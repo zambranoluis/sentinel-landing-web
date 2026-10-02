@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sentinel — Cubo SVG v4</title>
+<style>
+  :root{
+    --bg-a:#01050b;
+    --bg-b:#04101d;
+    --line:rgba(110,228,255,.72);
+    --line-soft:rgba(86,203,245,.22);
+    --line-mid:rgba(86,203,245,.36);
+    --pulse:#a5fbff;
+  }
+
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 44%, rgba(0,146,219,.12), transparent 22%),
+      radial-gradient(circle at 50% 52%, rgba(0,146,219,.06), transparent 34%),
+      linear-gradient(180deg, var(--bg-b), var(--bg-a));
+  }
+
+  body{
+    display:grid;
+    place-items:center;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+
+  .stage{
+    width:100%;
+    height:100%;
+    display:grid;
+    place-items:center;
+  }
+
+  svg{
+    width:min(74vw, 820px);
+    height:auto;
+    overflow:visible;
+    shape-rendering:geometricPrecision;
+  }
+
+  .cube-wrap{
+    transform-origin:50% 50%;
+    animation:float 6s ease-in-out infinite;
+  }
+
+  .face-top{
+    fill:rgba(72,205,245,.18);
+    stroke:rgba(120,233,255,.42);
+    stroke-width:1.05;
+  }
+
+  .face-left,.face-right{
+    stroke:rgba(100,220,255,.25);
+    stroke-width:1;
+  }
+
+  .face-left{ fill:url(#leftFill); }
+  .face-right{ fill:url(#rightFill); }
+
+  .line-main{
+    fill:none;
+    stroke:var(--line);
+    stroke-width:1.35;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .line-side{
+    fill:none;
+    stroke:var(--line-mid);
+    stroke-width:1.0;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .line-soft{
+    fill:none;
+    stroke:var(--line-soft);
+    stroke-width:.85;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .glow-line{
+    fill:none;
+    stroke:rgba(73,225,255,.78);
+    stroke-width:1.9;
+    vector-effect:non-scaling-stroke;
+    filter:url(#softGlow);
+    opacity:.9;
+  }
+
+  .pulse{
+    fill:none;
+    stroke:var(--pulse);
+    stroke-width:1.95;
+    vector-effect:non-scaling-stroke;
+    filter:url(#softGlow);
+    opacity:0;
+    animation:pulse 5.2s cubic-bezier(.34,.02,.22,1) infinite;
+  }
+
+  .node{
+    fill:#c6ffff;
+    filter:url(#nodeGlow);
+    opacity:.95;
+  }
+
+  .node.pulse-node{
+    animation:nodePulse 5.2s ease-in-out infinite;
+  }
+
+  .core{
+    fill:url(#coreGlow);
+    filter:url(#bigGlow);
+    opacity:.38;
+    animation:corePulse 5.2s ease-in-out infinite;
+  }
+
+  .micro{
+    fill:none;
+    stroke:rgba(66,206,247,.18);
+    stroke-width:.65;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .spark{
+    fill:#53dcff;
+    opacity:.65;
+    filter:url(#nodeGlow);
+    animation:spark 3.8s ease-in-out infinite;
+  }
+
+  .spark:nth-child(2n){animation-delay:-1.2s}
+  .spark:nth-child(3n){animation-delay:-2.1s}
+
+  @keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-5px)}
+  }
+
+  @keyframes pulse{
+    0%,10%{opacity:0}
+    15%{opacity:.18}
+    20%{opacity:1}
+    26%{opacity:.28}
+    34%,100%{opacity:0}
+  }
+
+  @keyframes nodePulse{
+    0%,100%{opacity:.4}
+    18%{opacity:1}
+    30%{opacity:.55}
+  }
+
+  @keyframes corePulse{
+    0%,100%{opacity:.22; transform:scale(.96)}
+    18%{opacity:.48; transform:scale(1.03)}
+    30%{opacity:.28; transform:scale(1)}
+  }
+
+  @keyframes spark{
+    0%,100%{opacity:.15; transform:translateY(0)}
+    50%{opacity:.85; transform:translateY(-4px)}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <svg viewBox="0 0 900 760" role="img" aria-label="Cubo holográfico geométricamente exacto">
+    <defs>
+      <linearGradient id="leftFill" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#04131e" stop-opacity=".60"/>
+        <stop offset="1" stop-color="#1187bd" stop-opacity=".12"/>
+      </linearGradient>
+
+      <linearGradient id="rightFill" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#1396cb" stop-opacity=".10"/>
+        <stop offset="1" stop-color="#021019" stop-opacity=".62"/>
+      </linearGradient>
+
+      <radialGradient id="coreGlow">
+        <stop offset="0" stop-color="#ebffff" stop-opacity="1"/>
+        <stop offset=".16" stop-color="#88f3ff" stop-opacity=".94"/>
+        <stop offset=".42" stop-color="#14c1f7" stop-opacity=".34"/>
+        <stop offset="1" stop-color="#14c1f7" stop-opacity="0"/>
+      </radialGradient>
+
+      <filter id="softGlow" x="-150%" y="-150%" width="400%" height="400%">
+        <feGaussianBlur stdDeviation="3.4" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <filter id="nodeGlow" x="-180%" y="-180%" width="460%" height="460%">
+        <feGaussianBlur stdDeviation="3.2" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <filter id="bigGlow" x="-180%" y="-180%" width="460%" height="460%">
+        <feGaussianBlur stdDeviation="16"/>
+      </filter>
+
+      <clipPath id="clip-left"><path id="clipLeftPath"/></clipPath>
+      <clipPath id="clip-right"><path id="clipRightPath"/></clipPath>
+    </defs>
+
+    <g id="ambient"></g>
+    <g class="cube-wrap" id="cubeWrap"></g>
+  </svg>
+</div>
+
+<script>
+(() => {
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const wrap = document.getElementById('cubeWrap');
+  const ambient = document.getElementById('ambient');
+
+  const cx = 450;
+  const topY = 158;
+  const edge = 178;
+  const dx = Math.cos(Math.PI/6) * edge;
+  const dy = Math.sin(Math.PI/6) * edge;
+
+  const T  = {x:cx,      y:topY};
+  const R  = {x:cx + dx, y:topY + dy};
+  const F  = {x:cx,      y:topY + edge};
+  const L  = {x:cx - dx, y:topY + dy};
+
+  const Rb = {x:R.x, y:R.y + edge};
+  const Fb = {x:F.x, y:F.y + edge};
+  const Lb = {x:L.x, y:L.y + edge};
+
+  const add = (tag, attrs, parent=wrap) => {
+    const el = document.createElementNS(svgNS, tag);
+    for (const [k,v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+    parent.appendChild(el);
+    return el;
+  };
+
+  const pt = p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`;
+  const lerp = (a,b,t) => ({x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t});
+  const pathPts = pts => pts.map((p,i)=> `${i?'L':'M'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ') + ' Z';
+  const linePath = (a,b,c=null) => c
+    ? `M${a.x.toFixed(2)} ${a.y.toFixed(2)} L${b.x.toFixed(2)} ${b.y.toFixed(2)} L${c.x.toFixed(2)} ${c.y.toFixed(2)}`
+    : `M${a.x.toFixed(2)} ${a.y.toFixed(2)} L${b.x.toFixed(2)} ${b.y.toFixed(2)}`;
+
+  document.getElementById('clipLeftPath').setAttribute('d', pathPts([L,F,Fb,Lb]));
+  document.getElementById('clipRightPath').setAttribute('d', pathPts([F,R,Rb,Fb]));
+
+  // Ambient
+  add('ellipse', {cx, cy:Fb.y-12, rx:180, ry:85, class:'core'}, ambient);
+  const sparks = [
+    [cx, topY-48, 2.5],[cx-22, topY-15, 1.7],[cx+24, topY+4, 1.7],
+    [cx-110, topY+18, 1.5],[cx+116, topY+36, 1.6],[cx-176, topY+78, 1.5],
+    [cx+178, topY+118, 1.5],[cx-154, Fb.y-60, 1.4],[cx+154, Fb.y-82, 1.6]
+  ];
+  sparks.forEach(([x,y,r]) => add('circle', {cx:x, cy:y, r, class:'spark'}, ambient));
+
+  // Faces
+  add('polygon', {points:[pt(T),pt(R),pt(F),pt(L)].join(' '), class:'face-top'});
+  add('polygon', {points:[pt(L),pt(F),pt(Fb),pt(Lb)].join(' '), class:'face-left'});
+  add('polygon', {points:[pt(F),pt(R),pt(Rb),pt(Fb)].join(' '), class:'face-right'});
+
+  // Outer edges
+  [
+    [T,R],[R,F],[F,L],[L,T],
+    [L,Lb],[F,Fb],[R,Rb],
+    [Lb,Fb],[Fb,Rb]
+  ].forEach(([a,b]) => add('path', {d:linePath(a,b), class:'line-main'}));
+
+  [
+    [L,F],[F,R],[L,Lb],[F,Fb],[R,Rb],[Lb,Fb],[Fb,Rb]
+  ].forEach(([a,b]) => add('path', {d:linePath(a,b), class:'glow-line'}));
+
+  // Each visible face = 3 x 3 = 9 same-size cells
+  const thirds = [1/3, 2/3];
+
+  // Top face grid (uniform top, no highlighted central square)
+  thirds.forEach(f => {
+    add('path', {d:linePath(lerp(T,L,f), lerp(R,F,f)), class:'line-soft'});
+    add('path', {d:linePath(lerp(T,R,f), lerp(L,F,f)), class:'line-soft'});
+  });
+
+  // Left face horizontal grid
+  thirds.forEach(f => {
+    add('path', {d:linePath(lerp(L,Lb,f), lerp(F,Fb,f)), class:'line-side'});
+  });
+
+  // Right face horizontal grid
+  thirds.forEach(f => {
+    add('path', {d:linePath(lerp(F,Fb,f), lerp(R,Rb,f)), class:'line-side'});
+  });
+
+  // Left face vertical grid
+  thirds.forEach(f => {
+    add('path', {d:linePath(lerp(L,F,f), lerp(Lb,Fb,f)), class:'line-soft'});
+  });
+
+  // Right face vertical grid
+  thirds.forEach(f => {
+    add('path', {d:linePath(lerp(F,R,f), lerp(Fb,Rb,f)), class:'line-soft'});
+  });
+
+  // Pulses on the cube's own lines
+  // top face main pulse
+  add('path', {d:`M${T.x} ${T.y} L${R.x} ${R.y} L${F.x} ${F.y} L${L.x} ${L.y} Z`, class:'pulse', style:'animation-delay:0s; stroke-width:1.5'});
+
+  // top face grid pulses
+  thirds.forEach((f,i) => {
+    add('path', {d:linePath(lerp(T,L,f), lerp(R,F,f)), class:'pulse', style:`animation-delay:${0.14 + i*0.14}s; stroke-width:1.45`});
+    add('path', {d:linePath(lerp(T,R,f), lerp(L,F,f)), class:'pulse', style:`animation-delay:${0.22 + i*0.14}s; stroke-width:1.45`});
+  });
+
+  // side horizontal pulses
+  thirds.forEach((f,i) => {
+    add('path', {d:linePath(lerp(L,Lb,f), lerp(F,Fb,f)), class:'pulse', style:`animation-delay:${0.48 + i*0.22}s`});
+    add('path', {d:linePath(lerp(F,Fb,f), lerp(R,Rb,f)), class:'pulse', style:`animation-delay:${0.48 + i*0.22}s`});
+  });
+
+  // center vertical pulse
+  add('path', {d:linePath(T,Fb), class:'pulse', style:'animation-delay:.26s; stroke-width:1.55'});
+
+  // floor extension
+  const floorInset = 18;
+  add('path', {
+    d: `M${Lb.x} ${Lb.y} L${Fb.x} ${Fb.y} L${Rb.x} ${Rb.y} L${Rb.x} ${Rb.y+floorInset} L${Fb.x} ${Fb.y+floorInset} L${Lb.x} ${Lb.y+floorInset} Z`,
+    class:'line-soft'
+  });
+
+  // Nodes on key intersections
+  const nodes = [];
+
+  // center column nodes
+  [0,1/3,2/3,1].forEach(f => nodes.push(lerp(F,Fb,f)));
+
+  // left edge nodes
+  thirds.forEach(f => nodes.push(lerp(L,Lb,f)));
+
+  // right edge nodes
+  thirds.forEach(f => nodes.push(lerp(R,Rb,f)));
+
+  // mid horizontal face intersections
+  thirds.forEach(yf => {
+    thirds.forEach(xf => {
+      nodes.push(lerp(lerp(L,Lb,yf), lerp(F,Fb,yf), xf)); // left face
+      nodes.push(lerp(lerp(F,Fb,yf), lerp(R,Rb,yf), xf)); // right face
+    });
+  });
+
+  // Deduplicate visually-close nodes
+  const filtered = [];
+  nodes.forEach(p => {
+    if (!filtered.some(q => Math.hypot(q.x-p.x, q.y-p.y) < 1.5)) filtered.push(p);
+  });
+
+  filtered.forEach((p, i) => add('circle', {
+    cx:p.x, cy:p.y, r:(i<4?2.8:2.1), class:'node pulse-node',
+    style:`animation-delay:${(i%5)*.12}s`
+  }));
+
+  // Core
+  add('circle', {cx:F.x, cy:F.y + edge*0.36, r:36, class:'core'});
+  add('circle', {cx:F.x, cy:F.y + edge*0.36, r:3.0, class:'node pulse-node', style:'animation-delay:.12s'});
+
+  // Micro details inside side faces
+  const microLeft = document.createElementNS(svgNS, 'g');
+  microLeft.setAttribute('clip-path', 'url(#clip-left)');
+  wrap.appendChild(microLeft);
+
+  const microRight = document.createElementNS(svgNS, 'g');
+  microRight.setAttribute('clip-path', 'url(#clip-right)');
+  wrap.appendChild(microRight);
+
+  const addMicro = (parent, x, y, w1, w2) => add('path', {d:`M${x} ${y} h${w1} m6 0 h${w2}`, class:'micro'}, parent);
+
+  [
+    [L.x+24, L.y+46, 14, 10],[L.x+30, L.y+62, 22, 14],[L.x+35, L.y+122, 16, 9],
+    [L.x+44, L.y+141, 24, 12],[L.x+32, L.y+222, 16, 8],[L.x+47, L.y+241, 24, 12]
+  ].forEach(v => addMicro(microLeft, ...v));
+
+  [
+    [F.x+36, R.y+58, 16, 10],[F.x+45, R.y+76, 22, 14],[F.x+34, R.y+140, 16, 9],
+    [F.x+48, R.y+158, 24, 12],[F.x+36, R.y+236, 16, 8],[F.x+50, R.y+255, 24, 12]
+  ].forEach(v => addMicro(microRight, ...v));
+
+  // subtle brightness drift
+  let t = 0;
+  function tick(){
+    t += 0.005;
+    wrap.style.filter = `brightness(${1 + Math.sin(t)*0.018})`;
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
