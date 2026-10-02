@@ -82,6 +82,16 @@ export function MobileNavigation({ children }: { children: ReactNode }) {
         inert={!open}
         data-open={open}
         className={styles.panel}
+        onClick={(event) => {
+          const link = (event.target as HTMLElement).closest<HTMLAnchorElement>(
+            "a[href]",
+          );
+          if (!link?.hash) return;
+          const target = document.getElementById(link.hash.slice(1));
+          if (!target) return;
+          setOpen(false);
+          target.focus({ preventScroll: true });
+        }}
       >
         {children}
       </div>

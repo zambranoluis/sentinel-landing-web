@@ -1,6 +1,6 @@
 export const destinations = {
   home: { available: true, href: "/" },
-  howItWorks: { available: false },
+  howItWorks: { available: true, href: "/#how-it-works" },
   capabilities: { available: false },
   deployment: { available: false },
   plans: { available: false },

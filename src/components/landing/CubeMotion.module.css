@@ -1,0 +1,238 @@
+.motion {
+  --line: rgba(110, 228, 255, 0.72);
+  --line-soft: rgba(86, 203, 245, 0.22);
+  --line-mid: rgba(86, 203, 245, 0.36);
+  --pulse: #a5fbff;
+  display: contents;
+}
+.artwork {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.cube {
+  position: absolute;
+  left: 32%;
+  top: 30%;
+  width: 36%;
+  height: 43%;
+  pointer-events: none;
+}
+.motion[data-running="false"] .artwork * {
+  animation-play-state: paused;
+}
+.control {
+  position: absolute;
+  right: 0;
+  bottom: -3.25rem;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-control);
+  background: var(--background-secondary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.control:active {
+  transform: translateY(1px);
+}
+@media (hover: hover) {
+  .control:hover {
+    color: var(--text-primary);
+    border-color: var(--sentinel-steel);
+  }
+}
+@media (max-width: 720px) {
+  .cube {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 12rem;
+    margin-bottom: 1rem;
+  }
+  .control {
+    bottom: 0;
+  }
+}
+.cube-wrap {
+  transform-origin: 50% 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.face-top {
+  fill: rgba(72, 205, 245, 0.18);
+  stroke: rgba(120, 233, 255, 0.42);
+  stroke-width: 1.05;
+}
+
+.face-left,
+.face-right {
+  stroke: rgba(100, 220, 255, 0.25);
+  stroke-width: 1;
+}
+
+.face-left {
+  fill: url(#how-leftFill);
+}
+.face-right {
+  fill: url(#how-rightFill);
+}
+
+.line-main {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.line-side {
+  fill: none;
+  stroke: var(--line-mid);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.line-soft {
+  fill: none;
+  stroke: var(--line-soft);
+  stroke-width: 0.85;
+  vector-effect: non-scaling-stroke;
+}
+
+.glow-line {
+  fill: none;
+  stroke: rgba(73, 225, 255, 0.78);
+  stroke-width: 1.9;
+  vector-effect: non-scaling-stroke;
+  filter: url(#how-softGlow);
+  opacity: 0.9;
+}
+
+.pulse {
+  fill: none;
+  stroke: var(--pulse);
+  stroke-width: 1.95;
+  vector-effect: non-scaling-stroke;
+  filter: url(#how-softGlow);
+  opacity: 0;
+  animation: pulse 5.2s cubic-bezier(0.34, 0.02, 0.22, 1) infinite;
+}
+
+.node {
+  fill: #c6ffff;
+  filter: url(#how-nodeGlow);
+  opacity: 0.95;
+}
+
+.node.pulse-node {
+  animation: nodePulse 5.2s ease-in-out infinite;
+}
+
+.core {
+  fill: url(#how-coreGlow);
+  filter: url(#how-bigGlow);
+  opacity: 0.38;
+  animation: corePulse 5.2s ease-in-out infinite;
+}
+
+.micro {
+  fill: none;
+  stroke: rgba(66, 206, 247, 0.18);
+  stroke-width: 0.65;
+  vector-effect: non-scaling-stroke;
+}
+
+.spark {
+  fill: #53dcff;
+  opacity: 0.65;
+  filter: url(#how-nodeGlow);
+  animation: spark 3.8s ease-in-out infinite;
+}
+
+.spark:nth-child(2n) {
+  animation-delay: -1.2s;
+}
+.spark:nth-child(3n) {
+  animation-delay: -2.1s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  10% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.18;
+  }
+  20% {
+    opacity: 1;
+  }
+  26% {
+    opacity: 0.28;
+  }
+  34%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes nodePulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  18% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes corePulse {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: scale(0.96);
+  }
+  18% {
+    opacity: 0.48;
+    transform: scale(1.03);
+  }
+  30% {
+    opacity: 0.28;
+    transform: scale(1);
+  }
+}
+
+@keyframes spark {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .artwork * {
+    animation: none !important;
+  }
+}

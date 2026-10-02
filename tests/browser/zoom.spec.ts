@@ -100,11 +100,22 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
     await expect.poll(() => page.evaluate(() => innerWidth)).toBe(720);
     await page
       .getByRole("main")
-      .getByRole("button")
+      .getByRole("button", { name: "Request a Site Assessment", exact: true })
       .evaluate((element) =>
         element.scrollIntoView({ block: "start", behavior: "instant" }),
       );
     await capture("browser-zoom-200-scene.png");
+    await page
+      .locator("#how-it-works")
+      .evaluate((element) =>
+        element.scrollIntoView({ block: "start", behavior: "instant" }),
+      );
+    await capture("browser-zoom-200-workflow.png");
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
     await page.evaluate(() =>
       window.scrollTo(0, document.querySelector("footer")!.offsetTop),
     );

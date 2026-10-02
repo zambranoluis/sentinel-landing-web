@@ -383,13 +383,17 @@ for (const viewport of [
     await expect(page.getByRole("link", { name: "Sentinel home" })).toHaveCount(
       2,
     );
-    await expect(page.getByRole("link")).toHaveCount(3);
+    await expect(page.getByRole("link")).toHaveCount(
+      viewport.width >= 1280 ? 5 : 4,
+    );
     for (const [group, labels] of Object.entries(footerLabels)) {
       const section = page.getByRole("region", { name: group, exact: true });
       await expect(section).toBeVisible();
       for (const label of labels)
         await expect(section.getByText(label, { exact: true })).toBeVisible();
-      await expect(section.getByRole("link")).toHaveCount(0);
+      await expect(section.getByRole("link")).toHaveCount(
+        group === "Product" ? 1 : 0,
+      );
     }
     const footer = page.getByRole("contentinfo");
     await expect(
@@ -410,7 +414,8 @@ for (const viewport of [
         { exact: true },
       ),
     ).toBeVisible();
-    for (const image of await page.locator("img").all())
+    for (const image of await page.locator("img").all()) {
+      await image.scrollIntoViewIfNeeded();
       await expect
         .poll(() =>
           image.evaluate(
@@ -418,6 +423,8 @@ for (const viewport of [
           ),
         )
         .toBeGreaterThan(0);
+    }
+    await page.evaluate(() => window.scrollTo(0, 0));
     const font = await page.evaluate(async () => {
       const faces = await Promise.all(
         [400, 500, 700].map((weight) =>
@@ -492,7 +499,9 @@ test("mobile disclosure, keyboard, interruption and open-menu accessibility", as
   });
   await page.keyboard.press("Tab");
   await expect(
-    page.getByRole("contentinfo").getByRole("link", { name: "Sentinel home" }),
+    page
+      .getByRole("navigation", { name: "Primary mobile", exact: true })
+      .getByRole("link", { name: "How it works" }),
   ).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(toggle).toBeFocused();

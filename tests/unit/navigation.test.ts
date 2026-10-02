@@ -16,6 +16,7 @@ describe("public destination availability", () => {
       ...footerGroups.flatMap((group) => [...group.items]),
     ];
     for (const entry of entries) {
+      if (destinations[entry.destination].available) continue;
       expect(destinationHref(entry.destination), entry.label).toBeNull();
       expect(destinations[entry.destination]).not.toHaveProperty("href");
     }
@@ -25,15 +26,19 @@ describe("public destination availability", () => {
     const enabled = (Object.keys(destinations) as Destination[]).filter(
       (key) => destinations[key].available,
     );
-    expect(enabled).toEqual(["home"]);
+    expect(enabled).toEqual(["home", "howItWorks"]);
     for (const key of enabled) {
       const href = destinationHref(key)!;
       expect(href).toMatch(/^\/(?!\/)/);
       const [route, fragment] = href.split("#");
       const routeFile = path.join(process.cwd(), "src/app", route, "page.tsx");
       expect(existsSync(routeFile), href).toBe(true);
-      if (fragment)
-        expect(readFileSync(routeFile, "utf8")).toContain(`id="${fragment}"`);
+      if (fragment) {
+        expect(readFileSync(routeFile, "utf8")).toContain("<HowItWorks />");
+        expect(
+          readFileSync("src/components/landing/HowItWorks.tsx", "utf8"),
+        ).toContain(`id="${fragment}"`);
+      }
     }
   });
 
