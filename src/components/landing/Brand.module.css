@@ -1,0 +1,20 @@
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.icon {
+  width: 1.6rem;
+  height: auto;
+}
+
+.word {
+  width: 7.6rem;
+  max-width: calc(100% - 2.475rem);
+  height: auto;
+}

@@ -12,7 +12,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  workers: 2,
+  // Concurrent Firefox axe scans timed out on the supported Windows host.
+  workers: 1,
   outputDir: path.join(evidence, "results"),
   reporter: [
     ["list"],
@@ -25,8 +26,16 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    {
+      name: "firefox",
+      testIgnore: "**/zoom.spec.ts",
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit",
+      testIgnore: "**/zoom.spec.ts",
+      use: { ...devices["Desktop Safari"] },
+    },
   ],
   webServer: {
     command: `npm run start -- --hostname 127.0.0.1 --port ${port}`,

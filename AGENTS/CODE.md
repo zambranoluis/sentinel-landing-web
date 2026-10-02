@@ -12,7 +12,9 @@ In an existing project, preserve its established language, styling system, and t
 
 ## Project engineering guidance
 
-The user-approved plan selects Next.js App Router, React, strict TypeScript, npm and CSS Modules. Manual setup preserves agent files and avoids unapproved Tailwind/generator additions. `src/app` owns routes and document composition; global CSS owns tokens/reset/typography; CSS Modules own local styles. Prefer server components and small client boundaries when needed. No client boundary, domain state, API, session, upstream service or persistence is authored in this entry. Assessment contracts remain with the product owner in [PRODUCT.md](../PRODUCT.md#public-landing-scope).
+The user-approved plan selects Next.js App Router, React, strict TypeScript, npm and CSS Modules. Manual setup preserves agent files and avoids unapproved Tailwind/generator additions. `src/app` owns routes and document composition; global CSS owns tokens/reset/typography; CSS Modules own local styles. `src/components/landing` owns server-rendered navbar/hero/footer and shared brand/actions. Only `MobileNavigation.tsx` declares a client boundary; server-rendered children pass into it. No API, session, upstream service or persistence is authored. Assessment contracts remain with the product owner in [PRODUCT.md](../PRODUCT.md#public-landing-scope).
+
+`navigation.ts` owns typed destination availability consumed by navbar/footer labels and brand. An unavailable destination has no `href`; render a span rather than an anchor or placeholder URL. Home is the sole enabled route. Unit tests validate this shared contract and implemented internal targets. Available links explicitly retain source-order `tabIndex=0` because the supported Windows WebKit default skipped ordinary anchors during local testing; pointer menu activation also focuses the trigger consistently across engines. Desktop focus handoff tracks `focusin` ownership because CSS may blur a hidden control before the breakpoint event. The disclosure is ordinary navigation, not an ARIA menu or modal; no focus trap or action animation is required.
 
 The supplied plan explicitly approves these exact dependencies; package.json and package-lock.json are executable authorities:
 
@@ -22,10 +24,11 @@ The supplied plan explicitly approves these exact dependencies; package.json and
 | Types                 | `typescript@5.9.3`, `@types/node@22.14.0`, `@types/react@19.3.0`, `@types/react-dom@19.3.0`          |
 | Quality               | `eslint@9.39.5`, `eslint-config-next@16.3.8`, `prettier@3.9.9`                                       |
 | Browser/accessibility | `@playwright/test@1.63.0`, `@axe-core/playwright@4.13.0`; matching Chromium/Firefox/WebKit downloads |
+| Unit tests            | `vitest@5.0.3`, approved in the landing foundation implementation plan                               |
 
-Do not force peer resolution. Propose Vitest separately when meaningful logic needs unit tests. Evaluate performance and motion/media packages with a substantial visual slice or actual video requirement. Type checking generates Next.js route/environment declarations before TypeScript. `agentRules: false` in the Next.js configuration prevents development startup from changing the repository's established instruction owners.
+Do not force peer resolution. Vitest uses `tests/unit/**/*.test.ts` in Node, configured in `vitest.config.mts`; no DOM package is installed. Playwright discovery remains `tests/browser`. Evaluate additional performance and motion/media packages separately. Type checking generates Next.js route/environment declarations before TypeScript. `agentRules: false` in the Next.js configuration prevents development startup from changing the repository's established instruction owners.
 
-Required gates are [README commands](../README.md#commands-and-verification): install, lint, types, format, local Markdown links/anchors, production build, real browser discovery, three-engine production tests, manual presentation/accessibility review and dependency audit. CI mirrors local gates; no remote execution is claimed before a requested push. Public browser evidence cannot prove authenticated/dashboard behavior. Generated QA remains external; artifact validation rejects repository targets, ancestors and redirects. No coverage percentage, structural analyzer or debt baseline is configured.
+Required gates are [README commands](../README.md#commands-and-verification): install, lint, types, format, local Markdown links/anchors, unit tests, production build, real browser discovery, three-engine production tests, manual presentation/accessibility review and dependency audit. CI mirrors local gates; no remote execution is claimed before a requested push. Browser workers are serial: parallel Firefox axe evaluations timed out on Windows; both focused and full serial reruns passed. `zoom.spec.ts` is Chromium-only because it exercises Chrome's real Tabs zoom API through a permission-free extension in an external isolated test profile, never the user's browser. Public browser evidence cannot prove authenticated/dashboard behavior. Generated QA remains external; artifact validation rejects repository targets, ancestors and redirects. No coverage percentage, structural analyzer or debt baseline is configured.
 
 ### Debt and coverage ownership
 
@@ -33,7 +36,7 @@ Required gates are [README commands](../README.md#commands-and-verification): in
 
 - The repository maintainer owns dependency advisory review, affected paths, mitigations and separately approved updates. Record audit results in the active work item; do not hide failures or upgrade outside approval.
 - The product owner owns assessment destinations and submission/privacy contracts before dependent work.
-- The design owner resolves affected visual conflicts; later motion/performance behavior is outside foundation coverage.
+- The design owner resolves affected visual conflicts; current coverage includes static hero, disclosure interruption/focus and reduced motion. Later sections and richer motion/performance behavior remain outside this milestone.
 - The maintainer owns first remote CI execution after a requested push; local checks do not establish Linux/remote success.
 
 ## Ownership

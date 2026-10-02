@@ -1,23 +1,18 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Navbar } from "@/components/landing/Navbar";
+import { Hero } from "@/components/landing/Hero";
+import { Footer } from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <main className={styles.entry}>
-      <h1 className={styles.brand}>
-        <Image
-          src="/logos/sentinel.svg"
-          alt="Sentinel"
-          width={896}
-          height={544}
-          preload
-          className={styles.logo}
-        />
-      </h1>
-      <p className={styles.description}>
-        Sentinel detects relevant events and directs your team’s attention where
-        it is needed most.
-      </p>
-    </main>
+    <>
+      <a className="skip-link" href="#main-content" tabIndex={0}>
+        Skip to content
+      </a>
+      <Navbar />
+      <main id="main-content" tabIndex={-1}>
+        <Hero />
+      </main>
+      <Footer />
+    </>
   );
 }
