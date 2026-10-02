@@ -78,7 +78,9 @@ export function MobileNavigation({ children }: { children: ReactNode }) {
       <div
         ref={panel}
         id="mobile-navigation"
-        hidden={!open}
+        aria-hidden={!open}
+        inert={!open}
+        data-open={open}
         className={styles.panel}
       >
         {children}

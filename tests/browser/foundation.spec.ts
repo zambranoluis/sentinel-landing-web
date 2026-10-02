@@ -138,6 +138,114 @@ for (const viewport of [
   { name: "mobile", width: 390, height: 844 },
   { name: "tablet", width: 834, height: 1112 },
 ]) {
+  test(`navigation panel transition and interruption at ${viewport.name}`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/");
+    const toggle = page.locator("header button[aria-controls]");
+    const panel = page.locator("#mobile-navigation");
+    await expect(panel).toBeHidden();
+    await expect(panel).toHaveAttribute("inert", "");
+    await toggle.click();
+    const opening = await panel.evaluate(async (element) => {
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve()),
+      );
+      const transitions = element.getAnimations();
+      for (const animation of transitions) {
+        animation.pause();
+        animation.currentTime =
+          Number(animation.effect!.getTiming().duration) / 2;
+      }
+      const style = getComputedStyle(element);
+      return {
+        count: transitions.length,
+        opacity: Number(style.opacity),
+        y: new DOMMatrixReadOnly(style.transform).m42,
+      };
+    });
+    expect(opening.count).toBe(2);
+    expect(opening.opacity).toBeGreaterThan(0);
+    expect(opening.opacity).toBeLessThan(1);
+    expect(opening.y).toBeGreaterThan(-8);
+    expect(opening.y).toBeLessThan(0);
+    await expect(panel).toHaveAttribute("aria-hidden", "false");
+    await expect(panel).not.toHaveAttribute("inert");
+    await page.screenshot({ path: testInfo.outputPath("panel-opening.png") });
+    await panel.evaluate((element) => {
+      for (const animation of element.getAnimations()) animation.finish();
+    });
+    const reversal = await panel.evaluate(async (element) => {
+      const trigger = document.querySelector<HTMLButtonElement>(
+        "header button[aria-controls]",
+      )!;
+      const read = () => {
+        const style = getComputedStyle(element);
+        return {
+          opacity: Number(style.opacity),
+          y: new DOMMatrixReadOnly(style.transform).m42,
+        };
+      };
+      trigger.click();
+      const deadline = performance.now() + 1000;
+      let before = read();
+      while (before.opacity > 0.75 && performance.now() < deadline) {
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() => resolve()),
+        );
+        before = read();
+      }
+      const closed = {
+        inert: (element as HTMLElement).inert,
+        hidden: element.getAttribute("aria-hidden"),
+        pointerEvents: getComputedStyle(element).pointerEvents,
+      };
+      trigger.click();
+      await Promise.resolve();
+      const transitions = element.getAnimations();
+      for (const animation of transitions) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+      return { before, after: read(), closed, count: transitions.length };
+    });
+    expect(reversal.closed).toEqual({
+      inert: true,
+      hidden: "true",
+      pointerEvents: "none",
+    });
+    expect(reversal.count).toBe(2);
+    expect(reversal.before.opacity).toBeGreaterThan(0);
+    expect(reversal.before.opacity).toBeLessThan(1);
+    expect(
+      Math.abs(reversal.after.opacity - reversal.before.opacity),
+    ).toBeLessThan(0.2);
+    expect(Math.abs(reversal.after.y - reversal.before.y)).toBeLessThan(1.6);
+    await panel.evaluate((element) => {
+      for (const animation of element.getAnimations()) animation.play();
+    });
+    await expect
+      .poll(() => panel.evaluate((el) => Number(getComputedStyle(el).opacity)))
+      .toBe(1);
+    await page.screenshot({ path: testInfo.outputPath("panel-open.png") });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await toggle.click();
+    await expect(panel).toBeHidden();
+    await toggle.click();
+    expect(
+      await panel.evaluate((element) => ({
+        opacity: getComputedStyle(element).opacity,
+        transform: getComputedStyle(element).transform,
+        animations: element.getAnimations().length,
+      })),
+    ).toEqual({ opacity: "1", transform: "none", animations: 0 });
+    await page.keyboard.press("Escape");
+    await expect(panel).toBeHidden();
+    await expect(toggle).toBeFocused();
+  });
+
   test(`burger icon states and rapid reversal at ${viewport.name}`, async ({
     page,
   }, testInfo) => {

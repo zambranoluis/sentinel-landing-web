@@ -105,6 +105,22 @@
   border-bottom: 1px solid var(--hairline-strong);
   max-height: calc(100dvh - 80px);
   overflow-y: auto;
+  opacity: 0;
+  transform: translateY(-8px);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--motion-surface) ease-out,
+    transform var(--motion-surface) ease-out,
+    visibility 0s linear var(--motion-surface);
+}
+
+.panel[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
 }
 
 .panel > div {
@@ -146,7 +162,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .toggle,
-  .line {
+  .line,
+  .panel {
     transition: none;
+  }
+  .panel,
+  .panel[data-open="true"] {
+    transform: none;
   }
 }
