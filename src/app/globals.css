@@ -1,0 +1,89 @@
+:root {
+  color-scheme: dark;
+  --sentinel-navy: #1b3266;
+  --sentinel-steel: #acbed1;
+  --sentinel-ice: #edf2f3;
+  --sentinel-mist: #9cb7bc;
+  --canvas: #050b16;
+  --background-secondary: #08111e;
+  --surface-primary: #0d1726;
+  --surface-interactive: #111722;
+  --surface-elevated: var(--sentinel-navy);
+  --text-primary: #f6f8fb;
+  --text-secondary: #a9b4c4;
+  --text-muted: var(--sentinel-mist);
+  --accent-primary: var(--sentinel-steel);
+  --accent-strong: var(--sentinel-ice);
+  --primary-hover: #192e5c;
+  --hairline: #263447;
+  --hairline-strong: rgb(172 190 209 / 42%);
+  --radius-control: 12px;
+  --radius-compact: 14px;
+  --radius-panel: 22px;
+  --radius-large: 32px;
+  --radius-pill: 999px;
+  --space-tight: 12px;
+  --space-compact: 20px;
+  --space-standard: 32px;
+  --space-group: 56px;
+  --space-section: 74px;
+  --font-lead: clamp(1rem, 1.4vw, 1.15rem);
+  --font-title: clamp(2.5925rem, 12.75vw, 3.9525rem);
+  --font-section: 2.295rem;
+  --font-panel: 22px;
+  --font-navigation: 0.86rem;
+  --motion-microinteraction: 200ms;
+  --motion-surface: 200ms;
+  --page-gutter: clamp(24px, 6vw, 40px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--canvas);
+  scrollbar-color: var(--hairline) var(--canvas);
+}
+
+body {
+  margin: 0;
+  color: var(--text-primary);
+  font-family:
+    Roboto,
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+::selection {
+  background: var(--sentinel-navy);
+  color: var(--text-primary);
+}
+
+:focus-visible {
+  outline: 3px solid var(--sentinel-steel);
+  outline-offset: 3px;
+}
+
+@media (min-width: 721px) {
+  :root {
+    --page-gutter: 20px;
+    --font-title: clamp(3rem, 6.2vw, 6.15rem);
+    --font-section: clamp(2rem, 4.2vw, 4.25rem);
+    --font-panel: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --page-gutter: 10vw;
+    --font-title: clamp(2.4rem, 4.96vw, 4.92rem);
+    --font-panel: 26px;
+    --font-navigation: 0.8rem;
+  }
+}

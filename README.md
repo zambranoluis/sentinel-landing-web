@@ -1,39 +1,67 @@
-# Project overview
+# Sentinel landing web
 
-Status: unconfigured starter. Keep this neutral source unconfigured. In an adopted project, preserve existing README content and reconcile these prompts incrementally with verified facts and decisions already authorized within scope. Link established detailed owners instead of copying their rules. Mark unresolved material items as unknown with an owner and the work they block; remove inapplicable prompts. Documentation maintenance does not approve a migration, dependency, or new product decision; explicit read-only requests prohibit these writes.
+Public English-language landing for Sentinel, CrimsonTide AI's computer vision and operational intelligence platform. The foundation renders the existing logo and approved description at `/`; landing sections follow later. [PRODUCT.md](PRODUCT.md) owns purpose and journeys; [DESIGN.md](DESIGN.md) owns brand and landing requirements.
 
-## Overview and runtime
+## Runtime and setup
 
-Record the project name, root, brief purpose, supported runtime, environments, and stack actually selected. Route users, behavior, and promises through [PRODUCT.md](PRODUCT.md). Link [CODE.md](AGENTS/CODE.md#project-engineering-guidance) or its detailed owners for engineering decisions, compatible alternatives, and rationale; a starting preference is not an approved stack or package.
+Next.js 16.3.8 App Router, React 19.3.0, strict TypeScript, npm, CSS Modules and self-hosted Roboto through Fontsource. [CODE](AGENTS/CODE.md#project-engineering-guidance) owns decisions and approvals. Use Node 22.14.0 (supported line: Node 22) and npm 11.7.0:
 
-## Setup and prerequisites
+```sh
+npm ci
+npx playwright install chromium firefox webkit
+npm run dev
+```
 
-Record verified setup steps, prerequisites, service dependencies, and environment/configuration locations. Explain where an intended agent can access permitted prerequisites without exposing secrets. Identify unavailable prerequisites and the work they block.
+Development defaults to `http://localhost:3000`. No environment variables, backend, account or credentials are required. On Linux use `npx playwright install --with-deps chromium firefox webkit`. Fonts need no external provider fetch during build.
+
+For custom arguments in Windows PowerShell, use the native wrapper, for example `npm.cmd run dev -- --hostname 127.0.0.1 --port 3188`. The `npm.ps1` wrapper on this machine stripped the argument separator. `next.config.ts` disables Next.js automatic agent-rule generation so development startup preserves the repository's instruction files.
 
 ## Locations and boundaries
 
-Record the actual module/package map, layer owners, public import surfaces, generated-code boundaries, and other repositories or services with their edit permissions. Link detailed architecture and contracts through CODE. Record test locations, evidence and artifact roots, and private-data boundaries without disclosing protected data. A sibling source is conditional; its absence blocks only work needing it.
+| Location                                        | Owner                                                                                                             |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `src/app/layout.tsx`                            | English document, metadata, font/global CSS imports                                                               |
+| `src/app/page.tsx`, `page.module.css`           | Server-rendered public entry, no authored client boundary                                                         |
+| `src/app/globals.css`                           | Brand tokens, reset, typography and focus                                                                         |
+| `src/app/icon.svg`, `public/logos/sentinel.svg` | Consumed copies of original SVG logos                                                                             |
+| `references/`                                   | Approved sections, originals and [copy](references/web-content.md); preserve, do not publish the entire directory |
+| `tests/browser/`                                | Production public-entry responsive/accessibility tests                                                            |
+| `scripts/`                                      | Markdown checker and external artifact paths                                                                      |
+| `.github/workflows/quality.yml`                 | Local quality/build/browser/audit gates in CI; remote execution requires a future push                            |
+| `workspace/<work-item>/`                        | Shareable durable text under [PLANS](AGENTS/PLANS.md#location); generated QA remains external                     |
+
+`.next/`, `next-env.d.ts` and TypeScript metadata are generated. Dependencies use the retained npm lockfile. Existing `.codex/` is local, ignored and user-owned. No backend, auth or dashboard contracts are introduced. Other repositories are outside the write boundary. Code and documentation use English.
 
 ## Commands and verification
 
-Record only verified commands or methods: purpose, scope, executable prerequisites, applicable evidence lane, and availability. Include applicable formatting/diff hygiene; lint, types/compile, build, structural analysis; documentation links and source claims; unit, contract, integration, browser, accessibility, and visual checks.
+| Command                     | Scope / prerequisites                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `npm run dev`               | Next.js development; installation required                                                  |
+| `npm run build`             | Production compilation and route generation                                                 |
+| `npm run start`             | Serve an existing production build                                                          |
+| `npm run lint`              | ESLint Next.js/TypeScript on source, tests and tooling                                      |
+| `npm run typecheck`         | Generate Next.js declarations, then strict TypeScript; works before a first build           |
+| `npm run format:check`      | Prettier on authored files; originals, settings and unchanged neutral instructions excluded |
+| `npm run format`            | Format the same files                                                                       |
+| `npm run docs:links`        | Local Markdown targets/anchors; no external URL fetch                                       |
+| `npm run check`             | Lint, types, formatting and documentation                                                   |
+| `npm run test:browser:list` | Discover real tests in all three engines                                                    |
+| `npm run test:browser`      | Existing production build and matching browsers; own server on `127.0.0.1:3187`             |
+| `npm audit`                 | Dependency advisories, owned through CODE                                                   |
+| `git diff --check`          | Tracked diff whitespace; formatter covers untracked authored files                          |
 
-For test commands, record the runner, discovery configuration, intended tests, and evidence that the command discovers and exercises them. Identify required runtime services and authenticated lanes; for each applicable lane, record fixture boundaries, permitted side effects, and evidence restrictions. Make coverage gaps discoverable through an existing coverage owner or work-item record under [CODE's testing methodology](AGENTS/CODE.md#testing-methodology).
+Tests cover the public entry, SVG/Roboto loading, language/title/landmarks, 390/834/1440px widths, no overflow/runtime/request errors, axe WCAG tags, and 320px reflow with enlarged text/reduced motion. Automated checks do not establish formal conformance. Manually inspect reading order, contrast, 200% zoom and applicable keyboard focus; no controls exist in the foundation. No authenticated/controlled dashboard or persistence lane is introduced.
 
-Link engineering gates and any baseline/debt owner through CODE. An incomplete application may support only a subset; mark unavailable required checks with blockers and exact remaining work, never as passes.
+Artifacts default to a dedicated run under the OS temporary directory's `sentinel-landing-web-qa/`. Set `SENTINEL_E2E_ARTIFACTS_ROOT` to a dedicated absolute external directory for a known location. Repository targets, ancestors and symlink redirects into the repository are rejected. Reports, screenshots and failure traces stay local; CI uses `runner.temp` and uploads public-entry evidence. Tests refuse to reuse an existing service on their port.
 
 ## Documentation map
 
-- [PRODUCT.md](PRODUCT.md): users, purpose, journeys, capabilities, scope, operating constraints, terminology, evidence, and confirmed brand commitments; may be an entry to existing detailed owners. Install it in every adoption. When it is missing, offer to create it using an available Impeccable `init` workflow; keep unknowns explicit if product direction is not yet settled.
-- [DESIGN.md](DESIGN.md): design direction, tokens, layout, components, states, accessibility, and motion where applicable; may be an entry to existing detailed owners. Install it in every adoption. When it is missing, offer to create it using an available Impeccable `document` workflow; keep unknowns explicit if design direction is not yet settled.
-- [AGENTS.md](AGENTS.md): working agreement and decision routing.
-- [CODE.md](AGENTS/CODE.md): engineering guidance, contracts, verification requirements, deviations, and debt owners.
-- [INVESTIGATIONS.md](AGENTS/INVESTIGATIONS.md): grounding and evidence.
-- [FRONTEND_CREATION.md](AGENTS/FRONTEND_CREATION.md): conditional frontend direction, skills and examples, and preview process; installed in every adoption and read when its trigger applies.
-- [PLANS.md](AGENTS/PLANS.md): work-item records, stops, and resumption.
+- [AGENTS.md](AGENTS.md): working agreement and routing.
+- [PRODUCT.md](PRODUCT.md): truth, audience, landing scope and journey unknowns.
+- [DESIGN.md](DESIGN.md): brand baseline and separate landing requirements.
+- [CODE.md](AGENTS/CODE.md): engineering, contracts, gates and debt.
+- [INVESTIGATIONS.md](AGENTS/INVESTIGATIONS.md): evidence.
+- [FRONTEND_CREATION.md](AGENTS/FRONTEND_CREATION.md): conditional direction and previews.
+- [PLANS.md](AGENTS/PLANS.md): durable state and resumption.
 
-Add links only to documents that exist. Record the established language/style convention when actually chosen and route other operational sources to their owners.
-
-## Records, sharing, and artifacts
-
-Record the work-item record root and actual tracking, sharing, privacy, evidence, and artifact policies or link their owners. Follow [PLANS.md](AGENTS/PLANS.md#location) when no different location has been designated; recommend shared durable text records where policy is absent without claiming they are already accessible. Identify machine-local or inaccessible prerequisites and the work they block. Tool-specific workflows and host configuration stay with their actual owner.
+Durable text is eligible for version control and collaborator use once committed by the user; this task does not stage, commit or push. Keep secrets/authentication state and generated QA outside shared records. Capability launchers, hooks and settings stay with their owners.

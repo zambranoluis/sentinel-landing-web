@@ -2,6 +2,16 @@
 
 <!-- impeccable:product-schema 1 -->
 
+## Public landing scope
+
+This repository implements Sentinel's public, English-language commercial landing site. Its primary audience is the purchase and evaluation audience described below: people responsible for security, operations, infrastructure, technology and procurement who need to understand suitability before requesting an assessment. Dashboard descriptions below are supplied product context, not implemented or independently verified dashboard features in this repository.
+
+The approved direction consists of [page copy](references/web-content.md) and ten section references in `references/sections/`: hero, how it works, capabilities, product demo, deployment, benefits, plans, FAQs, final CTA and footer. These establish direction, not deployed functionality or performance/legal claims.
+
+The intended journey is: understand the offer, assess operational fit and deployment conditions, then request a site assessment. The authorized milestone is foundation only: existing logo and approved description, “Sentinel detects relevant events and directs your team’s attention where it is needed most.” No assessment destination or submission has been specified. The product owner must settle CTA destinations, contact/submission ownership and required privacy terms before dependent navigation, CTA or form work. Do not invent an endpoint or publish a nonfunctional action.
+
+The standalone public foundation needs no backend or authentication. It introduces no dashboard routes, operational data, analytics, cookies, pricing, customer evidence or capability claims. Later demonstrations must distinguish illustrative data from real operational evidence.
+
 ## Users
 
 **Primary operational users.** Sentinel is designed for professional and organisational environments in which continuous visual information has operational value. Its day-to-day users are people who need to monitor, review, prioritise and act on information quickly and with clear context.
@@ -190,4 +200,4 @@ Confirmed current commitments include:
 - alerts should expose an available or recommended next step rather than leaving the user with information but no clear path forward;
 - product language must not portray operators or personnel as incompetent; Sentinel exists because human attention is finite, not because people are the problem.
 
-No formal accessibility conformance target, such as a specific WCAG level, has been confirmed for the product. The document must not imply one until it is formally established and validated.
+This landing repository has an approved WCAG 2.2 AA engineering target. Automated and manual checks cover the implemented entry only and do not assert conformance. This target does not extend to other Sentinel applications; no formal conformance commitment for the operational dashboard is established here.

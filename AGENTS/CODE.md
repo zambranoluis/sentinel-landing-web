@@ -12,14 +12,29 @@ In an existing project, preserve its established language, styling system, and t
 
 ## Project engineering guidance
 
-In an adopted project, record settled engineering guidance here or link its detailed owners. Keep this neutral source unconfigured. Populate only verified facts and decisions already authorized within scope; identify the evidence or decision maker for each material choice. An incomplete application may retain unknowns with owners and blocked work. Documentation maintenance does not approve a migration, dependency, or new product decision, and explicit read-only requests prohibit it.
+The user-approved plan selects Next.js App Router, React, strict TypeScript, npm and CSS Modules. Manual setup preserves agent files and avoids unapproved Tailwind/generator additions. `src/app` owns routes and document composition; global CSS owns tokens/reset/typography; CSS Modules own local styles. Prefer server components and small client boundaries when needed. No client boundary, domain state, API, session, upstream service or persistence is authored in this entry. Assessment contracts remain with the product owner in [PRODUCT.md](../PRODUCT.md#public-landing-scope).
 
-- Architecture and layer/module ownership; public import surfaces; generated-code boundaries; supported conventions and alternatives with their rationale.
-- State ownership; API and per-surface response, error, and lifecycle contracts, with authoritative producers, consumers, types, and upstream sources.
-- Security and session ownership; upstream integration policy, including bounded timeout/deadline mechanisms and project-specific durations; observability and applicable tool workflows.
-- Package proposals, purposes, and separate approval decisions before installation, including preferred test packages.
-- Project verification requirements, structural thresholds, and any configured baseline or debt register. Keep runnable commands and prerequisites discoverable through README.
-- Known deviations and ongoing debt, their owners, affected contracts, constraints on scoped work, and follow-up records. Link an existing register instead of duplicating it; keep this ownership discoverable after temporary work guides are removed.
+The supplied plan explicitly approves these exact dependencies; package.json and package-lock.json are executable authorities:
+
+| Purpose               | Approved versions                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| Runtime/fonts         | `next@16.3.8`, `react@19.3.0`, `react-dom@19.3.0`, `@fontsource/roboto@5.3.0`                        |
+| Types                 | `typescript@5.9.3`, `@types/node@22.14.0`, `@types/react@19.3.0`, `@types/react-dom@19.3.0`          |
+| Quality               | `eslint@9.39.5`, `eslint-config-next@16.3.8`, `prettier@3.9.9`                                       |
+| Browser/accessibility | `@playwright/test@1.63.0`, `@axe-core/playwright@4.13.0`; matching Chromium/Firefox/WebKit downloads |
+
+Do not force peer resolution. Propose Vitest separately when meaningful logic needs unit tests. Evaluate performance and motion/media packages with a substantial visual slice or actual video requirement. Type checking generates Next.js route/environment declarations before TypeScript. `agentRules: false` in the Next.js configuration prevents development startup from changing the repository's established instruction owners.
+
+Required gates are [README commands](../README.md#commands-and-verification): install, lint, types, format, local Markdown links/anchors, production build, real browser discovery, three-engine production tests, manual presentation/accessibility review and dependency audit. CI mirrors local gates; no remote execution is claimed before a requested push. Public browser evidence cannot prove authenticated/dashboard behavior. Generated QA remains external; artifact validation rejects repository targets, ancestors and redirects. No coverage percentage, structural analyzer or debt baseline is configured.
+
+### Debt and coverage ownership
+
+- The approved ESLint 9.39.5 emits a registry deprecation warning for unsupported status. The maintainer owns a separately approved upgrade and compatibility review; the installed version remains pinned as requested. The current npm audit reports zero vulnerabilities.
+
+- The repository maintainer owns dependency advisory review, affected paths, mitigations and separately approved updates. Record audit results in the active work item; do not hide failures or upgrade outside approval.
+- The product owner owns assessment destinations and submission/privacy contracts before dependent work.
+- The design owner resolves affected visual conflicts; later motion/performance behavior is outside foundation coverage.
+- The maintainer owns first remote CI execution after a requested push; local checks do not establish Linux/remote success.
 
 ## Ownership
 
@@ -92,14 +107,14 @@ Apply this section where the project has server code, external services, or prot
 
 Complete the authorized change before final verification. For every change, review the scoped diff and relevant references, check documentation claims against their owners, and run the available whitespace or formatting check. Use [README.md](../README.md) for exact commands and prerequisites and this document or its linked owners for required gates; do not invent npm, Maven, Playwright, quality, or link-check commands.
 
-| Changed mechanism | Evidence to obtain |
-| --- | --- |
-| Documentation or instructions | Read the final chain as a fresh agent would; check links, factual claims, contradictions, and formatting. |
-| Code behavior | Run the applicable formatter/linter, type or compile check, build when needed, and focused behavior tests. |
-| Shared contract or integration | Test producer, consumer, and affected boundary; distinguish controlled test doubles from live integration. |
-| UI behavior or presentation | Compare before and after when a runnable relevant lane exists; test interaction, responsive behavior, focus, and visual states using the project's permitted evidence. |
-| Motion | Observe intermediate and final states with animation enabled; check interruption and reduced motion where relevant. |
-| Packaging, migration, or runtime configuration | Exercise the changed deployment or runtime mechanism. |
+| Changed mechanism                              | Evidence to obtain                                                                                                                                                     |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Documentation or instructions                  | Read the final chain as a fresh agent would; check links, factual claims, contradictions, and formatting.                                                              |
+| Code behavior                                  | Run the applicable formatter/linter, type or compile check, build when needed, and focused behavior tests.                                                             |
+| Shared contract or integration                 | Test producer, consumer, and affected boundary; distinguish controlled test doubles from live integration.                                                             |
+| UI behavior or presentation                    | Compare before and after when a runnable relevant lane exists; test interaction, responsive behavior, focus, and visual states using the project's permitted evidence. |
+| Motion                                         | Observe intermediate and final states with animation enabled; check interruption and reduced motion where relevant.                                                    |
+| Packaging, migration, or runtime configuration | Exercise the changed deployment or runtime mechanism.                                                                                                                  |
 
 Apply the testing methodology above and the browser-evidence fallback in [INVESTIGATIONS.md](INVESTIGATIONS.md#sufficiency-test). Missing observations needed to settle correctness, current behavior, or material direction block dependent work; sufficiently grounded scoped work may continue with explicit evidence limits. A screenshot proves only the captured state; a mock does not prove live persistence. Static checks do not establish runtime, visual, hydration, or focus correctness. An unavailable required completion check remains unverified and must be reported with its blocker and exact remaining work; proceeding with implementation does not make affected acceptance complete.
 

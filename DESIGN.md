@@ -246,17 +246,17 @@ Sentinel uses **Roboto** as its principal interface type family.
 
 Sentinel uses the following canonical responsive typography metrics:
 
-| Sentinel role | Mobile `<721px` | Tablet `721–1279px` | Desktop `≥1280px` | Weight | Line-height | Tracking |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Page title | `clamp(2.5925rem, 12.75vw, 3.9525rem)` | `clamp(3rem, 6.2vw, 6.15rem)` | `clamp(2.4rem, 4.96vw, 4.92rem)` | 700 | 0.95 | `-0.065em` |
-| Major section | `2.295rem` | `clamp(2rem, 4.2vw, 4.25rem)` | `clamp(2rem, 4.2vw, 4.25rem)` | 700 | 1.02 | `-0.048em` |
-| Panel / dialog title | `22px` | `24px` | `26px` | 500 | 1.08 | `-0.035em` |
-| Lead | `clamp(1rem, 1.4vw, 1.15rem)` | same | same | 400 | 1.5 | default |
-| Body / interface | `16px` | `16px` | `16px` | 400 | 1.5 | default |
-| Action | `0.92rem` | `0.92rem` | `0.92rem` | 800 | 1.5 | default |
-| Navigation | `0.86rem` | `0.86rem` | `0.8rem` | 700 | 1.5 | default |
-| Label | `11px` | `11px` | `11px` | 800 | role-specific | `0.11em` |
-| Metadata | `10–12px` | `10–12px` | `10–12px` | contextual | contextual | contextual |
+| Sentinel role        |                        Mobile `<721px` |           Tablet `721–1279px` |                Desktop `≥1280px` |     Weight |   Line-height |   Tracking |
+| -------------------- | -------------------------------------: | ----------------------------: | -------------------------------: | ---------: | ------------: | ---------: |
+| Page title           | `clamp(2.5925rem, 12.75vw, 3.9525rem)` | `clamp(3rem, 6.2vw, 6.15rem)` | `clamp(2.4rem, 4.96vw, 4.92rem)` |        700 |          0.95 | `-0.065em` |
+| Major section        |                             `2.295rem` | `clamp(2rem, 4.2vw, 4.25rem)` |    `clamp(2rem, 4.2vw, 4.25rem)` |        700 |          1.02 | `-0.048em` |
+| Panel / dialog title |                                 `22px` |                        `24px` |                           `26px` |        500 |          1.08 | `-0.035em` |
+| Lead                 |          `clamp(1rem, 1.4vw, 1.15rem)` |                          same |                             same |        400 |           1.5 |    default |
+| Body / interface     |                                 `16px` |                        `16px` |                           `16px` |        400 |           1.5 |    default |
+| Action               |                              `0.92rem` |                     `0.92rem` |                        `0.92rem` |        800 |           1.5 |    default |
+| Navigation           |                              `0.86rem` |                     `0.86rem` |                         `0.8rem` |        700 |           1.5 |    default |
+| Label                |                                 `11px` |                        `11px` |                           `11px` |        800 | role-specific |   `0.11em` |
+| Metadata             |                              `10–12px` |                     `10–12px` |                        `10–12px` | contextual |    contextual | contextual |
 
 Typography is functional and concise. Operational information must remain easy to scan.
 
@@ -278,11 +278,11 @@ Sentinel uses the following canonical spacing construction baseline:
 
 The same responsive viewport bands and gutters are used:
 
-| Viewport | Range | Page gutter |
-| --- | --- | ---: |
-| Mobile | `<721px` | `clamp(24px, 6vw, 40px)` |
-| Tablet | `721–1279px` | `20px` |
-| Desktop | `≥1280px` | `≥10vw` |
+| Viewport | Range        |              Page gutter |
+| -------- | ------------ | -----------------------: |
+| Mobile   | `<721px`     | `clamp(24px, 6vw, 40px)` |
+| Tablet   | `721–1279px` |                   `20px` |
+| Desktop  | `≥1280px`    |                  `≥10vw` |
 
 ### Application width
 
@@ -593,11 +593,11 @@ Motion is short, controlled and informative.
 
 Baseline:
 
-| Motion role | Duration |
-| --- | ---: |
-| Standard microinteraction | `200ms` |
-| Surface / menu state transition | `200ms` |
-| Optional hover lift | `0–2px` |
+| Motion role                     | Duration |
+| ------------------------------- | -------: |
+| Standard microinteraction       |  `200ms` |
+| Surface / menu state transition |  `200ms` |
+| Optional hover lift             |  `0–2px` |
 
 Motion communicates response, continuity and state change.
 
@@ -655,7 +655,7 @@ Accessibility is part of every operational state.
 - Sensitive operations describe consequences before confirmation.
 - Alerts preserve textual meaning even when status color is unavailable.
 
-This document does not establish a formal WCAG conformance target, and no specific conformance level must be assumed.
+This landing repository targets WCAG 2.2 AA as an engineering requirement. Automated and manual verification must cover implemented content; neither the target nor an axe pass asserts conformance. The operational dashboard's formal conformance target remains unconfirmed.
 
 ## Do's and Don'ts
 
@@ -711,3 +711,13 @@ Sentinel should use the **least visual intensity necessary for operational hiera
 Development may choose the implementation architecture that best fits the product, provided the resulting interface preserves the visual behavior, hierarchy and character documented here.
 
 Where an exact Sentinel implementation value is not established in this document, it remains implementation-owned and must not be silently promoted to an official Sentinel rule.
+
+## Landing requirements
+
+The palette, Roboto family, fixed SVG logos, spacing/radius families, breakpoint bands and composure remain the brand baseline. Application shell width, dense tables, operational alert/status semantics, widgets, DVR, authentication and administration above describe dashboard context; they do not require those interfaces on the public landing.
+
+Approved compositions are the ten section previews in `references/sections/`, with [copy](references/web-content.md). Foundation only uses a main landmark, one heading containing the original combined logo, and the approved description. It is a quiet runtime entry, not the hero composition. Preserve logo proportions and originals; publish only consumed copies. Roboto Latin 400 is the entry's sole required text weight. Global CSS maps brand tokens to local custom properties; CSS Modules own local composition. No motion or controls are introduced.
+
+The entry uses documented gutters, canvas `#050B16`, secondary text `#A9B4C4`, standard gap `32px` and minimum section spacing `74px`. Text wraps at narrow widths and enlarged font sizes. Focus uses the baseline Steel outline when controls appear. Content remains complete with reduced motion.
+
+The product/design owner must settle reference/authority conflicts affecting a section before implementing it. Use a reviewable browser preview when evidence cannot settle the direction. Later slices must verify focus, responsive composition, applicable motion entry/exit/interruption/repositioning, reduced motion and load performance. The landing WCAG 2.2 AA engineering target does not assert conformance or change dashboard commitments.
