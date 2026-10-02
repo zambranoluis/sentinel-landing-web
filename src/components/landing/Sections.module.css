@@ -1,0 +1,77 @@
+.section {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(74px, 7.5vw, 144px) var(--page-gutter);
+  scroll-margin-top: 24px;
+}
+.heading {
+  max-width: 21ch;
+  margin: 0;
+  font-size: clamp(2.25rem, 4.2vw, 5rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.lead {
+  max-width: 65ch;
+  margin: 28px 0 0;
+  font-size: clamp(1.0625rem, 1.35vw, 1.5rem);
+  line-height: 1.55;
+  color: var(--sentinel-steel);
+  text-wrap: pretty;
+}
+.icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border: 1px solid #30516b;
+  border-radius: var(--radius-compact);
+  color: #8dd4ee;
+  background: #0b1b2b;
+}
+.background {
+  z-index: -2;
+  object-fit: cover;
+  pointer-events: none;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 1px solid var(--sentinel-steel);
+  border-radius: var(--radius-control);
+  background: var(--sentinel-navy);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background-color 200ms,
+    transform 200ms;
+}
+.button:disabled {
+  cursor: not-allowed;
+}
+.button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+@media (hover: hover) and (pointer: fine) {
+  .button:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+  .button:active:not(:disabled) {
+    transform: none;
+  }
+}

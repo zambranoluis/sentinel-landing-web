@@ -148,11 +148,15 @@ for (const viewport of [
     const panel = page.locator("#mobile-navigation");
     await expect(panel).toBeHidden();
     await expect(panel).toHaveAttribute("inert", "");
-    await toggle.click();
     const opening = await panel.evaluate(async (element) => {
-      await new Promise<void>((resolve) =>
-        requestAnimationFrame(() => resolve()),
-      );
+      // Start and sample in one browser task so WebKit cannot finish the
+      // 200ms transition while the automation protocol is collecting state.
+      const trigger = document.querySelector<HTMLButtonElement>(
+        "header button[aria-controls]",
+      )!;
+      trigger.focus();
+      trigger.click();
+      await Promise.resolve();
       const transitions = element.getAnimations();
       for (const animation of transitions) {
         animation.pause();
@@ -189,6 +193,11 @@ for (const viewport of [
         };
       };
       trigger.click();
+      await Promise.resolve();
+      // Slow only this sampled native timeline; timing and natural endpoints
+      // are asserted separately. Busy frames must not skip the reversal point.
+      for (const animation of element.getAnimations())
+        animation.playbackRate = 0.1;
       const deadline = performance.now() + 1000;
       let before = read();
       while (before.opacity > 0.75 && performance.now() < deadline) {
@@ -269,8 +278,19 @@ for (const viewport of [
     await expectIcon(page, false);
     await page.screenshot({ path: testInfo.outputPath("icon-closed.png") });
 
-    await toggle.click();
-    const opening = await seekIcon(page, 0.5);
+    const opening = await toggle.evaluate(async (button) => {
+      (button as HTMLButtonElement).focus();
+      (button as HTMLButtonElement).click();
+      await Promise.resolve();
+      return button
+        .firstElementChild!.getAnimations({ subtree: true })
+        .map((animation) => {
+          const timing = animation.effect!.getTiming();
+          animation.pause();
+          animation.currentTime = Number(timing.duration) / 2;
+          return { duration: Number(timing.duration), easing: timing.easing };
+        });
+    });
     expect(opening).toHaveLength(3);
     for (const timing of opening)
       expect(timing).toEqual({ duration: 200, easing: "ease-in-out" });
@@ -304,8 +324,11 @@ for (const viewport of [
           };
         });
       trigger.click();
+      await Promise.resolve();
+      for (const animation of icon.getAnimations({ subtree: true }))
+        animation.playbackRate = 0.1;
       let before = read();
-      const deadline = performance.now() + 1000;
+      const deadline = performance.now() + 3000;
       while (before[1].opacity > 0.5 && performance.now() < deadline) {
         await new Promise<void>((resolve) =>
           requestAnimationFrame(() => resolve()),
@@ -384,7 +407,7 @@ for (const viewport of [
       2,
     );
     await expect(page.getByRole("link")).toHaveCount(
-      viewport.width >= 1280 ? 5 : 4,
+      viewport.width >= 1280 ? 17 : 12,
     );
     for (const [group, labels] of Object.entries(footerLabels)) {
       const section = page.getByRole("region", { name: group, exact: true });
@@ -392,7 +415,7 @@ for (const viewport of [
       for (const label of labels)
         await expect(section.getByText(label, { exact: true })).toBeVisible();
       await expect(section.getByRole("link")).toHaveCount(
-        group === "Product" ? 1 : 0,
+        group === "Product" ? 4 : group === "Industries" ? 5 : 0,
       );
     }
     const footer = page.getByRole("contentinfo");
@@ -415,6 +438,7 @@ for (const viewport of [
       ),
     ).toBeVisible();
     for (const image of await page.locator("img").all()) {
+      if (!(await image.isVisible())) continue;
       await image.scrollIntoViewIfNeeded();
       await expect
         .poll(() =>
@@ -446,7 +470,7 @@ for (const viewport of [
     expect(
       font.resources.every((url) => url.startsWith("http://127.0.0.1:")),
     ).toBe(true);
-    await disabledAssessment(page, viewport.width >= 1280 ? 2 : 1);
+    await disabledAssessment(page, viewport.width >= 1280 ? 4 : 3);
     if (viewport.width >= 1280)
       for (const label of navigationLabels)
         await expect(
@@ -491,7 +515,7 @@ test("mobile disclosure, keyboard, interruption and open-menu accessibility", as
         .getByRole("navigation", { name: "Primary mobile", exact: true })
         .getByText(label, { exact: true }),
     ).toBeVisible();
-  await disabledAssessment(page, 2);
+  await disabledAssessment(page, 4);
   await accessible(page);
   await page.screenshot({
     path: testInfo.outputPath("mobile-menu-open.png"),
@@ -584,8 +608,15 @@ test("narrow reflow with enlarged text and reduced motion", async ({
   await expect(toggle).toBeFocused();
   await page.screenshot({
     path: testInfo.outputPath("narrow-enlarged-text.png"),
-    fullPage: true,
   });
+  // The complete landing exceeds browser bitmap height limits at enlarged text.
+  for (const section of await page.locator("main > section").all()) {
+    await section.scrollIntoViewIfNeeded();
+    const name = await section.getAttribute("aria-labelledby");
+    await section.screenshot({
+      path: testInfo.outputPath(`enlarged-${name}.png`),
+    });
+  }
 });
 
 test("skip link focuses the main landmark", async ({ page }) => {
@@ -613,7 +644,7 @@ test("static sections remain server-rendered without JavaScript", async ({
         .getByRole("contentinfo")
         .getByText("Biometric & Consent Policy", { exact: true }),
     ).toBeVisible();
-    await disabledAssessment(page, 2);
+    await disabledAssessment(page, 4);
   } finally {
     await context.close();
   }

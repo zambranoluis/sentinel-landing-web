@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { capabilities } from "../../src/components/landing/content";
 import { describe, expect, it } from "vitest";
 import {
   destinationHref,
@@ -26,7 +27,33 @@ describe("public destination availability", () => {
     const enabled = (Object.keys(destinations) as Destination[]).filter(
       (key) => destinations[key].available,
     );
-    expect(enabled).toEqual(["home", "howItWorks"]);
+    expect(enabled).toEqual([
+      "home",
+      "howItWorks",
+      "capabilities",
+      "deployment",
+      "plans",
+      "faq",
+      "retail",
+      "shops",
+      "restaurants",
+      "manufacturing",
+      "gasStations",
+    ]);
+    const sectionFiles = [
+      "HowItWorks",
+      "Capabilities",
+      "Deployment",
+      "Plans",
+      "Faq",
+    ];
+    const page = readFileSync("src/app/page.tsx", "utf8");
+    const implemented = sectionFiles
+      .map((name) => {
+        expect(page).toContain(`<${name} />`);
+        return readFileSync(`src/components/landing/${name}.tsx`, "utf8");
+      })
+      .join("\n");
     for (const key of enabled) {
       const href = destinationHref(key)!;
       expect(href).toMatch(/^\/(?!\/)/);
@@ -34,10 +61,11 @@ describe("public destination availability", () => {
       const routeFile = path.join(process.cwd(), "src/app", route, "page.tsx");
       expect(existsSync(routeFile), href).toBe(true);
       if (fragment) {
-        expect(readFileSync(routeFile, "utf8")).toContain("<HowItWorks />");
         expect(
-          readFileSync("src/components/landing/HowItWorks.tsx", "utf8"),
-        ).toContain(`id="${fragment}"`);
+          implemented.includes(`id="${fragment}"`) ||
+            capabilities.some((item) => item.id === fragment),
+          href,
+        ).toBe(true);
       }
     }
   });

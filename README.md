@@ -1,6 +1,6 @@
 # Sentinel landing web
 
-Public English-language landing for Sentinel, CrimsonTide AI's computer vision and operational intelligence platform. The current milestone renders the reference navbar, warehouse hero, How it works section and footer at `/`. All supplied labels remain visible; How it works links reach the section; destinations for later sections and unspecified pages are noninteractive text. Assessment buttons are disabled. [PRODUCT.md](PRODUCT.md) owns purpose and journeys; [DESIGN.md](DESIGN.md) owns brand and landing requirements.
+Public English-language landing for Sentinel, CrimsonTide AI's computer vision and operational intelligence platform. All ten supplied sections render at `/`: hero, How it works, capabilities, product demo, deployment, benefits, plans, FAQs, final assessment CTA and footer. The navbar and matching footer links reach implemented sections and industry cards. Assessment, package and add-on buttons remain disabled; unspecified company/legal destinations remain plain text. [PRODUCT.md](PRODUCT.md) owns purpose and journeys; [DESIGN.md](DESIGN.md) owns brand and landing requirements.
 
 ## Runtime and setup
 
@@ -18,19 +18,19 @@ For custom arguments in Windows PowerShell, use the native wrapper, for example 
 
 ## Locations and boundaries
 
-| Location                                              | Owner                                                                                                                                             |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/layout.tsx`                                  | English document, metadata, font/global CSS imports                                                                                               |
-| `src/app/page.tsx`                                    | Server-rendered page composition and skip target                                                                                                  |
-| `src/components/landing/`                             | Navbar, hero, How it works, footer and shared brand/action/availability; `MobileNavigation.tsx` and `CubeMotion.tsx` are narrow client boundaries |
-| `src/app/globals.css`                                 | Brand tokens, reset, typography and focus                                                                                                         |
-| `src/app/icon.svg`, `public/logos/`, `public/images/` | Consumed original logos and warehouse backgrounds                                                                                                 |
-| `references/`                                         | Approved sections, originals and [copy](references/web-content.md); preserve, do not publish the entire directory                                 |
-| `tests/browser/`                                      | Production public-entry responsive/accessibility tests                                                                                            |
-| `tests/unit/`, `vitest.config.mts`                    | Navigation availability contract tests in Node; separate from browser discovery                                                                   |
-| `scripts/`                                            | Markdown checker and external artifact paths                                                                                                      |
-| `.github/workflows/quality.yml`                       | Quality/unit/build/browser/audit gates in CI; remote execution requires a future push                                                             |
-| `workspace/<work-item>/`                              | Shareable durable text under [PLANS](AGENTS/PLANS.md#location); generated QA remains external                                                     |
+| Location                                              | Owner                                                                                                                                           |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/layout.tsx`                                  | English document, metadata, font/global CSS imports                                                                                             |
+| `src/app/page.tsx`                                    | Server-rendered page composition and skip target                                                                                                |
+| `src/components/landing/`                             | All landing sections and shared brand/action/availability; mobile navigation, cube, demo, deployment entry and FAQ are narrow client boundaries |
+| `src/app/globals.css`                                 | Brand tokens, reset, typography and focus                                                                                                       |
+| `src/app/icon.svg`, `public/logos/`, `public/images/` | Consumed original logos, warehouse backgrounds and section WebP images with provenance sidecars                                                 |
+| `references/`                                         | Approved sections, originals and [copy](references/web-content.md); preserve, do not publish the entire directory                               |
+| `tests/browser/`                                      | Production public-entry responsive/accessibility tests                                                                                          |
+| `tests/unit/`, `vitest.config.mts`                    | Navigation availability contract tests in Node; separate from browser discovery                                                                 |
+| `scripts/`                                            | Markdown checker and external artifact paths                                                                                                    |
+| `.github/workflows/quality.yml`                       | Quality/unit/build/browser/audit gates in CI; remote execution requires a future push                                                           |
+| `workspace/<work-item>/`                              | Shareable durable text under [PLANS](AGENTS/PLANS.md#location); generated QA remains external                                                   |
 
 `.next/`, `next-env.d.ts` and TypeScript metadata are generated. Dependencies use the retained npm lockfile. Existing `.codex/` is local, ignored and user-owned. No backend, auth or dashboard contracts are introduced. Other repositories are outside the write boundary. Code and documentation use English.
 
@@ -56,13 +56,13 @@ For custom arguments in Windows PowerShell, use the native wrapper, for example 
 
 Unit tests verify unavailable destinations expose no URL and enabled internal targets exist. Production browser tests cover landmarks, exact copy and labels, local SVG/image/Roboto 400/500/700 loading, disabled CTAs, disclosure keyboard/Escape/focus/desktop closure, skip navigation, no-JavaScript static content, 390/834/1440px widths, 720/721/1279/1280px boundaries, no overflow/runtime/request errors, closed/open axe scans and 320px reflow with enlarged text/reduced motion. Navbar coverage includes the icon-only trigger's accessible names and 44px target, burger/X endpoints, halfway geometry, live rapid reversal, immediate reduced-motion switching and icon reset after desktop resizing. A Chromium-only test uses an isolated, permission-free temporary extension to apply actual 200% browser zoom and checks reflow and keys; no user browser profile or installed extension is touched. Workers run serially after parallel Firefox axe scans timed out on this Windows host.
 
-For this milestone, 3 unit tests and 25 production browser checks passed locally; production build, lint/types/format/links, dependency audit and visual comparison passed. The [implementation record](workspace/landing-base/plan.md) preserves failures, corrections and evidence locations. Desktop, tablet, mobile, open menu, enlarged text and real 200% browser-zoom captures received a manual rendered review for composition, reading order, contrast and focus. Automated checks do not establish formal conformance. No authenticated/controlled dashboard or persistence lane is introduced; remote CI remains unexecuted until a requested push.
-
-The [navbar icon transition](workspace/navbar-icon/plan.md) extends that baseline to 31 passing production browser checks across Chromium, Firefox and WebKit, with 3 unit tests and all quality/build/audit checks passing. Its record preserves the regression-test corrections and final evidence location.
+The [site completion record](workspace/site-completion/plan.md) owns the current implementation, verification results, corrections and evidence paths. Final local results are 76/76 production browser checks, 3/3 unit tests, passing build/lint/types/format and zero audit vulnerabilities. `docs:links` (and therefore aggregate `check`) still fails on two pre-existing missing adoption records referenced by AGENTS/ADOPTION.md; the instruction-system owner must recover or reconcile those records. The earlier foundation and navbar history cited missing records; their former links have been removed. Automated checks and rendered review do not establish formal accessibility conformance. No authenticated/dashboard or persistence lane is introduced; remote CI remains unexecuted until a requested push.
 
 Artifacts default to a dedicated run under the OS temporary directory's `sentinel-landing-web-qa/`. Set `SENTINEL_E2E_ARTIFACTS_ROOT` to a dedicated absolute external directory for a known location. Repository targets, ancestors and symlink redirects into the repository are rejected. Reports, screenshots and failure traces stay local; CI uses `runner.temp` and uploads public-entry evidence. Tests refuse to reuse an existing service on their port.
 
 The [How it works record](workspace/how-it-works/plan.md) owns the section extension and its verification. `/#how-it-works` is available from the navbar and footer. Its supplied cube motion has a pause/resume control, pauses offscreen and in hidden documents, and becomes static with reduced motion or without JavaScript. Browser coverage exercises the workflow across responsive boundaries, motion continuity and navigation focus.
+
+The completed-page suite also checks supplied prose, all section imagery and nine responsive widths, native FAQ keyboard/no-JavaScript behavior, reversible disclosure motion, the illustrative demo playback/step selection/report download, reduced-motion changes, deployment entry, fragment focus and enlarged text. Generated captures are split by section where full-page bitmap dimensions exceed browser limits.
 
 ## Documentation map
 

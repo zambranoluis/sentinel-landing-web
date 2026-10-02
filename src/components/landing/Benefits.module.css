@@ -1,0 +1,62 @@
+.section {
+  padding-top: clamp(100px, 13vw, 240px);
+  background: transparent;
+}
+.section::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(4 14 25 / 94%), rgb(4 14 25 / 45%)),
+    linear-gradient(0deg, #040e19 5%, transparent);
+}
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 80px;
+}
+.benefits article {
+  padding: 0 28px;
+  border-left: 1px solid #30516b;
+}
+.benefits article:first-child {
+  padding-left: 0;
+  border: 0;
+}
+.benefits article:last-child {
+  padding-right: 0;
+}
+.benefits h3 {
+  font-size: clamp(1.2rem, 1.45vw, 1.625rem);
+  line-height: 1.3;
+  margin: 24px 0 16px;
+}
+.benefits p {
+  color: var(--sentinel-steel);
+  margin: 0;
+  line-height: 1.65;
+}
+@media (max-width: 1279px) {
+  .benefits {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 0;
+  }
+  .benefits article:nth-child(3) {
+    padding-left: 0;
+    border: 0;
+  }
+}
+@media (max-width: 720px) {
+  .benefits {
+    grid-template-columns: 1fr;
+    margin-top: 48px;
+  }
+  .benefits article {
+    padding: 0;
+    border: 0;
+  }
+  .section::before {
+    background: rgb(4 14 25 / 86%);
+  }
+}

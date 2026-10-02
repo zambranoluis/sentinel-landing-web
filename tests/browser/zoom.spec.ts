@@ -101,6 +101,7 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
     await page
       .getByRole("main")
       .getByRole("button", { name: "Request a Site Assessment", exact: true })
+      .first()
       .evaluate((element) =>
         element.scrollIntoView({ block: "start", behavior: "instant" }),
       );
@@ -111,6 +112,20 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
         element.scrollIntoView({ block: "start", behavior: "instant" }),
       );
     await capture("browser-zoom-200-workflow.png");
+    for (const id of [
+      "capabilities",
+      "product-demo",
+      "deployment",
+      "plans",
+      "faq",
+    ]) {
+      await page
+        .locator(`#${id}`)
+        .evaluate((element) =>
+          element.scrollIntoView({ block: "start", behavior: "instant" }),
+        );
+      await capture(`browser-zoom-200-${id}.png`);
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

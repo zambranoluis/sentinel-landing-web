@@ -2,6 +2,13 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { Footer } from "@/components/landing/Footer";
 import { HowItWorks } from "@/components/landing/HowItWorks";
+import { Capabilities } from "@/components/landing/Capabilities";
+import { ProductDemo } from "@/components/landing/ProductDemo";
+import { Deployment } from "@/components/landing/Deployment";
+import { Benefits } from "@/components/landing/Benefits";
+import { Plans } from "@/components/landing/Plans";
+import { Faq } from "@/components/landing/Faq";
+import { FinalCta } from "@/components/landing/FinalCta";
 
 export default function Home() {
   return (
@@ -13,6 +20,13 @@ export default function Home() {
       <main id="main-content" tabIndex={-1}>
         <Hero />
         <HowItWorks />
+        <Capabilities />
+        <ProductDemo />
+        <Deployment />
+        <Benefits />
+        <Plans />
+        <Faq />
+        <FinalCta />
       </main>
       <Footer />
     </>
