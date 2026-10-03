@@ -36,4 +36,4 @@ FIRST VIEWPORT: About 40% copy and 56% diagram with a 4% desktop gap; five icon 
 
 FORM: Preserve supplied local geometry and responsive reading order. Cube motion remains the focal illustration with automatic visibility pausing; no identity replacement or alternate concept is required.
 
-FINISH: Preserve original/consumed asset provenance and verify affected focus, responsive and motion states through [CODE](../../AGENTS/CODE.md#verification). Historical reviews and execution state belong in the [reconciliation record](../../workspace/documentation-reconciliation/plan.md).
+FINISH: Preserve original/consumed asset provenance and verify affected focus, responsive and motion states through [CODE](../../AGENTS/CODE.md#verification). Handle historical reviews and execution records through [PLANS](../../AGENTS/PLANS.md).

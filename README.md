@@ -73,11 +73,11 @@ Remove-Item Env:SENTINEL_E2E_ARTIFACTS_ROOT
 
 Run the example from the repository root. Omit the variable for automatic unique runs. To inspect a report, use `npx playwright show-report playwright/runs/<run-id>/report`. Playwright uses `http://127.0.0.1:3200` with `reuseExistingServer: !process.env.CI`: local tests reuse a compatible running server and leave it running afterward. When no server is available, tests start and clean up their own production server, requiring an existing `npm run build` output. Reused development servers exercise current source; reused production servers exercise their build, so rebuild when needed. Check the listener's identity before testing because Playwright's availability probe does not establish which project it serves. CI requires the port to be free and starts its own production server. CI writes and uploads the checkout's `/playwright` collection. Generate only evidence required by the selected checks; this location does not require extra screenshots, recordings, manifests or analysis files.
 
-Historical run results belong in the [reconciliation history](workspace/documentation-reconciliation/records/history.md), [hero viewport record](workspace/hero-viewport/plan.md) and [demo loop record](workspace/demo-loop/plan.md). These are dated reports, not current verification. The latest recorded demo work passed 171 unique browser cases across a broad run and targeted reruns, not a single uninterrupted clean run. Deletion without migration of their former raw evidence under the dedicated OS-temp `sentinel-landing-web-qa` directory was requested on 2026-10-02, but automatic approval review blocked deletion. That directory remains present pending cleanup; its old paths are historical references, not current verification. Dated reports and exact archived snapshots remain preserved. Formal accessibility conformance, real-device/field performance, authenticated/dashboard behaviour and remote CI are not established by those records. Product-owned integration gaps remain in PRODUCT.
+Historical run results are dated execution evidence, not current verification. They do not establish formal accessibility conformance, real-device/field performance, authenticated/dashboard behaviour or remote CI. Product-owned integration gaps remain in [PRODUCT](PRODUCT.md#open-product-decisions).
 
 ## Agent host operations
 
-Task-entry discovery concerns the active host, permissions and capabilities relevant to the request. Cross-provider execution is needed only when expressly in scope; portability does not require ordinary work to run under four providers. Keep launchers, adapters, hooks and settings with their operational owner. This repository makes no host-setting changes and supplies no new adapter.
+Task-entry discovery concerns the active host, permissions and capabilities relevant to the request. Cross-provider execution is required only when expressly in scope; historical adoption gates do not govern ordinary landing work. Keep launchers, adapters, hooks and settings with their operational owner. This repository makes no host-setting changes and supplies no new adapter.
 
 For local browser work, follow the port-3200 server checks in [Runtime and setup](#runtime-and-setup) before starting a service. Share this project's compatible existing server, preserve the user's process after checks, and clean up only servers created by the current task. Report an incompatible occupied port without silently choosing a replacement.
 
@@ -92,7 +92,7 @@ Official loading references, retrieved 2026-10-02:
 
 Local inspection on 2026-10-02 found Claude's personal `impeccable` and `instructions-maker` junctions pointing to the canonical `~/.agents/skills` folders. No registration change is needed for that path relationship; filesystem discovery does not prove activation. Personal skills are not automatically available to collaborators or hosted sessions.
 
-For a loading diagnosis, establish the active version, documented discovery/priority, available files and actual loaded context separately. A user-provided AGENTS block or a model's claim is not independent native-loader evidence. Missing account access blocks that host's probe, not unrelated product work. Only add/change host configuration when requested and justified by observed need. Historical four-host observations and their exact limits are preserved in [history](workspace/documentation-reconciliation/records/history.md); their obsolete adoption gates are retired.
+For a loading diagnosis, establish the active version, documented discovery/priority, available files and actual loaded context separately. A user-provided AGENTS block or a model's claim is not independent native-loader evidence. Missing account access blocks that host's probe, not unrelated product work. Only add/change host configuration when requested and justified by observed need.
 
 ## Documentation map
 
@@ -105,6 +105,7 @@ For a loading diagnosis, establish the active version, documented discovery/prio
 - [INVESTIGATIONS](AGENTS/INVESTIGATIONS.md): evidence and unresolved facts.
 - [FRONTEND_CREATION](AGENTS/FRONTEND_CREATION.md): direction discovery, skills and conditional previews.
 - [PLANS](AGENTS/PLANS.md): proportional records, stops and resumption.
-- [Documentation reconciliation](workspace/documentation-reconciliation/plan.md): findings, history recovery, scenario review and this revision's results.
+
+Permanent decisions reside in their named documentation owners above and must be understandable and applicable without task records. Task records contain dated execution evidence and follow [PLANS](AGENTS/PLANS.md); settled decisions move into their permanent owner.
 
 Durable text and Impeccable artifacts are eligible for version control once committed by the user. Keep secrets and authentication state out of shared records; generated test evidence stays in ignored `/playwright`. No staging, commit, push or deployment is implied.

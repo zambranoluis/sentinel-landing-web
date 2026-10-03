@@ -51,7 +51,7 @@ Browser workers are serial after historical parallel Firefox axe timeouts on Win
 - The repository maintainer owns dependency advisory review, affected paths, mitigations and separately approved updates. Record audit results in the active work item; do not hide failures or upgrade outside approval.
 - The product owner owns assessment destinations and submission/privacy contracts before dependent work.
 - The design owner resolves affected visual conflicts. The complete landing includes public interaction, responsive and motion coverage; real operational/dashboard behavior remains outside scope.
-- [Documentation reconciliation](../workspace/documentation-reconciliation/plan.md) owns adoption retirement and recovered history. Historical host observations retain provenance limits; they are not completion gates for ordinary landing work. Host administrators own diagnosis when loading or access is actually in scope.
+- [Agent host operations](../README.md#agent-host-operations) owns operational policy. Engineering verification remains under [Verification](#verification); host administrators own diagnosis when loading or access is actually in scope.
 - The maintainer owns first remote CI execution after a requested push; local checks do not establish Linux/remote success.
 
 ## Ownership
