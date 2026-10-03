@@ -120,7 +120,7 @@ Canvas is the page/nav foundation; background-secondary separates package conten
 
 ### Illustrative treatments
 
-Illustration-cyan appears in detection brackets, icons and demo highlights; workflow-cyan belongs to the supplied cube diagram/connectors and all five workflow icons and circular rings. Industry cards use their local surface and border. Other scene-specific overlays and cyan strokes remain owned by their CSS Modules and assets. They do not establish operational severity, confidence or alert semantics.
+Illustration-cyan appears in detection brackets, icons, demo highlights and navigation option feedback; workflow-cyan belongs to the supplied cube diagram/connectors and all five workflow icons and circular rings. Industry cards use their local surface and border. Other scene-specific overlays and cyan strokes remain owned by their CSS Modules and assets. They do not establish operational severity, confidence or alert semantics.
 
 ## Typography
 
@@ -158,6 +158,8 @@ Capabilities pairs the mosaic with five industry cards; the demo pairs nonintera
 
 Footer uses brand plus four groups at desktop, brand above four groups on tablet and two groups per row on mobile. At 360px and below it stacks one group per row.
 
+The bottom area contains exactly “© 2026 CrimsonTide AI Limited.” and the full Sentinel brand home link with icon and wordmark. Above 720px, copyright sits left and the logo right, vertically centered. Through 720px, copyright occupies the first row and the logo sits right on the second row.
+
 Footer clips decorative travel at its outer bounds so preparation and playback never extend the document's native scroll range. Its interior spacing retains visible link focus outlines.
 
 ## Elevation & Depth
@@ -178,9 +180,19 @@ Keyboard focus uses a 3px Steel outline with 3px offset; FAQ summaries use a -4p
 
 ### Navigation
 
+Desktop and mobile navigation links have no text underline. Fine-pointer hover and keyboard-visible focus change their text to cyan (`#8dd4ee`) over the existing 200ms ease-out transition, preserving the Steel focus outline. Reduced motion makes color changes immediate.
+
 Below 1280px navigation is a disclosure, not a modal or ARIA menu. The 44 × 44px trigger centers a 24px icon with three 20 × 2px lines separated by 6px. “Menu” / “Close menu” is the accessible name. Outer lines move to the centre and rotate ±45°, with middle-line opacity changing over 200ms ease-in-out; rapid reversal continues from current geometry.
 
 The panel fades/translates from -8px over 200ms ease-out. Closed content immediately becomes inert and inaccessible; visibility waits for exit completion. Escape restores trigger focus. Fragment activation closes the panel and focuses its section. Desktop switching closes it and hands focus to the visible brand when required. Reduced motion removes transitions and spatial movement.
+
+### Footer navigation
+
+Footer options have no text underline and retain their resting text colors during hover and keyboard focus. Each option has a separate 2px navy (`#1b3266`) bar beneath its label, growing from left to right to the label width. Pointer feedback includes unavailable plain-text options; only enabled links receive keyboard focus and retain the existing focus outline.
+
+Headings size to their text width. Their bars remain navy and 24px wide at rest. Hover anywhere within a footer section, or keyboard focus within it, expands its heading bar across the heading text width. Moving between options keeps the heading bar expanded while each option bar responds independently. Heading width and option scale transitions use 200ms ease-out, reverse from their current state on exit or interruption, and do not move surrounding content. Pointer hover requires a hover-capable fine pointer; touch does not leave hover feedback. Reduced motion makes changes immediate, and the styling works without JavaScript.
+
+Global text selection retains a navy (`#1b3266`) background with light (`#f6f8fb`) text.
 
 ### Workflow illustration
 

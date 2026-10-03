@@ -36,7 +36,12 @@
 
 .links a {
   color: inherit;
-  text-underline-offset: 0.25em;
+  text-decoration: none;
+  transition: color var(--motion-microinteraction) ease-out;
+}
+
+.links a:focus-visible {
+  color: #8dd4ee;
 }
 
 .toggle {
@@ -129,6 +134,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .links a:hover {
+    color: #8dd4ee;
+  }
+
   .toggle:hover {
     background: var(--sentinel-navy);
   }
@@ -163,6 +172,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .links a,
   .toggle,
   .line,
   .panel {

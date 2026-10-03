@@ -407,10 +407,10 @@ for (const viewport of [
       ),
     ).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Sentinel home" })).toHaveCount(
-      2,
+      3,
     );
     await expect(page.getByRole("link")).toHaveCount(
-      viewport.width >= 1280 ? 17 : 12,
+      viewport.width >= 1280 ? 18 : 13,
     );
     for (const [group, labels] of Object.entries(footerLabels)) {
       const section = page.getByRole("region", { name: group, exact: true });
@@ -435,10 +435,7 @@ for (const viewport of [
       ),
     ).toBeVisible();
     await expect(
-      footer.getByText(
-        "© 2026 CrimsonTide AI Limited. Sentinel supports detection and review; trained personnel remain responsible for decisions and response. Camera compatibility and deployment requirements are confirmed through a site assessment. Commercial terms are governed by the current proposal.",
-        { exact: true },
-      ),
+      footer.getByText("© 2026 CrimsonTide AI Limited.", { exact: true }),
     ).toBeVisible();
     for (const image of await page.locator("img").all()) {
       if (!(await image.isVisible())) continue;

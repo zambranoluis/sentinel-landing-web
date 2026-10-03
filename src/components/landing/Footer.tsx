@@ -40,14 +40,8 @@ export function Footer() {
         ))}
       </div>
       <div className={styles.legal} data-motion="unit">
-        <p>
-          © 2026 CrimsonTide AI Limited. Sentinel supports detection and review;
-          trained personnel remain responsible for decisions and response.
-          Camera compatibility and deployment requirements are confirmed through
-          a site assessment. Commercial terms are governed by the current
-          proposal.
-        </p>
-        <span>Sentinel</span>
+        <p>© 2026 CrimsonTide AI Limited.</p>
+        <Brand />
       </div>
     </footer>
   );
