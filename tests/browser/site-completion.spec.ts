@@ -1,23 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Locator, type Page } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 
 const sections = ["capabilities", "product-demo", "deployment", "plans", "faq"];
-const sample = (player: Locator) =>
-  player.locator('[class*="progress"] > span').evaluate(async (element) => {
-    const animation = element.getAnimations()[0];
-    // WebKit resolves a CSS pause asynchronously; sample its committed hold time.
-    await animation?.ready;
-    return {
-      time: Number(animation?.currentTime ?? 0),
-      state: animation?.playState,
-    };
-  });
-async function finishStep(player: Locator) {
-  await player
-    .locator('[class*="progress"] > span')
-    .evaluate((element) => element.getAnimations()[0].finish());
-}
 async function noOverflow(page: Page) {
   expect(
     await page.evaluate(
@@ -29,7 +14,7 @@ async function noOverflow(page: Page) {
 test("complete supplied content, imagery and responsive section layouts", async ({
   page,
 }, testInfo) => {
-  test.setTimeout(180_000);
+  test.setTimeout(Math.max(testInfo.timeout, 180_000));
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("response", (response) => {
@@ -99,78 +84,6 @@ test("complete supplied content, imagery and responsive section layouts", async 
   await expect(page.locator("#faq details")).toHaveCount(8);
   await expect(page.locator("#faq details[open]")).toHaveCount(0);
   expect(errors).toEqual([]);
-});
-
-test("demo plays, pauses in place, resumes offscreen and supports direct step selection", async ({
-  page,
-}, testInfo) => {
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto("/#product-demo");
-  const player = page.locator("[data-step]");
-  await page.getByRole("button", { name: "Play demo", exact: true }).click();
-  await expect(player).toHaveAttribute("data-step", "0");
-  // Sample the visible timeline after fragment/control scrolling settles.
-  const progress = player.locator('[class*="progress"]');
-  await progress.scrollIntoViewIfNeeded();
-  await expect(progress).toBeInViewport();
-  await expect
-    .poll(() => sample(player).then((s) => s.time))
-    .toBeGreaterThan(50);
-  // Controlled visibility-event coverage; no claim of native OS tab suspension.
-  await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", {
-      configurable: true,
-      value: true,
-    });
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect(player).toHaveAttribute("data-playing", "false");
-  await page.evaluate(() => {
-    Reflect.deleteProperty(document, "hidden");
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
-  await expect(player).toHaveAttribute("data-playing", "true");
-  await page.getByRole("button", { name: "Pause demo" }).click();
-  await expect.poll(() => sample(player).then((s) => s.state)).toBe("paused");
-  const paused = await sample(player);
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await player.scrollIntoViewIfNeeded();
-  expect((await sample(player)).time).toBeCloseTo(paused.time, 0);
-  await page.getByRole("button", { name: "Resume demo" }).click();
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await expect(player).toHaveAttribute("data-playing", "false");
-  await player.scrollIntoViewIfNeeded();
-  await expect(player).toHaveAttribute("data-playing", "true");
-  await finishStep(player);
-  await expect(player).toHaveAttribute("data-step", "1");
-  await expect(
-    page.getByText("Analysing the detection", { exact: true }),
-  ).toBeVisible();
-  await player.screenshot({ path: testInfo.outputPath("demo-analysis.png") });
-  await page.getByRole("button", { name: /3 Review the event/ }).click();
-  await expect(player).toHaveAttribute("data-step", "2");
-  await expect(player).toHaveAttribute("data-playing", "false");
-  await page.getByRole("button", { name: "Play demo", exact: true }).click();
-  for (const step of [1, 2]) {
-    await finishStep(player);
-    await expect(player).toHaveAttribute("data-step", String(step));
-  }
-  await finishStep(player);
-  await expect(
-    page.getByRole("button", { name: "Play demo", exact: true }),
-  ).toBeVisible();
-  const downloadEvent = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export event report" }).click();
-  const download = await downloadEvent;
-  expect(download.suggestedFilename()).toBe("sentinel-illustrative-demo.txt");
-  const file = await download.path();
-  expect(readFileSync(file!, "utf8")).toContain(
-    "Synthetic example only. Not an operational record.",
-  );
-  await page.getByRole("button", { name: /1 The event is detected/ }).click();
-  await expect(
-    page.getByRole("button", { name: "Export event report" }),
-  ).toBeDisabled();
 });
 
 test("FAQ supports keys, pointer reversal, reduced motion and open-state accessibility", async ({
@@ -290,7 +203,7 @@ test("new navigation reaches real targets and retains mobile keyboard focus", as
 
 test("reduced motion and enlarged text preserve complete demo and section content", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.setViewportSize({ width: 320, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
@@ -299,37 +212,29 @@ test("reduced motion and enlarged text preserve complete demo and section conten
     await page.locator(`#${id}`).scrollIntoViewIfNeeded();
     await noOverflow(page);
   }
-  await page.getByRole("button", { name: "Explore demo" }).click();
   const player = page.locator("[data-step]");
-  await expect(player).toHaveAttribute("data-step", "0");
-  await expect(player).toHaveAttribute("data-playing", "false");
-  await page.getByRole("button", { name: "Next demo step" }).click();
-  await expect(player).toHaveAttribute("data-step", "1");
-  await page.getByRole("button", { name: "Next demo step" }).click();
   await expect(player).toHaveAttribute("data-step", "2");
+  await expect(player).toHaveAttribute("data-phase", "static");
+  await expect(player).toHaveAttribute("data-playing", "false");
+  await expect(player.getByRole("button")).toHaveCount(0);
+  await player.scrollIntoViewIfNeeded();
   const label = player.getByText("Potential concealment · 88%", {
     exact: true,
   });
   const box = (await label.boundingBox())!;
   expect(box.x).toBeGreaterThanOrEqual(0);
   expect(box.x + box.width).toBeLessThanOrEqual(320);
+  await page.locator("#product-demo").screenshot({
+    path: testInfo.outputPath("demo-enlarged-text.png"),
+  });
   const scan = await new AxeBuilder({ page })
     .include("#product-demo")
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
   expect(scan.violations).toEqual([]);
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  const play = page.getByRole("button", { name: "Play demo", exact: true });
-  await play.focus();
-  await play.press("Space");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(player).toHaveAttribute("data-playing", "false");
-  await expect(
-    page.getByRole("button", { name: "Next demo step" }),
-  ).toBeFocused();
 });
 
-test("phone touch controls open FAQ and select demo stages", async ({
+test("phone touch controls open FAQ and demo stages remain indicators", async ({
   browser,
 }) => {
   const context = await browser.newContext({
@@ -344,10 +249,11 @@ test("phone touch controls open FAQ and select demo stages", async ({
     await expect(first).toHaveAttribute("open", "");
     await first.locator("summary").tap();
     await expect(first).not.toHaveAttribute("open");
-    const step = page.getByRole("button", { name: /1 The event is detected/ });
-    await step.scrollIntoViewIfNeeded();
-    await step.tap();
-    await expect(page.locator("[data-step]")).toHaveAttribute("data-step", "0");
+    const stages = page.getByRole("list", { name: "Demo stages" });
+    await stages.scrollIntoViewIfNeeded();
+    await stages.getByText("The event is detected", { exact: true }).tap();
+    await expect(stages.getByRole("button")).toHaveCount(0);
+    await expect(stages.locator("li")).toHaveCount(3);
   } finally {
     await context.close();
   }
@@ -355,7 +261,7 @@ test("phone touch controls open FAQ and select demo stages", async ({
 
 test("all sections and native FAQ remain usable without JavaScript", async ({
   browser,
-}) => {
+}, testInfo) => {
   const context = await browser.newContext({
     javaScriptEnabled: false,
     viewport: { width: 390, height: 844 },
@@ -365,12 +271,23 @@ test("all sections and native FAQ remain usable without JavaScript", async ({
     await page.goto("/");
     for (const id of sections)
       await expect(page.locator(`#${id}`)).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "Play demo", exact: true }),
-    ).toBeDisabled();
-    await expect(
-      page.getByRole("button", { name: "Export event report" }),
-    ).toBeDisabled();
+    const player = page.locator("[data-step]");
+    await expect(player).toHaveAttribute("data-step", "2");
+    await expect(player).toHaveAttribute("data-phase", "static");
+    await expect(player.getByRole("button")).toHaveCount(0);
+    expect(
+      await player.evaluate(
+        (element) => element.getAnimations({ subtree: true }).length,
+      ),
+    ).toBe(0);
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.locator("#product-demo").scrollIntoViewIfNeeded();
+      await noOverflow(page);
+      await page.locator("#product-demo").screenshot({
+        path: testInfo.outputPath(`demo-no-js-${width}.png`),
+      });
+    }
     const first = page.locator("#faq details").first();
     await first.locator("summary").click();
     await expect(first).toHaveAttribute("open", "");
