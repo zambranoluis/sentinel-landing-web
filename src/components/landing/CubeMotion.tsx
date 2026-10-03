@@ -5,21 +5,12 @@ import styles from "./CubeMotion.module.css";
 
 export function CubeMotion({ children }: { children: ReactNode }) {
   const cube = useRef<HTMLDivElement>(null);
-  const control = useRef<HTMLButtonElement>(null);
-  const [paused, setPaused] = useState(false);
   const [canAnimate, setCanAnimate] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePreference = () => {
-      if (preference.matches && document.activeElement === control.current) {
-        cube.current
-          ?.closest<HTMLElement>("section")
-          ?.focus({ preventScroll: true });
-      }
-      setCanAnimate(!preference.matches);
-    };
+    const updatePreference = () => setCanAnimate(!preference.matches);
     updatePreference();
     preference.addEventListener("change", updatePreference);
     let intersecting = false;
@@ -38,24 +29,10 @@ export function CubeMotion({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div
-      className={styles.motion}
-      data-running={canAnimate && visible && !paused}
-    >
+    <div className={styles.motion} data-running={canAnimate && visible}>
       <div ref={cube} className={styles.cube}>
         {children}
       </div>
-      {canAnimate && (
-        <button
-          ref={control}
-          className={styles.control}
-          type="button"
-          onClick={() => setPaused((value) => !value)}
-          aria-pressed={paused}
-        >
-          {paused ? "Resume animation" : "Pause animation"}
-        </button>
-      )}
     </div>
   );
 }

@@ -3,6 +3,8 @@
   --line-soft: rgba(86, 203, 245, 0.22);
   --line-mid: rgba(86, 203, 245, 0.36);
   --pulse: #a5fbff;
+  --propagation-duration: 5.2s;
+  --lower-propagation-delay: 0.7s;
   display: contents;
 }
 .artwork {
@@ -23,29 +25,6 @@
 .motion[data-running="false"] .artwork * {
   animation-play-state: paused;
 }
-.control {
-  position: absolute;
-  right: 0;
-  bottom: -3.25rem;
-  min-height: 44px;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-control);
-  background: var(--background-secondary);
-  color: var(--text-secondary);
-  font: inherit;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-.control:active {
-  transform: translateY(1px);
-}
-@media (hover: hover) {
-  .control:hover {
-    color: var(--text-primary);
-    border-color: var(--sentinel-steel);
-  }
-}
 @media (max-width: 720px) {
   .cube {
     position: relative;
@@ -53,9 +32,6 @@
     width: 100%;
     height: 12rem;
     margin-bottom: 1rem;
-  }
-  .control {
-    bottom: 0;
   }
 }
 .cube-wrap {
@@ -119,7 +95,8 @@
   vector-effect: non-scaling-stroke;
   filter: url(#how-softGlow);
   opacity: 0;
-  animation: pulse 5.2s cubic-bezier(0.34, 0.02, 0.22, 1) infinite;
+  animation: pulse var(--propagation-duration) cubic-bezier(0.34, 0.02, 0.22, 1)
+    infinite;
 }
 
 .node {
@@ -137,6 +114,16 @@
   filter: url(#how-bigGlow);
   opacity: 0.38;
   animation: corePulse 5.2s ease-in-out infinite;
+}
+
+.halo {
+  fill: url(#how-coreGlow);
+  filter: url(#how-bigGlow);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: haloPulse var(--propagation-duration)
+    cubic-bezier(0.34, 0.02, 0.22, 1) var(--lower-propagation-delay) infinite;
 }
 
 .micro {
@@ -215,6 +202,28 @@
   }
   30% {
     opacity: 0.28;
+    transform: scale(1);
+  }
+}
+
+@keyframes haloPulse {
+  0%,
+  10%,
+  34%,
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  15% {
+    opacity: 0.18;
+    transform: scale(1);
+  }
+  20% {
+    opacity: 0.48;
+    transform: scale(1.03);
+  }
+  26% {
+    opacity: 0.16;
     transform: scale(1);
   }
 }

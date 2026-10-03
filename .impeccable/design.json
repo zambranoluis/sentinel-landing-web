@@ -78,12 +78,17 @@
       {
         "name": "cube-float",
         "value": "6s ease-in-out",
-        "purpose": "Supplied local illustration; pausable, static with reduced motion."
+        "purpose": "Supplied local illustration; automatically pauses offscreen/hidden, static with reduced motion or no JavaScript."
       },
       {
         "name": "cube-pulse",
         "value": "5.2s",
         "purpose": "Edges, nodes and core use their source easing."
+      },
+      {
+        "name": "cube-bottom-halo",
+        "value": "5.2s with 0.7s delay",
+        "purpose": "Lower-row propagation glow peaks at 1.74s; silhouette-masked behind floating faces with fill-box centered scaling. Inner core motion remains unchanged."
       },
       {
         "name": "cube-spark",
@@ -136,14 +141,6 @@
       "description": "Implemented disabled commercial action; no availability message.",
       "html": "<button class=\"ds-assessment\" disabled>Request a Site Assessment</button>",
       "css": ".ds-assessment { min-height: 48px; max-width: 100%; padding: 0.75rem 1.25rem; border: 1px solid var(--hairline-strong, rgb(172 190 209 / 42%)); border-radius: var(--radius-control, 12px); background: var(--sentinel-navy, #1b3266); color: var(--text-primary, #f6f8fb); font: 700 1rem/1.5 Roboto, sans-serif; text-align: center; cursor: not-allowed; }"
-    },
-    {
-      "name": "Cube motion control",
-      "kind": "button",
-      "refersTo": "motion-control",
-      "description": "Pause/resume chrome; snippet shows appearance, not the cube lifecycle.",
-      "html": "<button class=\"ds-motion\">Pause animation</button>",
-      "css": ".ds-motion { min-height: 44px; padding: 0.5rem 0.75rem; border: 1px solid var(--hairline, #263447); border-radius: var(--radius-control, 12px); background: var(--background-secondary, #08111e); color: var(--text-secondary, #a9b4c4); font: 400 0.875rem/1.5 Roboto, sans-serif; cursor: pointer; } .ds-motion:focus-visible { outline: 3px solid var(--sentinel-steel, #acbed1); outline-offset: 3px; } .ds-motion:active { transform: translateY(1px); } @media (hover: hover) { .ds-motion:hover { color: var(--text-primary, #f6f8fb); border-color: var(--sentinel-steel, #acbed1); } }"
     },
     {
       "name": "Menu trigger",

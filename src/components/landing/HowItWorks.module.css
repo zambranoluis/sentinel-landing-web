@@ -116,18 +116,13 @@
   place-items: center;
   width: 44%;
   aspect-ratio: 1;
-  border: 2px solid #83badd;
+  border: 2px solid #05ddf1;
   border-radius: 50%;
-  color: var(--text-primary);
+  color: #05ddf1;
 }
 .icon svg {
   width: 66%;
   height: 66%;
-}
-.observe .icon,
-.respond .icon {
-  color: #05ddf1;
-  border-color: #05ddf1;
 }
 
 @media (min-width: 1280px) {
@@ -154,7 +149,6 @@
   }
   .diagram {
     aspect-ratio: auto;
-    padding-bottom: 3.5rem;
   }
   .connections {
     display: none;

@@ -82,11 +82,6 @@ components:
     backgroundColor: "{colors.industry-surface}"
     textColor: "{colors.text-primary}"
     rounded: "{rounded.compact}"
-  motion-control:
-    backgroundColor: "{colors.background-secondary}"
-    textColor: "{colors.text-secondary}"
-    rounded: "{rounded.control}"
-    padding: "0.5rem 0.75rem"
 ---
 
 # Design System: Sentinel landing
@@ -121,11 +116,11 @@ Steel supplies leads, supporting content, borders and keyboard focus. Ice suppli
 
 ### Neutral
 
-Canvas is the page/nav foundation; background-secondary separates package content and the cube control. Surface-interactive defines the menu trigger. Text-primary and text-secondary maintain hierarchy. Hairline and hairline-strong separate panels and navigation without heavy decoration. Footer-canvas is a local near-black reference field.
+Canvas is the page/nav foundation; background-secondary separates package content. Surface-interactive defines the menu trigger. Text-primary and text-secondary maintain hierarchy. Hairline and hairline-strong separate panels and navigation without heavy decoration. Footer-canvas is a local near-black reference field.
 
 ### Illustrative treatments
 
-Illustration-cyan appears in detection brackets, icons and demo highlights; workflow-cyan belongs to the supplied cube diagram/connectors. Industry cards use their local surface and border. Other scene-specific overlays and cyan strokes remain owned by their CSS Modules and assets. They do not establish operational severity, confidence or alert semantics.
+Illustration-cyan appears in detection brackets, icons and demo highlights; workflow-cyan belongs to the supplied cube diagram/connectors and all five workflow icons and circular rings. Industry cards use their local surface and border. Other scene-specific overlays and cyan strokes remain owned by their CSS Modules and assets. They do not establish operational severity, confidence or alert semantics.
 
 ## Typography
 
@@ -189,7 +184,7 @@ The panel fades/translates from -8px over 200ms ease-out. Closed content immedia
 
 ### Workflow illustration
 
-The supplied SVG cube floats over 6s, pulses edges/nodes/core over 5.2s and moves sparks over 3.8s. A minimum 44px pause/resume control freezes the actual timeline. Offscreen or hidden-document motion pauses; reentry preserves the visitor's pause choice. Reduced motion removes animation/control and safely transfers focus if necessary. Without JavaScript the artwork and workflow remain complete and static. Responsive repositioning is immediate.
+The supplied SVG cube floats over 6s, pulses edges/nodes/core over 5.2s and moves sparks over 3.8s. The bottom halo uses its own 5.2s animation and the lower rows' 0.7s delay: it stays dark through 1.22s, brightens to a peak at 1.74s and fades before the next cycle. It floats behind the faces with centered local scaling and a silhouette mask that prevents blur washing over the translucent cube. The inner glow retains its original motion. Offscreen or hidden-document motion pauses in place and resumes automatically when visible. No playback control remains. Reduced motion removes animation. Without JavaScript the artwork and workflow remain complete and static. Responsive repositioning is immediate.
 
 ### Industry and package cards
 

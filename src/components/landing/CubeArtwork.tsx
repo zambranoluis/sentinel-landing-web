@@ -59,6 +59,21 @@ export function CubeArtwork() {
           <feGaussianBlur stdDeviation="16"></feGaussianBlur>
         </filter>
 
+        <mask
+          id="how-haloMask"
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="900"
+          height="800"
+        >
+          <rect width="900" height="800" fill="white" />
+          <path
+            d="M450 158 L604.15 247 L604.15 425 L450 514 L295.85 425 L295.85 247 Z"
+            fill="black"
+          />
+        </mask>
+
         <clipPath id="how-clip-left">
           <path
             id="how-clipLeftPath"
@@ -74,13 +89,6 @@ export function CubeArtwork() {
       </defs>
 
       <g id="how-ambient">
-        <ellipse
-          cx="450"
-          cy="502"
-          rx="180"
-          ry="85"
-          className={styles["core"]}
-        ></ellipse>
         <circle cx="450" cy="110" r="2.5" className={styles["spark"]}></circle>
         <circle cx="428" cy="143" r="1.7" className={styles["spark"]}></circle>
         <circle cx="474" cy="162" r="1.7" className={styles["spark"]}></circle>
@@ -92,6 +100,17 @@ export function CubeArtwork() {
         <circle cx="604" cy="432" r="1.6" className={styles["spark"]}></circle>
       </g>
       <g className={styles["cube-wrap"]} id="how-cubeWrap">
+        {/* Mask the filtered halo after scaling so it cannot tint the faces. */}
+        <g id="how-bottomHalo" mask="url(#how-haloMask)">
+          <ellipse
+            id="how-halo"
+            cx="450"
+            cy="502"
+            rx="180"
+            ry="85"
+            className={styles.halo}
+          />
+        </g>
         <polygon
           points="450.00,158.00 604.15,247.00 450.00,336.00 295.85,247.00"
           className={styles["face-top"]}
@@ -254,12 +273,12 @@ export function CubeArtwork() {
         <path
           d="M295.85 365.67 L450.00 454.67"
           className={styles["pulse"]}
-          style={{ animationDelay: "0.7s" }}
+          style={{ animationDelay: "var(--lower-propagation-delay)" }}
         ></path>
         <path
           d="M450.00 454.67 L604.15 365.67"
           className={styles["pulse"]}
-          style={{ animationDelay: "0.7s" }}
+          style={{ animationDelay: "var(--lower-propagation-delay)" }}
         ></path>
         <path
           d="M450.00 158.00 L450.00 514.00"
