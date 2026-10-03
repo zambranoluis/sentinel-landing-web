@@ -72,8 +72,7 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
     await flag.focus();
     const workflowScroll = await page.evaluate(() => scrollY);
     await flag.press("Enter");
-    await expect(workflow).toHaveAttribute("data-feedback-step", "flag");
-    await expect(workflow.locator("[aria-pressed]")).toHaveCount(0);
+    await expect(flag).toHaveAttribute("aria-pressed", "true");
     await expect(flag).toBeFocused();
     expect(await page.evaluate(() => scrollY)).toBe(workflowScroll);
     expect(
@@ -87,9 +86,11 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
           ),
         ),
     ).toBe(true);
-    await flag.press("Space");
-    await expect(flag).toBeFocused();
-    await expect(workflow.getByRole("button")).toHaveCount(5);
+    await workflow.getByRole("button", { name: "Resume sequence" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(
+      workflow.getByRole("button", { name: "Pause sequence" }),
+    ).toBeVisible();
     await capture("browser-zoom-200-workflow-selected.png");
     for (const id of [
       "capabilities",

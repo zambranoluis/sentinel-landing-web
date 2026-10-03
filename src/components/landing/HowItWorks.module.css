@@ -91,29 +91,18 @@
   font-size: clamp(1rem, 1.3vw, 1.5rem);
   font-weight: 700;
   line-height: 1.3;
+  transition:
+    border-color 200ms ease-out,
+    background-color 200ms ease-out;
 }
-.cardAccent,
-.feedbackAccent {
-  position: absolute;
-  inset: 0;
-  box-shadow: 0 0 0 1px #05ddf1;
-  border-radius: inherit;
+.step[data-active="true"] {
+  border-color: #05ddf1;
   background: rgb(5 44 58 / 96%);
-  opacity: 0;
-  pointer-events: none;
 }
-.step[data-active="true"] .cardAccent,
-.step[data-feedback="true"] .feedbackAccent {
-  opacity: 1;
-}
-.feedbackAccent {
-  transition: opacity 200ms ease-out;
-}
-.workflow[data-immediate="true"] .feedbackAccent {
+.workflow[data-immediate="true"] .step {
   transition: none;
 }
 .stepControl {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -141,17 +130,16 @@ button.stepControl {
 button.stepControl:active {
   transform: scale(0.98);
 }
-.stepControl:focus-visible {
+.stepControl:focus-visible,
+.playbackControl:focus-visible {
   outline: 3px solid var(--sentinel-steel);
   outline-offset: 3px;
 }
-.trace,
-.feedbackTrace {
+.trace {
   opacity: 0;
   stroke-dasharray: 1;
 }
-.trace[data-active="true"],
-.feedbackTrace[data-active="true"] {
+.trace[data-active="true"] {
   opacity: 1;
 }
 .dot {
@@ -168,6 +156,40 @@ button.stepControl:active {
 }
 .railAccent {
   display: none;
+}
+.playback {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 1rem;
+}
+.playbackControl {
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--sentinel-steel);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--sentinel-ice);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    color 200ms ease-out,
+    border-color 200ms ease-out,
+    transform 120ms ease-out;
+}
+.playbackControl:active {
+  transform: scale(0.98);
+}
+.playbackControl:disabled {
+  cursor: default;
+}
+@media (hover: hover) and (pointer: fine) {
+  .playbackControl:enabled:hover {
+    color: #05ddf1;
+    border-color: #05ddf1;
+  }
 }
 .observe {
   left: 38%;
@@ -264,12 +286,6 @@ button.stepControl:active {
     border-radius: var(--radius-compact);
     font-size: 1.125rem;
   }
-  .workflow[data-active-step] .feedbackRail {
-    opacity: 0;
-  }
-  .workflow[data-feedback-step] .feedbackRail {
-    opacity: 1;
-  }
   .stepControl {
     min-height: calc(4.5rem - 2px);
     flex-direction: row;
@@ -288,10 +304,11 @@ button.stepControl:active {
 @media (prefers-reduced-motion: reduce) {
   .step,
   button.stepControl,
-  .feedbackAccent {
+  .playbackControl {
     transition: none;
   }
-  button.stepControl:active {
+  button.stepControl:active,
+  .playbackControl:active {
     transform: none;
   }
 }
