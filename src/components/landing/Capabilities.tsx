@@ -40,7 +40,7 @@ export function Capabilities() {
         </div>
       </div>
       <div className={styles.cards} data-motion-group>
-        {capabilities.map((item, index) => (
+        {capabilities.map((item) => (
           <article
             key={item.id}
             id={item.id}
@@ -48,9 +48,6 @@ export function Capabilities() {
             className={styles.card}
             data-motion="content"
           >
-            <span className={styles.number}>
-              {String(index + 1).padStart(2, "0")}
-            </span>
             <span className={common.icon}>
               <SectionIcon name={item.icon} />
             </span>

@@ -67,12 +67,6 @@
 .card:nth-child(n + 4) {
   grid-column: span 3;
 }
-.number {
-  display: block;
-  color: var(--sentinel-steel);
-  font-variant-numeric: tabular-nums;
-  margin-bottom: 16px;
-}
 .card h3 {
   font-size: clamp(1.125rem, 1.35vw, 1.5rem);
   line-height: 1.25;
