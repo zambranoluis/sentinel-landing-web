@@ -67,6 +67,31 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
         element.scrollIntoView({ block: "start", behavior: "instant" }),
       );
     await capture("browser-zoom-200-workflow.png");
+    const workflow = page.locator("[data-workflow]");
+    const flag = workflow.getByRole("button", { name: "Flag.", exact: true });
+    await flag.focus();
+    const workflowScroll = await page.evaluate(() => scrollY);
+    await flag.press("Enter");
+    await expect(flag).toHaveAttribute("aria-pressed", "true");
+    await expect(flag).toBeFocused();
+    expect(await page.evaluate(() => scrollY)).toBe(workflowScroll);
+    expect(
+      await workflow
+        .locator("li")
+        .evaluateAll((rows) =>
+          rows.every(
+            (row) =>
+              row.scrollWidth <= row.clientWidth &&
+              row.scrollHeight <= row.clientHeight,
+          ),
+        ),
+    ).toBe(true);
+    await workflow.getByRole("button", { name: "Resume sequence" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(
+      workflow.getByRole("button", { name: "Pause sequence" }),
+    ).toBeVisible();
+    await capture("browser-zoom-200-workflow-selected.png");
     for (const id of [
       "capabilities",
       "product-demo",

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { CubeArtwork } from "./CubeArtwork";
 import { CubeMotion } from "./CubeMotion";
 import styles from "./HowItWorks.module.css";
+import { Workflow } from "./Workflow";
 
 const steps = [
   {
@@ -62,70 +63,11 @@ export function HowItWorks() {
             presents the context people need to review, decide and respond.
           </p>
         </div>
-        <div className={styles.diagram} data-motion="unit">
-          <svg
-            className={styles.connections}
-            viewBox="0 0 820 690"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <g fill="none" stroke="currentColor">
-              <circle cx="410" cy="357" r="140" />
-              <circle cx="410" cy="357" r="205" />
-              <circle cx="410" cy="357" r="255" />
-            </g>
-            <g
-              className={styles.connectors}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path d="M410 180V265 M200 335 294 355 M620 335 526 355 M290 514 335 462 M530 514 483 462" />
-            </g>
-            <g className={styles.connectors} fill="currentColor">
-              {[
-                [410, 180],
-                [410, 265],
-                [200, 335],
-                [294, 355],
-                [620, 335],
-                [526, 355],
-                [290, 514],
-                [335, 462],
-                [530, 514],
-                [483, 462],
-              ].map(([cx, cy]) => (
-                <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="4.5" />
-              ))}
-            </g>
-          </svg>
+        <Workflow steps={steps}>
           <CubeMotion>
             <CubeArtwork />
           </CubeMotion>
-          <ol className={styles.steps} aria-label="How Sentinel works">
-            {steps.map((step) => (
-              <li
-                key={step.position}
-                className={`${styles.step} ${styles[step.position]}`}
-              >
-                <span className={styles.icon} aria-hidden="true">
-                  <svg
-                    viewBox="0 0 48 48"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    focusable="false"
-                  >
-                    <path d={step.path} />
-                  </svg>
-                </span>
-                <span>{step.name}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
+        </Workflow>
       </div>
     </section>
   );

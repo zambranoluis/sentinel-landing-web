@@ -231,7 +231,12 @@ test("reduced motion at startup and during entry settles content and resumes onl
   await frames(page);
   expect(await count(page, "[data-motion]")).toBe(0);
   await expect(page.locator("#hero-heading")).toHaveCSS("opacity", "1");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-motion-startup",
+    "ready",
+  );
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  await frames(page);
   await position(page, "#deployment ol", 250);
   await expect.poll(() => active(page, "#deployment li")).toBe(3);
   await page.emulateMedia({ reducedMotion: "reduce" });

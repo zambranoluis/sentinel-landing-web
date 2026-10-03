@@ -76,6 +76,16 @@
         "purpose": "Fade and travel out through the outgoing 18% viewport edge; interrupted exits recover from their current pose over 320ms."
       },
       {
+        "name": "workflow-sequence",
+        "value": "2.4s per step; 700ms accents",
+        "purpose": "Observe through Respond; held selection and focus-over-hover previews; remaining hold and effects suspend offscreen/hidden. Independent of cube and demo."
+      },
+      {
+        "name": "workflow-feedback",
+        "value": "200ms selection; 120ms press to 0.98",
+        "purpose": "Existing tiles/rows retain geometry; mobile rail travels beside the rows. Keyboard and reduced-motion selection are immediate."
+      },
+      {
         "name": "cube-float",
         "value": "6s ease-in-out",
         "purpose": "Supplied local illustration; automatically pauses offscreen/hidden, static with reduced motion or no JavaScript."
@@ -193,7 +203,7 @@
     "donts": [
       "Don't introduce dashboard recipes or semantic alert colours as landing requirements.",
       "Don't activate unavailable actions or invent destinations, legal terms or product claims.",
-      "Don't hide content behind motion or turn illustrative stage labels into controls.",
+      "Don't hide content behind motion or turn the separate demo's illustrative stage labels into controls.",
       "Don't replace the accepted visual direction during a focused extension or correction."
     ]
   }
