@@ -1,10 +1,10 @@
 # Sentinel landing web
 
-Public English-language landing for Sentinel, CrimsonTide AI's computer vision and operational intelligence platform. All ten supplied sections render at `/`: hero, How it works, capabilities, product demo, deployment, benefits, plans, FAQs, final assessment CTA and footer. The navbar and matching footer links reach implemented sections and industry cards. Assessment, package and add-on buttons remain disabled; unspecified company/legal destinations remain plain text. [PRODUCT.md](PRODUCT.md) owns purpose and journeys; [DESIGN.md](DESIGN.md) owns brand and landing requirements.
+Public English-language landing for Sentinel, CrimsonTide AI's computer vision and operational intelligence platform. The accepted baseline renders the navbar and ten supplied sections at `/`. Internal navigation reaches implemented sections and industry cards; assessment/package/add-on actions stay disabled and unspecified destinations remain text. [PRODUCT](PRODUCT.md) owns the offer and open product decisions; [DESIGN](DESIGN.md) owns reusable visual decisions.
 
 ## Runtime and setup
 
-Next.js 16.3.8 App Router, React 19.3.0, strict TypeScript, npm, CSS Modules and self-hosted Roboto through Fontsource. [CODE](AGENTS/CODE.md#project-engineering-guidance) owns decisions and approvals. Use Node 22.14.0 (supported line: Node 22) and npm 11.7.0:
+Next.js 16.3.8 App Router, React 19.3.0, strict TypeScript, npm, CSS Modules and self-hosted Roboto. Package files own exact versions; [CODE](AGENTS/CODE.md#project-engineering-guidance) owns architecture and approved dependency decisions. Use Node 22.14.0 (supported line: Node 22) and npm 11.7.0:
 
 ```sh
 npm ci
@@ -12,70 +12,82 @@ npx playwright install chromium firefox webkit
 npm run dev
 ```
 
-Development defaults to `http://localhost:3000`. No environment variables, backend, account or credentials are required. On Linux use `npx playwright install --with-deps chromium firefox webkit`. Fonts need no external provider fetch during build.
+Development defaults to `http://localhost:3000`. No environment variables, backend, account or credentials are required. On Linux install browsers with `npx playwright install --with-deps chromium firefox webkit`. Fonts require no external provider fetch during build.
 
-For custom arguments in Windows PowerShell, use the native wrapper, for example `npm.cmd run dev -- --hostname 127.0.0.1 --port 3188`. The `npm.ps1` wrapper on this machine stripped the argument separator. `next.config.ts` disables Next.js automatic agent-rule generation so development startup preserves the repository's instruction files.
+For custom arguments in Windows PowerShell, use the native wrapper, for example `npm.cmd run dev -- --hostname 127.0.0.1 --port 3188`; the PowerShell wrapper previously stripped the argument separator. Inspect and reuse compatible existing services without stopping user-managed processes or silently changing ports. `next.config.ts` disables Next.js automatic agent-rule generation to preserve repository instruction files.
 
 ## Locations and boundaries
 
-| Location                                              | Owner                                                                                                                                           |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/layout.tsx`                                  | English document, metadata, font/global CSS imports                                                                                             |
-| `src/app/page.tsx`                                    | Server-rendered page composition and skip target                                                                                                |
-| `src/components/landing/`                             | All landing sections and shared brand/action/availability; mobile navigation, cube, demo, deployment entry and FAQ are narrow client boundaries |
-| `src/app/globals.css`                                 | Brand tokens, reset, typography and focus                                                                                                       |
-| `src/app/icon.svg`, `public/logos/`, `public/images/` | Consumed original logos, warehouse backgrounds and section WebP images with provenance sidecars                                                 |
-| `references/`                                         | Approved sections, originals and [copy](references/web-content.md); preserve, do not publish the entire directory                               |
-| `tests/browser/`                                      | Production public-entry responsive/accessibility tests                                                                                          |
-| `tests/unit/`, `vitest.config.mts`                    | Navigation availability contract tests in Node; separate from browser discovery                                                                 |
-| `scripts/`                                            | Markdown checker and external artifact paths                                                                                                    |
-| `.github/workflows/quality.yml`                       | Quality/unit/build/browser/audit gates in CI; remote execution requires a future push                                                           |
-| `workspace/<work-item>/`                              | Shareable durable text under [PLANS](AGENTS/PLANS.md#location); generated QA remains external                                                   |
+| Location                                              | Responsibility                                                                                                         |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `src/app/layout.tsx`, `src/app/page.tsx`              | English document/metadata, font imports, page composition and skip target                                              |
+| `src/components/landing/`                             | Sections, approved repeated content, typed destination availability and narrow client interaction boundaries           |
+| `src/app/globals.css`, section CSS Modules            | Global foundations and local section geometry/states                                                                   |
+| `src/app/icon.svg`, `public/logos/`, `public/images/` | Consumed originals and converted section images with provenance                                                        |
+| `references/`                                         | Approved compositions, originals and [copy](references/web-content.md); preserve sources, publish consumed assets only |
+| `.impeccable/design.json`, `.impeccable/surfaces/`    | Design extensions/component samples and durable surface strategy; shareable and formatted                              |
+| `tests/unit/`, `vitest.config.mts`                    | Deterministic navigation availability contracts in Node                                                                |
+| `tests/browser/`, `playwright.config.ts`              | Public-entry responsive, accessibility, interaction and motion coverage                                                |
+| `scripts/`                                            | Local documentation checking and external QA artifact validation                                                       |
+| `.github/workflows/quality.yml`                       | Configured remote quality, unit, build, browser and dependency-audit gates                                             |
+| `workspace/<work-item>/`                              | Durable text and permitted evidence under [PLANS](AGENTS/PLANS.md#location); generated QA stays external               |
 
-`.next/`, `next-env.d.ts` and TypeScript metadata are generated. Dependencies use the retained npm lockfile. Existing `.codex/` is local, ignored and user-owned. No backend, auth or dashboard contracts are introduced. Other repositories are outside the write boundary. Code and documentation use English.
+`.next/`, `next-env.d.ts` and TypeScript metadata are generated. Dependencies use the retained npm lockfile. `.codex/` is local, ignored and user-owned. This project introduces no backend, authentication or dashboard contracts. Other repositories and personal host settings are outside its write boundary. Code and documentation use English.
 
 ## Commands and verification
 
-| Command                     | Scope / prerequisites                                                             |
-| --------------------------- | --------------------------------------------------------------------------------- |
-| `npm run dev`               | Next.js development; installation required                                        |
-| `npm run build`             | Production compilation and route generation                                       |
-| `npm run start`             | Serve an existing production build                                                |
-| `npm run lint`              | ESLint Next.js/TypeScript on source, tests and tooling                            |
-| `npm run typecheck`         | Generate Next.js declarations, then strict TypeScript; works before a first build |
-| `npm run docs:links`        | Local Markdown targets/anchors; no external URL fetch                             |
-| `npm run check`             | Lint, types, formatting and documentation                                         |
-| `npm run test:unit`         | Vitest 5.0.3, `tests/unit/**/*.test.ts` in Node; no DOM package                   |
-| `npm run test:unit:watch`   | Watch the same unit test surface                                                  |
-| `npm run test:browser:list` | Discover real tests in all three engines                                          |
-| `npm run test:browser`      | Existing production build and matching browsers; own server on `127.0.0.1:3187`   |
-| `npm audit`                 | Dependency advisories, owned through CODE                                         |
-| `git diff --check`          | Tracked diff whitespace; formatter covers untracked authored files                |
+| Command                                         | Scope / prerequisites                                                                                  |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `npm run dev`                                   | Development server; installed dependencies                                                             |
+| `npm run build`                                 | Production compilation and route generation                                                            |
+| `npm run start`                                 | Serve an existing production build                                                                     |
+| `npm run lint`                                  | ESLint on source, tests and tooling                                                                    |
+| `npm run typecheck`                             | Generate Next.js declarations, then strict TypeScript; works before a first build                      |
+| `npm run format:check` / `npm run format`       | Check / format nonignored authored files, including the instruction chain and Impeccable Markdown/JSON |
+| `npm run docs:links`                            | Local Markdown targets/anchors, including Impeccable briefs; no external URL fetch                     |
+| `npm run check`                                 | Aggregate lint, types, formatting and documentation checks                                             |
+| `npm run test:unit` / `npm run test:unit:watch` | Vitest navigation contract tests / watch in Node                                                       |
+| `npm run test:browser:list`                     | Discover production browser cases                                                                      |
+| `npm run test:browser`                          | Existing production build, installed browsers, owned test server on `127.0.0.1:3187`                   |
+| `npm audit`                                     | Current dependency advisories; updates follow CODE's approval rule                                     |
+| `git diff --check`                              | Tracked whitespace; formatter also covers untracked authored files                                     |
 
-Unit tests verify unavailable destinations expose no URL and enabled internal targets exist. Production browser tests cover landmarks, exact copy and labels, local SVG/image/Roboto 400/500/700 loading, disabled CTAs, disclosure keyboard/Escape/focus/desktop closure, skip navigation, no-JavaScript static content, 390/834/1440px widths, 720/721/1279/1280px boundaries, no overflow/runtime/request errors, closed/open axe scans and 320px reflow with enlarged text/reduced motion. Navbar coverage includes the icon-only trigger's accessible names and 44px target, burger/X endpoints, halfway geometry, live rapid reversal, immediate reduced-motion switching and icon reset after desktop resizing. A Chromium-only test uses an isolated, permission-free temporary extension to apply actual 200% browser zoom and checks reflow and keys; no user browser profile or installed extension is touched. Workers run serially after parallel Firefox axe scans timed out on this Windows host.
+Choose checks by the [changed mechanism](AGENTS/CODE.md#verification). Documentation work needs link/format/source and instruction-chain checks; checker edits also need lint and affected positive/negative validation. A design extraction needs parsed artifacts and focused computed-style comparison. These do not automatically require a complete product browser suite. CI retains its configured full gates.
 
-The [desktop-width record](workspace/desktop-width/plan.md) records the preceding width verification, corrections and external evidence. All 111 unique browser cases are verified: the full run passed 110 with one existing WebKit full-page screenshot timeout, and an unchanged focused rerun passed that case. All 27 wide geometry checks and eight low-zoom checks passed. Build/lint/types/format, 3/3 unit tests and dependency audit (zero vulnerabilities) pass. `docs:links` (and therefore aggregate `check`) fails on eight references to six pre-existing absent records: two adoption-foundation records referenced by AGENTS/ADOPTION.md, the desktop-width plan, the [site completion plan](workspace/site-completion/plan.md), its finish review referenced by DESIGN, and the How it works plan below. Their instruction-system and implementation-history owners must recover or reconcile authentic records; this width correction preserves the unresolved references. Automated checks and rendered review do not establish formal accessibility conformance. No authenticated/dashboard or persistence lane is introduced; remote CI remains unexecuted until a requested push.
+Existing unit coverage checks unavailable destinations expose no URL and enabled internal targets exist. Browser coverage includes supplied copy/assets/Roboto, landmarks, disabled CTAs, disclosure keyboard/focus/rapid reversal, fragment focus, FAQ/no-JavaScript behaviour, cube pause/resume, demo looping/visibility/reduced motion, deployment entry, responsive boundaries, enlarged text, first-viewport hero and bounded desktop geometry. Three-engine tests run serially after historical parallel Firefox axe timeouts. Chromium-only isolated temporary extensions exercise actual browser zoom without accessing a user profile.
 
-Artifacts default to a dedicated run under the OS temporary directory's `sentinel-landing-web-qa/`. Set `SENTINEL_E2E_ARTIFACTS_ROOT` to a dedicated absolute external directory for a known location. Repository targets, ancestors and symlink redirects into the repository are rejected. Reports, screenshots and failure traces stay local; CI uses `runner.temp` and uploads public-entry evidence. Tests refuse to reuse an existing service on their port.
+Generated reports, captures and traces default to a dedicated run under OS temp `sentinel-landing-web-qa/`. `SENTINEL_E2E_ARTIFACTS_ROOT` may designate a dedicated absolute external directory. Validation rejects repository targets, ancestors and symlink redirects into the repository. Tests refuse to reuse an existing service on their port. CI uses `runner.temp` and uploads public-entry evidence.
 
-The [How it works record](workspace/how-it-works/plan.md) owns the section extension and its verification. `/#how-it-works` is available from the navbar and footer. Its supplied cube motion has a pause/resume control, pauses offscreen and in hidden documents, and becomes static with reduced motion or without JavaScript. Browser coverage exercises the workflow across responsive boundaries, motion continuity and navigation focus.
+Historical run results belong in the [reconciliation history](workspace/documentation-reconciliation/records/history.md), [hero viewport record](workspace/hero-viewport/plan.md) and [demo loop record](workspace/demo-loop/plan.md). These are dated reports, not current verification. The latest recorded demo work passed 171 unique browser cases across a broad run and targeted reruns, not a single uninterrupted clean run. Raw captures are machine-local and have not been revalidated here. Formal accessibility conformance, real-device/field performance, authenticated/dashboard behaviour and remote CI are not established by those records. Product-owned integration gaps remain in PRODUCT.
 
-The completed-page suite also checks supplied prose, all section imagery and nine responsive widths, native FAQ keyboard/no-JavaScript behavior, reversible disclosure motion, illustrative demo autoplay/repeated loops, its two-second final hold, visibility suspension, static reduced-motion/no-JavaScript review and motion-preference changes, deployment entry, fragment focus and enlarged text. Generated captures are split by section where full-page bitmap dimensions exceed browser limits.
+## Agent host operations
 
-Desktop content follows a centered 1920px reference frame with a 1536px main content cap. Layouts retain their existing geometry through 1920px; wider effective viewports add equal outer margins. Full-width backgrounds remain fluid. Capabilities keeps its bounded asymmetric 1689.6px composition. [DESIGN](DESIGN.md#landing-requirements) owns these requirements; [the desktop-width record](workspace/desktop-width/plan.md) owns results and external evidence. The geometry suite covers 1280, 1440, 1919, 1920, 1921, 2560, 3440, 3840 and 7680px across Chromium, Firefox and WebKit. Isolated Chromium zoom coverage additionally applies real 80%, 67%, 50% and 25% browser zoom at 1440px and 1920px physical viewport widths, verifies the applied factor/effective viewport with rounding tolerance, and checks content alignment and caps. Existing 200% zoom, mobile/tablet, keyboard and reduced-motion coverage remains part of the production suite.
+Task-entry discovery concerns the active host, permissions and capabilities relevant to the request. Cross-provider execution is needed only when expressly in scope; portability does not require ordinary work to run under four providers. Keep launchers, adapters, hooks and settings with their operational owner. This repository makes no host-setting changes and supplies no new adapter.
 
-Navbar and hero fill at least the first viewport at every breakpoint. `NavbarFrame.tsx` measures the full header height with a border-box observer; global CSS provides an 81px fallback. Hero sizing uses `100dvh` with a `100vh` fallback and permits taller content to scroll. The mobile image band grows below the copy, and enlarged desktop navigation can wrap. `tests/browser/hero-viewport.spec.ts` checks first-screen geometry, short landscape, 200% text, border/content resizing, disclosure and no JavaScript across all three engines; the existing real 200% browser-zoom test also checks first-screen geometry. [The hero viewport record](workspace/hero-viewport/plan.md) owns current verification and external before/after evidence. All 162 discovered browser cases have passed across the broad run and focused reruns. The final 72-case subset passed 71 cases; the remaining WebKit whole-page capture exceeded its 30-second deadline and passed unchanged with a 90-second deadline. All 51 hero cases pass. Build, lint, types, formatting and 3/3 unit tests pass; documentation links retain the baseline failures above.
+Official loading references, retrieved 2026-10-02:
 
-The [demo loop record](workspace/demo-loop/plan.md) owns the demo simplification, current verification and external before/after captures. All 171 unique browser cases passed across the full run (166 passed) and targeted WebKit rerun (five passed); the final three-engine stage-indicator checks also passed. The broad responsive test retains its 180-second default and honors a larger explicit CLI timeout on slower hosts. Baseline documentation-link failures remain unchanged.
+| Host        | Documented mechanism / diagnosis                                                                                                                                                                                                                                                                                |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex       | [AGENTS discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md) follows the applicable directory chain. [Local skills](https://learn.chatgpt.com/docs/build-skills) include personal `~/.agents/skills` and repository `.agents/skills`.                                                       |
+| Claude Code | [Memory and AGENTS conditions](https://code.claude.com/docs/en/memory) depend on version/configuration; inspect actual loaded context. [Skills](https://code.claude.com/docs/en/skills) use personal `~/.claude/skills` and project `.claude/skills`, with cloud availability distinct from local availability. |
+| Copilot CLI | [Custom instructions](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions) documents AGENTS and other instruction sources; discovered files are not proof of effective model behaviour.                                                                            |
+| OpenCode V2 | Use [V2 instructions](https://opencode.ai/v2/docs/instructions) for the historically observed v2 host rather than assuming another major version's loading rules.                                                                                                                                               |
+
+Local inspection on 2026-10-02 found Claude's personal `impeccable` and `instructions-maker` junctions pointing to the canonical `~/.agents/skills` folders. No registration change is needed for that path relationship; filesystem discovery does not prove activation. Personal skills are not automatically available to collaborators or hosted sessions.
+
+For a loading diagnosis, establish the active version, documented discovery/priority, available files and actual loaded context separately. A user-provided AGENTS block or a model's claim is not independent native-loader evidence. Missing account access blocks that host's probe, not unrelated product work. Only add/change host configuration when requested and justified by observed need. Historical four-host observations and their exact limits are preserved in [history](workspace/documentation-reconciliation/records/history.md); their obsolete adoption gates are retired.
 
 ## Documentation map
 
-- [AGENTS.md](AGENTS.md): working agreement and routing.
-- [PRODUCT.md](PRODUCT.md): truth, audience, landing scope and journey unknowns.
-- [DESIGN.md](DESIGN.md): brand baseline and separate landing requirements.
-- [CODE.md](AGENTS/CODE.md): engineering, contracts, gates and debt.
-- [INVESTIGATIONS.md](AGENTS/INVESTIGATIONS.md): evidence.
-- [FRONTEND_CREATION.md](AGENTS/FRONTEND_CREATION.md): conditional direction and previews.
-- [PLANS.md](AGENTS/PLANS.md): durable state and resumption.
+- [AGENTS](AGENTS.md): working agreement, authorization and routing.
+- [PRODUCT](PRODUCT.md): product truth, audience, positioning, scope and open product decisions.
+- [DESIGN](DESIGN.md): reusable visual decisions and normative token values.
+- [Design sidecar](.impeccable/design.json): extension metadata and representative component snippets.
+- [Landing brief](.impeccable/surfaces/src-app-page-tsx.md) and [How it works brief](.impeccable/surfaces/src-components-landing-howitworks-tsx.md): Persuade surface strategy and direction contracts, not execution state.
+- [CODE](AGENTS/CODE.md): engineering mechanisms, verification and debt.
+- [INVESTIGATIONS](AGENTS/INVESTIGATIONS.md): evidence and unresolved facts.
+- [FRONTEND_CREATION](AGENTS/FRONTEND_CREATION.md): direction discovery, skills and conditional previews.
+- [PLANS](AGENTS/PLANS.md): proportional records, stops and resumption.
+- [Documentation reconciliation](workspace/documentation-reconciliation/plan.md): findings, history recovery, scenario review and this revision's results.
 
-Durable text is eligible for version control and collaborator use once committed by the user; this task does not stage, commit or push. Keep secrets/authentication state and generated QA outside shared records. Capability launchers, hooks and settings stay with their owners.
+Durable text and Impeccable artifacts are eligible for version control once committed by the user. Keep secrets, authentication state and generated QA outside shared records. No staging, commit, push or deployment is implied.

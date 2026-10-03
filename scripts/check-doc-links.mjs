@@ -2,14 +2,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
-const excluded = new Set([
-  ".git",
-  ".codex",
-  ".next",
-  ".impeccable",
-  "node_modules",
-  "out",
-]);
+const excluded = new Set([".git", ".codex", ".next", "node_modules", "out"]);
 
 async function markdownFiles(directory) {
   const files = [];

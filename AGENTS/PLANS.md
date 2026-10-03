@@ -99,7 +99,7 @@ A detailed plan has six sections always present, even when empty: they are the r
 | While building               | Progress and Current state updated at each meaningful stage boundary; heavy work updates every stage. Discoveries appended as they occur, not reconstructed afterwards.                                                                                                                                         |
 | At verification              | Validation results written from what actually ran. A stage moves to complete only here.                                                                                                                                                                                                                         |
 | After a failure              | The failure is recorded in Validation results, not overwritten. Progress returns the stage to in progress.                                                                                                                                                                                                      |
-| A finding becomes a standard | Move the settled decision into its actual owning project document, routed through README, PRODUCT, DESIGN, or CODE as appropriate. The plan then points at it rather than holding a second copy. |
+| A finding becomes a standard | Move the settled decision into its actual owning project document, routed through README, PRODUCT, DESIGN, or CODE as appropriate. The plan then points at it rather than holding a second copy.                                                                                                                |
 | At completion                | Remaining work is empty, or its contents are stated to the user as deliberately out of scope.                                                                                                                                                                                                                   |
 | On resumption                | Read Current state, Progress, remaining work, and linked evidence. Check relevant source changes and accessible prerequisites before relying on prior findings or results. Record material drift, re-investigate stale facts, and reconfirm a material approach change before continuing authorized work.       |
 
@@ -113,16 +113,6 @@ Questions and discussion can occur at any phase, including during investigation,
 - Review the complete change against the request, applicable authorities, tests, and diff. Correct findings. Final verification runs the checks required for the complete changed mechanism after corrections, under [CODE.md](CODE.md) Verification. Record actual results and unresolved limits.
 - A requested stop after a named stage or after every stage takes effect once that stage's result and resume point are recorded. If the user says to stop immediately, end implementation immediately; when permitted, record the last verified state, unfinished work, and next action, then hand off. Do not perform further implementation to make the record look complete.
 - At an implementation handoff, describe the changes actually made and state unfinished verification separately. If README or its linked engineering owner requires a proposed commit message, provide one for commit-eligible changes. Leave changes uncommitted unless staging or committing was requested.
-
-## Execution state
-
-These rules are what separate a plan from a wish list.
-
-- A detailed-plan stage is complete only when its validation criteria were met and the result is recorded. Intent, a clean diff and a passing unrelated check are not completion.
-- Record what ran, not what should have run. A check that could not run is recorded as blocked with the blocker and the exact remaining verification — the same standard the final report is held to.
-- Preserve verification outcomes when condensing records. A stage that failed and was corrected shows both, with the latest result clear.
-- Current state and Progress in a detailed plan, or Current state and Remaining work in a compact note, must always be accurate. If updating only one thing before a session ends, update those.
-- The plan or compact note describes execution; it does not restate the rules. Detailed-plan Validation criteria and compact-note Checks state observable acceptance conditions and cite [CODE.md](CODE.md) rather than copying its matrix.
 
 ## Relationships
 

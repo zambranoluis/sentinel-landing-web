@@ -4,6 +4,8 @@ This process applies to new interfaces, redesigns, meaningful visual or interact
 
 ## Establish direction
 
+For design documentation without a UI change, extract the accepted implementation and supplied direction; do not initiate a redesign or require a concept preview. [DESIGN](../DESIGN.md) owns reusable visual decisions, surface briefs under `.impeccable/surfaces/` own strategy for their targets, and [CODE](CODE.md#verification) selects checks for the changed mechanism. Task progress and verification results belong in the work item, not a surface brief.
+
 Identify the supplied direction, user job, affected states, and material choices about flow, hierarchy, visual treatment, assets, interaction, and motion. Resolve factual gaps through the owning sources and current behavior. Ask the user when an unresolved preference or tradeoff could materially change the result, and continue independent authorized work while the answer is pending. Review the chosen direction before production work that depends on an unsettled choice.
 
 For meaningful state changes, decide entry, exit, repositioning, and interruption where applicable, including responsive and reduced-motion behavior. Immediate change is valid when animation adds no value.

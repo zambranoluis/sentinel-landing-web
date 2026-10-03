@@ -1,6 +1,6 @@
 # Investigations
 
-This document owns how a task is grounded and what counts as evidence. [AGENTS.md](../AGENTS.md) owns authorization; investigation identifies the work within that boundary. [README.md](../README.md) supplies the project map, operational sources, and verification lanes once reconciled.
+This document owns how a task is grounded and what counts as evidence. [AGENTS.md](../AGENTS.md) owns authorization; investigation identifies the work within that boundary. [README.md](../README.md) supplies the project map, operational sources, and verification lanes.
 
 ## Sufficiency test
 
@@ -11,7 +11,7 @@ Start with the current user request and material corrections. Distinguish intent
 3. **Dependencies:** Trace producers, consumers, types, tests, and upstream legs far enough to establish the proposed change's effect. State justified inapplicability instead of exploring unrelated systems.
 4. **Requirements:** Find product requirements through [PRODUCT.md](../PRODUCT.md), applicable design requirements through [DESIGN.md](../DESIGN.md), operational sources through [README.md](../README.md), and engineering decisions and contracts through [CODE.md](CODE.md). Follow their links to detailed owners. A missing source is an open fact or decision, not proof that there is no requirement.
 5. **Verification:** Identify [CODE.md](CODE.md) obligations, project commands, required services, and evidence restrictions. Check whether the relevant lane can run now.
-6. **Capabilities:** Check material tools, skills, permissions, and host modes. Distinguish documented support from actual access. Use a capable available equivalent where appropriate; if a missing capability changes the result, explain the limit and feasible choices.
+6. **Capabilities:** Check material tools, skills, permissions, and modes for the active host and requested work. Distinguish documented support from actual access. Use a capable available equivalent where appropriate; if a missing capability changes the result, explain the limit and feasible choices. Investigate another provider's loading only when that provider or a portability diagnosis is in scope; do not turn task-entry discovery into cross-provider execution.
 
 Before settling an approach, resolve material factual gaps with evidence. Ask the user about unresolved intent, preferences, or tradeoffs when the answer could materially change the result. An invited answer does not suspend independent work; a required decision blocks only work that depends on it.
 

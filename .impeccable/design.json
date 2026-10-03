@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-03T01:58:09.458Z",
+  "title": "Design System: Sentinel landing",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Sentinel Navy"
+      },
+      "steel": {
+        "role": "secondary",
+        "displayName": "Sentinel Steel"
+      },
+      "ice": {
+        "role": "neutral",
+        "displayName": "Sentinel Ice"
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Night Canvas"
+      },
+      "illustration-cyan": {
+        "displayName": "Illustration Cyan"
+      },
+      "workflow-cyan": {
+        "displayName": "Workflow Cyan"
+      }
+    },
+    "typographyMeta": {
+      "hero": {
+        "displayName": "Hero",
+        "purpose": "Responsive hero clamp and measure are recorded in DESIGN.md Typography."
+      },
+      "headline": {
+        "displayName": "Section headline",
+        "purpose": "Balanced commercial section headings with source-specific clamps."
+      }
+    },
+    "shadows": [
+      {
+        "name": "demo-panel",
+        "value": "0 24px 60px rgb(0 0 0 / 30%)",
+        "purpose": "Local illustrative demo panel depth."
+      }
+    ],
+    "motion": [
+      {
+        "name": "microinteraction",
+        "value": "200ms",
+        "purpose": "Menu icon and restrained pointer feedback."
+      },
+      {
+        "name": "surface",
+        "value": "200ms",
+        "purpose": "Reversible mobile disclosure fade/translation."
+      },
+      {
+        "name": "faq-height",
+        "value": "240ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Reversible pointer disclosure; keyboard and reduced motion immediate."
+      },
+      {
+        "name": "deployment-entry",
+        "value": "650ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Once on entry, 100ms stagger; visible defaults; preference changes finish motion."
+      },
+      {
+        "name": "cube-float",
+        "value": "6s ease-in-out",
+        "purpose": "Supplied local illustration; pausable, static with reduced motion."
+      },
+      {
+        "name": "cube-pulse",
+        "value": "5.2s",
+        "purpose": "Edges, nodes and core use their source easing."
+      },
+      {
+        "name": "cube-spark",
+        "value": "3.8s ease-in-out",
+        "purpose": "Local SVG spark detail."
+      },
+      {
+        "name": "demo-stage",
+        "value": "3.6s linear",
+        "purpose": "Three autoplay stages suspend on visibility loss."
+      },
+      {
+        "name": "demo-hold",
+        "value": "2s linear",
+        "purpose": "Additional final review hold before restarting."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-footer",
+        "value": "360px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "720px"
+      },
+      {
+        "name": "tablet-min",
+        "value": "721px"
+      },
+      {
+        "name": "faq-addons-max",
+        "value": "1000px"
+      },
+      {
+        "name": "desktop-min",
+        "value": "1280px"
+      },
+      {
+        "name": "reference-frame",
+        "value": "1920px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Assessment action",
+      "kind": "button",
+      "refersTo": "assessment",
+      "description": "Implemented disabled commercial action; no availability message.",
+      "html": "<button class=\"ds-assessment\" disabled>Request a Site Assessment</button>",
+      "css": ".ds-assessment { min-height: 48px; max-width: 100%; padding: 0.75rem 1.25rem; border: 1px solid var(--hairline-strong, rgb(172 190 209 / 42%)); border-radius: var(--radius-control, 12px); background: var(--sentinel-navy, #1b3266); color: var(--text-primary, #f6f8fb); font: 700 1rem/1.5 Roboto, sans-serif; text-align: center; cursor: not-allowed; }"
+    },
+    {
+      "name": "Cube motion control",
+      "kind": "button",
+      "refersTo": "motion-control",
+      "description": "Pause/resume chrome; snippet shows appearance, not the cube lifecycle.",
+      "html": "<button class=\"ds-motion\">Pause animation</button>",
+      "css": ".ds-motion { min-height: 44px; padding: 0.5rem 0.75rem; border: 1px solid var(--hairline, #263447); border-radius: var(--radius-control, 12px); background: var(--background-secondary, #08111e); color: var(--text-secondary, #a9b4c4); font: 400 0.875rem/1.5 Roboto, sans-serif; cursor: pointer; } .ds-motion:focus-visible { outline: 3px solid var(--sentinel-steel, #acbed1); outline-offset: 3px; } .ds-motion:active { transform: translateY(1px); } @media (hover: hover) { .ds-motion:hover { color: var(--text-primary, #f6f8fb); border-color: var(--sentinel-steel, #acbed1); } }"
+    },
+    {
+      "name": "Menu trigger",
+      "kind": "button",
+      "refersTo": "menu-toggle",
+      "description": "Disclosure trigger with closed/open icon states; snippet does not operate a panel.",
+      "html": "<button class=\"ds-toggle\" aria-label=\"Menu\" aria-expanded=\"false\"><span class=\"ds-icon\" aria-hidden=\"true\"><span class=\"ds-line\"></span><span class=\"ds-line\"></span><span class=\"ds-line\"></span></span></button>",
+      "css": ".ds-toggle { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--hairline-strong, rgb(172 190 209 / 42%)); border-radius: var(--radius-control, 12px); background: var(--surface-interactive, #111722); color: var(--text-primary, #f6f8fb); cursor: pointer; transition: background-color 200ms ease-out; } .ds-icon { position: relative; width: 24px; height: 24px; } .ds-line { position: absolute; top: 11px; left: 2px; width: 20px; height: 2px; background: currentColor; transition: transform 200ms ease-in-out, opacity 200ms ease-in-out; } .ds-line:first-child { transform: translateY(-6px); } .ds-line:last-child { transform: translateY(6px); } .ds-toggle[aria-expanded=\"true\"] .ds-line:first-child { transform: rotate(45deg); } .ds-toggle[aria-expanded=\"true\"] .ds-line:nth-child(2) { opacity: 0; } .ds-toggle[aria-expanded=\"true\"] .ds-line:last-child { transform: rotate(-45deg); } .ds-toggle:focus-visible { outline: 3px solid var(--sentinel-steel, #acbed1); outline-offset: 3px; } @media (hover: hover) and (pointer: fine) { .ds-toggle:hover { background: var(--sentinel-navy, #1b3266); } } @media (prefers-reduced-motion: reduce) { .ds-toggle, .ds-line { transition: none; } }"
+    },
+    {
+      "name": "Desktop section navigation",
+      "kind": "nav",
+      "description": "Available section link and unavailable assessment label.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Example section navigation\"><a href=\"/#how-it-works\">How it works</a><span>Request an assessment</span></nav>",
+      "css": ".ds-nav { display: flex; flex-wrap: wrap; gap: 1.5rem; color: var(--text-primary, #f6f8fb); font: 500 0.9375rem/1.5 Roboto, sans-serif; } .ds-nav a { color: inherit; text-underline-offset: 0.25em; } .ds-nav a:focus-visible { outline: 3px solid var(--sentinel-steel, #acbed1); outline-offset: 3px; }"
+    },
+    {
+      "name": "Industry card",
+      "kind": "card",
+      "refersTo": "industry-card",
+      "description": "Informational industry target; source desktop padding is responsive.",
+      "html": "<article class=\"ds-industry\"><span class=\"ds-number\">01</span><h3>Supermarkets and retail</h3><p>Identify configured events related to product concealment, cash-to-pocket activity, cashier monitoring and people flow, then present them for review with visual context.</p></article>",
+      "css": ".ds-industry { padding: 24px; border: 1px solid #284254; border-radius: var(--radius-compact, 14px); background: #091623; color: var(--text-primary, #f6f8fb); font: 400 1rem/1.5 Roboto, sans-serif; transition: border-color 200ms, background-color 200ms; } .ds-number { display: block; color: var(--sentinel-steel, #acbed1); font-variant-numeric: tabular-nums; margin-bottom: 16px; } .ds-industry h3 { font-size: clamp(1.125rem, 1.35vw, 1.5rem); line-height: 1.25; margin: 20px 0 16px; letter-spacing: -0.02em; } .ds-industry p { margin: 0; color: var(--sentinel-steel, #acbed1); line-height: 1.55; } @media (min-width: 1280px) { .ds-industry { padding: clamp(16px, calc(min(100vw, 1920px) * 0.012), 24px); } } @media (hover: hover) and (pointer: fine) { .ds-industry:hover { border-color: #74b4d1; background: #0d1d2c; } } @media (prefers-reduced-motion: reduce) { .ds-industry { transition: none; } }"
+    },
+    {
+      "name": "FAQ disclosure",
+      "kind": "custom",
+      "description": "Native details/summary appearance and static interaction; production adds pointer-height animation.",
+      "html": "<details class=\"ds-faq\"><summary>Do I need to buy new cameras?<span class=\"ds-plus\" aria-hidden=\"true\"></span></summary><div class=\"ds-answer\"><p>Not necessarily. Sentinel can work with compatible existing camera systems. The site assessment confirms compatibility and identifies any changes required before deployment.</p></div></details>",
+      "css": ".ds-faq { color: var(--text-primary, #f6f8fb); font: 400 1rem/1.5 Roboto, sans-serif; border-top: 1px solid var(--hairline, #263447); border-bottom: 1px solid var(--hairline, #263447); overflow: clip; } .ds-faq summary { box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 80px; padding: 22px 4px; font-weight: 700; cursor: pointer; list-style: none; touch-action: manipulation; } .ds-faq summary::-webkit-details-marker { display: none; } .ds-faq summary:focus-visible { outline: 3px solid var(--sentinel-steel, #acbed1); outline-offset: -4px; } .ds-plus { position: relative; flex: 0 0 32px; height: 32px; border: 1px solid var(--hairline-strong, rgb(172 190 209 / 42%)); border-radius: 50%; } .ds-plus::before, .ds-plus::after { content: \"\"; position: absolute; width: 12px; height: 1px; background: var(--sentinel-steel, #acbed1); top: 15px; left: 9px; transition: transform 200ms; } .ds-plus::after { transform: rotate(90deg); } .ds-faq[open] .ds-plus::after { transform: rotate(0); } .ds-answer { color: var(--sentinel-steel, #acbed1); padding: 0 48px 24px 4px; } .ds-answer p { margin: 0; line-height: 1.65; } @media (max-width: 720px) { .ds-faq summary { min-height: 88px; gap: 16px; } .ds-answer { padding-right: 4px; } } @media (hover: hover) and (pointer: fine) { .ds-faq summary:hover { color: #8dd4ee; } } @media (prefers-reduced-motion: reduce) { .ds-plus::before, .ds-plus::after { transition: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Controlled Precision",
+    "overview": "Sentinel uses dark photographic fields, clear white hierarchy, Roboto and restrained steel outlines to explain operational intelligence with composure. Generous commercial layouts let decision-makers understand the offer; illustrative cyan details show processing and review without implying live operational evidence.\n\nThe accepted landing is the baseline for extensions. Preserve supplied logo proportions, assets and copy. [PRODUCT](PRODUCT.md) owns product truth and unresolved commercial actions; [surface briefs](.impeccable/surfaces/src-app-page-tsx.md) own page strategy. This document records reusable visual decisions, not dashboard recipes.",
+    "keyCharacteristics": [
+      "Dark navy scenes and legible photographic overlays.",
+      "Large balanced headings and measured body copy.",
+      "Bounded reference geometry with responsive reading order.",
+      "Restrained outlines and local cyan illustration detail.",
+      "Complete content with reduced motion or without JavaScript."
+    ],
+    "rules": [],
+    "dos": [
+      "Do preserve Roboto, supplied logo geometry, source assets and approved copy.",
+      "Do retain the centered reference frame, bounded capabilities exception and viewport-height hero.",
+      "Do keep keyboard focus visible and content complete with reduced motion or without JavaScript.",
+      "Do use cyan as local illustrative detail and keep deployment caveats readable."
+    ],
+    "donts": [
+      "Don't introduce dashboard recipes or semantic alert colours as landing requirements.",
+      "Don't activate unavailable actions or invent destinations, legal terms or product claims.",
+      "Don't hide content behind motion or turn illustrative stage labels into controls.",
+      "Don't replace the accepted visual direction during a focused extension or correction."
+    ]
+  }
+}

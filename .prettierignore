@@ -3,9 +3,4 @@ node_modules/
 package-lock.json
 next-env.d.ts
 .codex/
-.impeccable/
 references/
-AGENTS.md
-AGENTS/INVESTIGATIONS.md
-AGENTS/FRONTEND_CREATION.md
-AGENTS/PLANS.md
