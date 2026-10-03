@@ -109,6 +109,10 @@ test("demo plays, pauses in place, resumes offscreen and supports direct step se
   const player = page.locator("[data-step]");
   await page.getByRole("button", { name: "Play demo", exact: true }).click();
   await expect(player).toHaveAttribute("data-step", "0");
+  // Sample the visible timeline after fragment/control scrolling settles.
+  const progress = player.locator('[class*="progress"]');
+  await progress.scrollIntoViewIfNeeded();
+  await expect(progress).toBeInViewport();
   await expect
     .poll(() => sample(player).then((s) => s.time))
     .toBeGreaterThan(50);

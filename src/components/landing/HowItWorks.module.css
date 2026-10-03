@@ -24,7 +24,7 @@
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-group);
   align-items: center;
-  max-width: 1600px;
+  max-width: var(--content-max-width);
   margin-inline: auto;
 }
 .copy {
@@ -132,7 +132,8 @@
 
 @media (min-width: 1280px) {
   .section {
-    padding-block: clamp(74px, 4.3vw, 100px) clamp(100px, 6vw, 140px);
+    padding-block: clamp(74px, calc(var(--reference-width) * 0.043), 100px)
+      clamp(100px, calc(var(--reference-width) * 0.06), 140px);
   }
   .layout {
     grid-template-columns: minmax(0, 40%) minmax(0, 56%);

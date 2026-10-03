@@ -1,66 +1,21 @@
-import { chromium, expect, test } from "@playwright/test";
-import { mkdirSync, writeFileSync } from "node:fs";
-import path from "node:path";
+import { expect, test } from "@playwright/test";
+import { writeFileSync } from "node:fs";
+import { launchZoomContext, setBrowserZoom } from "./browser-zoom";
+import { expectDesktopGeometry, readyForLayout } from "./layout-geometry";
+import { expectFirstScreen } from "./hero-geometry";
 
 test("200% browser zoom preserves reflow and keyboard navigation", async ({
   baseURL,
 }, testInfo) => {
-  // The extension exists only in this isolated test profile outside the repository.
-  // Chrome's Tabs API changes real browser zoom, unlike CSS zoom or pinch scaling.
-  const extension = testInfo.outputPath("zoom-extension");
-  mkdirSync(extension, { recursive: true });
-  writeFileSync(
-    path.join(extension, "manifest.json"),
-    JSON.stringify({
-      manifest_version: 3,
-      name: "Sentinel isolated zoom check",
-      version: "1.0.0",
-      background: { service_worker: "background.js" },
-    }),
-  );
-  writeFileSync(
-    path.join(extension, "background.js"),
-    "chrome.runtime.onInstalled.addListener(() => {});",
-  );
-  const context = await chromium.launchPersistentContext(
-    testInfo.outputPath("browser-profile"),
-    {
-      channel: "chromium",
-      viewport: { width: 1440, height: 900 },
-      args: [
-        `--disable-extensions-except=${extension}`,
-        `--load-extension=${extension}`,
-      ],
-    },
-  );
+  const context = await launchZoomContext(testInfo, 1440);
   try {
     const page = context.pages()[0];
     await page.goto(baseURL!);
-    const worker =
-      context.serviceWorkers()[0] ||
-      (await context.waitForEvent("serviceworker"));
-    const zoom = await worker.evaluate(async () => {
-      const tabs = (
-        globalThis as typeof globalThis & {
-          chrome: {
-            tabs: {
-              query: (query: {
-                active: boolean;
-                currentWindow: boolean;
-              }) => Promise<{ id: number }[]>;
-              setZoom: (id: number, zoom: number) => Promise<void>;
-              getZoom: (id: number) => Promise<number>;
-            };
-          };
-        }
-      ).chrome.tabs;
-      const [tab] = await tabs.query({ active: true, currentWindow: true });
-      await tabs.setZoom(tab.id, 2);
-      return tabs.getZoom(tab.id);
-    });
+    const zoom = await setBrowserZoom(context, 2);
     expect(zoom).toBe(2);
     await expect.poll(() => page.evaluate(() => innerWidth)).toBe(720);
     await page.evaluate(() => document.fonts.ready);
+    await expectFirstScreen(page);
     await expect(
       page.getByRole("heading", {
         level: 1,
@@ -151,3 +106,70 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
     await context.close();
   }
 });
+
+for (const width of [1440, 1920]) {
+  for (const factor of [0.8, 0.67, 0.5, 0.25]) {
+    test(`${factor * 100}% browser zoom keeps the ${width}px composition bounded`, async ({
+      baseURL,
+    }, testInfo) => {
+      test.setTimeout(90_000);
+      const context = await launchZoomContext(testInfo, width);
+      try {
+        const page = context.pages()[0];
+        await page.emulateMedia({ reducedMotion: "reduce" });
+        await page.goto(baseURL!, { waitUntil: "domcontentloaded" });
+        const initial = await page.evaluate(() => ({
+          width: innerWidth,
+          pixelRatio: devicePixelRatio,
+        }));
+        expect(initial.width).toBe(width);
+        const applied = await setBrowserZoom(context, factor);
+        expect(applied).toBeCloseTo(factor, 5);
+        await expect
+          .poll(async () =>
+            Math.abs((await page.evaluate(() => innerWidth)) - width / factor),
+          )
+          .toBeLessThanOrEqual(1);
+        expect(await page.evaluate(() => devicePixelRatio)).toBeCloseTo(
+          initial.pixelRatio * factor,
+          5,
+        );
+        await readyForLayout(page);
+        const geometry = await expectDesktopGeometry(page);
+        await testInfo.attach("zoom-geometry", {
+          body: JSON.stringify(
+            { initial, requested: factor, applied, geometry },
+            null,
+            2,
+          ),
+          contentType: "application/json",
+        });
+        const session = await context.newCDPSession(page);
+        for (const selector of [
+          "section[aria-labelledby='hero-heading']",
+          "#capabilities",
+          "#product-demo",
+          "#plans",
+          "#faq",
+          "footer",
+        ]) {
+          await page
+            .locator(selector)
+            .evaluate((element) =>
+              element.scrollIntoView({ block: "start", behavior: "instant" }),
+            );
+          const { data } = await session.send("Page.captureScreenshot", {
+            format: "png",
+            captureBeyondViewport: false,
+          });
+          writeFileSync(
+            testInfo.outputPath(`${selector.replace(/[^a-z-]/gi, "")}.png`),
+            Buffer.from(data, "base64"),
+          );
+        }
+      } finally {
+        await context.close();
+      }
+    });
+  }
+}

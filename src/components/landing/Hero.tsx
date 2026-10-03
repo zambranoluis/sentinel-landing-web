@@ -65,7 +65,7 @@ export function Hero() {
             alt=""
             fill
             preload
-            sizes="100vw"
+            sizes="(max-aspect-ratio: 1672/941) 178vh, 100vw"
             className={styles.image}
           />
           <DetectionArtwork />

@@ -18,6 +18,8 @@ The user-approved plan selects Next.js App Router, React, strict TypeScript, npm
 
 `content.ts` holds repeated approved section content. FAQ uses native details/summary for its no-JavaScript path; pointer animation is cancellable WAAPI, keyboard activation is immediate, and reduced-motion changes finish active motion. Deployment uses a bounded one-time entry sequence with visible static defaults. Demo playback advances on the real CSS animation completion event, pauses offscreen/when the document is hidden and preserves the visitor's pause. Reduced motion switches to manual step controls; no-JavaScript rendering shows the static review state with disabled actions. Report export creates only a local, explicitly synthetic text file, with no request or backend effect.
 
+`NavbarFrame.tsx` is a narrow client boundary around server-rendered navigation children. Its layout effect publishes the header's border-box height as `--navbar-height` before the mounted frame paints, then a border-box `ResizeObserver` updates it on size changes. Cleanup disconnects the observer and removes the inline measurement. Global CSS supplies the 81px fallback; the hero minimum and disclosure maximum consume the shared measurement without moving the navbar out of document flow.
+
 The supplied plan explicitly approves these exact dependencies; package.json and package-lock.json are executable authorities:
 
 | Purpose               | Approved versions                                                                                    |

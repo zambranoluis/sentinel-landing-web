@@ -35,6 +35,11 @@
   --motion-microinteraction: 200ms;
   --motion-surface: 200ms;
   --page-gutter: clamp(24px, 6vw, 40px);
+  --navbar-height: 81px;
+  --content-max-width: 1536px;
+  --reference-max-width: 1920px;
+  --reference-width: min(100vw, var(--reference-max-width));
+  --reference-offset: max(0px, calc((100vw - var(--reference-max-width)) / 2));
 }
 
 * {
@@ -97,7 +102,7 @@ body {
 
 @media (min-width: 1280px) {
   :root {
-    --page-gutter: 10vw;
+    --page-gutter: max(10vw, calc((100vw - var(--content-max-width)) / 2));
     --font-title: clamp(2.4rem, 4.96vw, 4.92rem);
     --font-panel: 26px;
     --font-navigation: 0.8rem;

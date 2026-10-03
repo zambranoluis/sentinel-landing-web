@@ -1,6 +1,8 @@
 .hero {
   display: flex;
   flex-direction: column;
+  min-height: calc(100vh - var(--navbar-height));
+  min-height: calc(100dvh - var(--navbar-height));
   position: relative;
   isolation: isolate;
   background: var(--canvas);
@@ -8,6 +10,7 @@
 
 .content {
   order: -1;
+  flex-shrink: 0;
   padding: 3.5rem var(--page-gutter) 2.5rem;
 }
 
@@ -33,9 +36,12 @@
 
 .scene {
   margin: 0;
+  display: flex;
+  flex: 1 0 auto;
 }
 .artwork {
   position: relative;
+  width: 100%;
   aspect-ratio: 1672 / 941;
 }
 .image {
@@ -50,9 +56,6 @@
 }
 
 @media (min-width: 721px) {
-  .hero {
-    min-height: clamp(640px, 47.3vw, 905px);
-  }
   .scene {
     position: absolute;
     inset: 0;
@@ -77,10 +80,11 @@
   .content {
     order: initial;
     width: 57%;
-    padding: clamp(74px, 6.5vw, 125px) 0 110px var(--page-gutter);
+    padding: clamp(74px, calc(var(--reference-width) * 0.065), 125px) 0 110px
+      var(--page-gutter);
   }
   .title {
-    font-size: clamp(2.75rem, 4vw, 4.92rem);
+    font-size: clamp(2.75rem, calc(var(--reference-width) * 0.04), 4.92rem);
     max-width: 13ch;
   }
   .description {
@@ -91,6 +95,19 @@
 
 @media (min-width: 1280px) {
   .content {
-    width: 45%;
+    width: calc(var(--reference-width) * 0.45);
+    margin-left: var(--reference-offset);
+    padding-left: calc(var(--reference-width) * 0.1);
+  }
+  .artwork::after {
+    background: linear-gradient(
+      90deg,
+      rgb(5 11 22 / 95%) var(--reference-offset),
+      rgb(5 11 22 / 82%)
+        calc(var(--reference-offset) + var(--reference-width) * 0.31),
+      rgb(5 11 22 / 35%)
+        calc(var(--reference-offset) + var(--reference-width) * 0.52),
+      transparent calc(var(--reference-offset) + var(--reference-width) * 0.76)
+    );
   }
 }

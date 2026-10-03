@@ -16,7 +16,7 @@
   object-position: center;
 }
 .content {
-  padding: clamp(32px, 4vw, 80px);
+  padding: clamp(32px, calc(var(--reference-width) * 0.04), 80px);
 }
 .content h2 {
   max-width: 12ch;

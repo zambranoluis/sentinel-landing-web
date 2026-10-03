@@ -1,6 +1,7 @@
 import { AssessmentAction } from "./AssessmentAction";
 import { Brand } from "./Brand";
 import { MobileNavigation } from "./MobileNavigation";
+import { NavbarFrame } from "./NavbarFrame";
 import { NavigationLabel } from "./NavigationLabel";
 import { primaryNavigation } from "./navigation";
 import styles from "./Navbar.module.css";
@@ -21,7 +22,7 @@ function Navigation({ label }: { label: string }) {
 
 export function Navbar() {
   return (
-    <header className={styles.header} id="top">
+    <NavbarFrame>
       <div className={styles.row}>
         <Brand />
         <div className={styles.desktop}>
@@ -33,6 +34,6 @@ export function Navbar() {
           <AssessmentAction />
         </MobileNavigation>
       </div>
-    </header>
+    </NavbarFrame>
   );
 }

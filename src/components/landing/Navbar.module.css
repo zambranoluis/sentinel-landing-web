@@ -103,7 +103,8 @@
   right: 0;
   background: var(--canvas);
   border-bottom: 1px solid var(--hairline-strong);
-  max-height: calc(100dvh - 80px);
+  max-height: calc(100vh - var(--navbar-height));
+  max-height: calc(100dvh - var(--navbar-height));
   overflow-y: auto;
   opacity: 0;
   transform: translateY(-8px);
@@ -139,15 +140,16 @@
   }
   .desktop {
     display: flex;
+    flex-wrap: wrap;
     flex: 1;
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
-    margin-left: clamp(1rem, 5vw, 7rem);
+    margin-left: clamp(1rem, calc(var(--reference-width) * 0.05), 7rem);
   }
   .links {
     display: flex;
-    gap: clamp(0.75rem, 1.1vw, 1.5rem);
+    gap: clamp(0.75rem, calc(var(--reference-width) * 0.011), 1.5rem);
     font-size: 0.9375rem;
     white-space: nowrap;
   }
