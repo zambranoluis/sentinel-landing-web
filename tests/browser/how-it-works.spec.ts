@@ -710,6 +710,16 @@ test("enlarged workflow text stays inside controls at mobile, tablet and desktop
         const box = row.getBoundingClientRect();
         return {
           label: row.textContent,
+          dimensions: [
+            row.clientWidth,
+            row.scrollWidth,
+            row.clientHeight,
+            row.scrollHeight,
+            control.clientWidth,
+            control.scrollWidth,
+            control.clientHeight,
+            control.scrollHeight,
+          ],
           fits:
             row.scrollWidth <= row.clientWidth &&
             row.scrollHeight <= row.clientHeight &&

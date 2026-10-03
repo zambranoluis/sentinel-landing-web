@@ -107,16 +107,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: clamp(2px, calc(16px - 0.5rem), 8px);
   width: 100%;
   height: 100%;
-  padding: 0.75rem;
+  padding: clamp(4px, calc(24px - 0.75rem), 12px);
   border: 0;
   border-radius: inherit;
   background: transparent;
   color: inherit;
   font: inherit;
   text-align: center;
+}
+.stepControl > span:last-child {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 button.stepControl {
   cursor: pointer;
@@ -210,7 +214,7 @@ button.stepControl:active {
 .icon {
   display: grid;
   place-items: center;
-  width: 44%;
+  width: clamp(20%, calc(44% - 2rem + 32px), 44%);
   aspect-ratio: 1;
   border: 2px solid #05ddf1;
   border-radius: 50%;
