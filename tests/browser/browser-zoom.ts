@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 export async function launchZoomContext(testInfo: TestInfo, width: number) {
-  // The extension and profile exist only in external, isolated test output.
+  // The extension and profile exist only in isolated /playwright test output.
   // Chrome's Tabs API changes real browser zoom, unlike CSS zoom or pinch scaling.
   const extension = testInfo.outputPath("zoom-extension");
   mkdirSync(extension, { recursive: true });

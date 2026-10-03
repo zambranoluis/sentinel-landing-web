@@ -11,6 +11,7 @@ export default defineConfig([
     "next-env.d.ts",
     "references/**",
     ".codex/**",
+    "playwright/**",
     ".impeccable/**",
   ]),
 ]);

@@ -1,5 +1,7 @@
 # Historical evidence and recovery
 
+Historical evidence notice (2026-10-02): The former raw evidence in `C:\Users\MrMonka\AppData\Local\Temp\sentinel-landing-web-qa` was requested for deletion without migration, but automatic approval review blocked cleanup. The directory remains present; old paths below are historical references, not current verification. Dated conclusions and archived snapshots are preserved. New generated test output belongs in repository-local `/playwright`.
+
 Reconciled 2026-10-02. This index distinguishes authentic recovered text, surviving reports and unavailable evidence. It is historical context, not an instruction entry point or a requirement to repeat old host/product runs. Current project decisions are understandable from README, PRODUCT, DESIGN and CODE.
 
 ## Authentic recovered records

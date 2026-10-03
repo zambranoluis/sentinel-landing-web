@@ -1,5 +1,7 @@
 # Demo loop
 
+Historical evidence notice (2026-10-02): The former raw evidence in `C:\Users\MrMonka\AppData\Local\Temp\sentinel-landing-web-qa` was requested for deletion without migration, but automatic approval review blocked cleanup. The directory remains present; old paths below are historical references, not current verification. Dated conclusions and archived snapshots are preserved. New generated test output belongs in repository-local `/playwright`.
+
 ## Current state
 
 Implemented and verified within the supplied plan. All 171 unique browser cases passed across the full run and targeted reruns; the final stage-indicator assertions passed in all three engines. Production build, lint, types, format, units and audit pass. Aggregate `check` still fails only on eight documentation links verified broken before this work. Task-owned services and capture helpers are stopped; port 3000 retains its original listener. Changes remain uncommitted.

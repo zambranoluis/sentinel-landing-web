@@ -1,5 +1,7 @@
 # Fill the first screen with navigation and hero
 
+Historical evidence notice (2026-10-02): The former raw evidence in `C:\Users\MrMonka\AppData\Local\Temp\sentinel-landing-web-qa` was requested for deletion without migration, but automatic approval review blocked cleanup. The directory remains present; old paths below are historical references, not current verification. Dated conclusions and archived snapshots are preserved. New generated test output belongs in repository-local `/playwright`.
+
 ## Current state
 
 Implemented and locally verified under the user's supplied plan. Navbar and hero fill at least the first viewport at every breakpoint, with readable scrolling when content needs more height. All 162 discovered browser cases have passed across the broad run and focused reruns. Existing uncommitted width/zoom work and the original port 3000 process are preserved. No implementation or required local verification remains.
