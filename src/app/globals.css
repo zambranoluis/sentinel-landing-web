@@ -65,6 +65,12 @@ body {
   line-height: 1.5;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html[data-motion-startup="pending"] [data-motion] {
+    opacity: 0;
+  }
+}
+
 ::selection {
   background: var(--sentinel-navy);
   color: var(--text-primary);
