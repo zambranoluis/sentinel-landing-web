@@ -1,4 +1,6 @@
 .footer {
+  /* Decorative travel must not extend the document's native scroll range. */
+  overflow: clip;
   padding: var(--space-section) var(--page-gutter) 2rem;
   background: #050706;
   color: var(--text-secondary);

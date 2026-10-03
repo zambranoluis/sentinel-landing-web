@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { prepareMotion, ready, frames } from "./landing-motion-helpers";
 
 const sections = ["capabilities", "product-demo", "deployment", "plans", "faq"];
 async function noOverflow(page: Page) {
@@ -15,6 +16,9 @@ test("complete supplied content, imagery and responsive section layouts", async 
   page,
 }, testInfo) => {
   test.setTimeout(Math.max(testInfo.timeout, 180_000));
+  // This sweep checks settled geometry and authored content. Native motion is
+  // exercised separately in the recorded full downward/upward passes.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("response", (response) => {
@@ -100,6 +104,17 @@ test("FAQ supports keys, pointer reversal, reduced motion and open-state accessi
   await summary.press("Space");
   await expect(details).not.toHaveAttribute("open");
   const closedHeight = (await details.boundingBox())!.height;
+  // Capture the first real pointer effect at creation, before host round trips
+  // can consume its 240ms duration. Subsequent reversal runs naturally.
+  await details.evaluate((element) => {
+    const animate = element.animate;
+    element.animate = function (keyframes, options) {
+      const animation = animate.call(this, keyframes, options);
+      animation.pause();
+      Reflect.deleteProperty(this, "animate");
+      return animation;
+    };
+  });
   await summary.click();
   const middle = await details.evaluate((element) => {
     const animation = element.getAnimations()[0];
@@ -132,12 +147,13 @@ test("FAQ supports keys, pointer reversal, reduced motion and open-state accessi
   expect(scan.violations).toEqual([]);
 });
 
-test("deployment entrance has intermediate motion, finishes on preference change and does not replay", async ({
+test("deployment entrance finishes on preference change and replays after exit", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1440, height: 1000 });
+  await prepareMotion(page);
   await page.goto("/");
-  const section = page.locator("#deployment");
+  await ready(page);
+  const section = page.locator("#deployment ol");
   await section.scrollIntoViewIfNeeded();
   await expect
     .poll(() =>
@@ -146,15 +162,21 @@ test("deployment entrance has intermediate motion, finishes on preference change
       ),
     )
     .toBe(3);
-  const offsets = await section.evaluate((element) =>
+  await section.evaluate((element) =>
     element.getAnimations({ subtree: true }).map((animation) => {
       animation.pause();
-      animation.currentTime = 100;
-      const target = (animation.effect as KeyframeEffect).target!;
-      return new DOMMatrixReadOnly(getComputedStyle(target).transform).m42;
+      animation.currentTime = (animation.effect!.getTiming().delay ?? 0) + 100;
     }),
   );
-  expect(offsets.some((offset) => offset > 0 && offset < 20)).toBe(true);
+  await frames(page);
+  const offsets = await section
+    .locator("li")
+    .evaluateAll((items) =>
+      items.map((item) =>
+        parseFloat(getComputedStyle(item).translate.split(" ")[1]),
+      ),
+    );
+  expect(offsets.some((offset) => offset > 0 && offset < 48)).toBe(true);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect
     .poll(() =>
@@ -166,11 +188,13 @@ test("deployment entrance has intermediate motion, finishes on preference change
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await section.scrollIntoViewIfNeeded();
-  expect(
-    await section.evaluate(
-      (element) => element.getAnimations({ subtree: true }).length,
-    ),
-  ).toBe(0);
+  await expect
+    .poll(() =>
+      section.evaluate(
+        (element) => element.getAnimations({ subtree: true }).length,
+      ),
+    )
+    .toBe(3);
 });
 
 test("new navigation reaches real targets and retains mobile keyboard focus", async ({

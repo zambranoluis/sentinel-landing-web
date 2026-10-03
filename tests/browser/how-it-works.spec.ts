@@ -8,6 +8,8 @@ const labels = ["Observe.", "Interpret.", "Flag.", "Review.", "Respond."];
 test("workflow composition, assets and accessibility across responsive boundaries", async ({
   page,
 }, testInfo) => {
+  // Nine responsive navigations, captures and axe share one serial test.
+  test.setTimeout(90_000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   for (const width of [320, 390, 720, 721, 834, 1279, 1280, 1440, 1910]) {
@@ -179,14 +181,16 @@ test("mobile and footer links reach the section with keyboard focus", async ({
 
 test("workflow remains readable without JavaScript and with enlarged text", async ({
   browser,
+  baseURL,
 }) => {
   const context = await browser.newContext({
+    baseURL,
     javaScriptEnabled: false,
     viewport: { width: 320, height: 900 },
     reducedMotion: "reduce",
   });
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:3187/#how-it-works");
+  await page.goto("/#how-it-works");
   await page.evaluate(() => {
     document.documentElement.style.fontSize = "200%";
   });

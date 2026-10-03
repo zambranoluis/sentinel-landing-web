@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { deployment } from "./content";
-import { DeploymentMotion } from "./DeploymentMotion";
 import common from "./Sections.module.css";
 import styles from "./Deployment.module.css";
 
@@ -11,19 +10,20 @@ export function Deployment() {
       tabIndex={-1}
       aria-labelledby="deployment-title"
       className={common.section}
+      data-motion-group
     >
-      <h2 id="deployment-title" className={common.heading}>
+      <h2 id="deployment-title" className={common.heading} data-motion="intro">
         Built around your operation
       </h2>
-      <p className={common.lead}>
+      <p className={common.lead} data-motion="intro">
         Sentinel starts with a site assessment to determine compatibility,
         priority areas and deployment requirements. From there, the system is
         installed, configured and tuned to the operational environment.
       </p>
-      <DeploymentMotion>
-        <ol className={styles.steps}>
+      <div>
+        <ol className={styles.steps} data-motion-group>
           {deployment.map((item, index) => (
-            <li key={item.title}>
+            <li key={item.title} data-motion="content">
               <Image
                 src={`/images/deployment-${["assessment", "installation", "review"][index]}.webp`}
                 width={1672}
@@ -40,7 +40,7 @@ export function Deployment() {
             </li>
           ))}
         </ol>
-      </DeploymentMotion>
+      </div>
     </section>
   );
 }

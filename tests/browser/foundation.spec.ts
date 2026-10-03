@@ -387,6 +387,9 @@ for (const viewport of [
   { name: "desktop", width: 1440, height: 900 },
 ]) {
   test(`public entry at ${viewport.name}`, async ({ page }, testInfo) => {
+    // Serial WebKit image preparation plus the full-page axe scan can exceed
+    // 30s on the supported Windows host; retain all assertions and scanning.
+    test.setTimeout(90_000);
     await page.setViewportSize(viewport);
     const response = await page.goto("/");
     expect(response?.status()).toBe(200);
@@ -479,10 +482,14 @@ for (const viewport of [
             .getByText(label, { exact: true }),
         ).toBeVisible();
     await noOverflow(page);
+    // Scan and capture complete settled content. WebKit's full-page capture
+    // resizes its surface; decorative observers must not animate that resize.
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await accessible(page);
     await page.screenshot({
       path: testInfo.outputPath(`${viewport.name}.png`),
       fullPage: true,
+      animations: "disabled",
     });
   });
 }
@@ -630,14 +637,16 @@ test("skip link focuses the main landmark", async ({ page }) => {
 
 test("static sections remain server-rendered without JavaScript", async ({
   browser,
+  baseURL,
 }) => {
   const context = await browser.newContext({
+    baseURL,
     javaScriptEnabled: false,
     viewport: { width: 1440, height: 900 },
   });
   const page = await context.newPage();
   try {
-    await page.goto("http://127.0.0.1:3187/");
+    await page.goto("/");
     await expect(page.getByRole("heading", { name: headline })).toBeVisible();
     await expect(
       page

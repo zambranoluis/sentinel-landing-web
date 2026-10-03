@@ -163,6 +163,8 @@ Capabilities pairs the mosaic with five industry cards; the demo pairs nonintera
 
 Footer uses brand plus four groups at desktop, brand above four groups on tablet and two groups per row on mobile. At 360px and below it stacks one group per row.
 
+Footer clips decorative travel at its outer bounds so preparation and playback never extend the document's native scroll range. Its interior spacing retains visible link focus outlines.
+
 ## Elevation & Depth
 
 Depth comes mainly from dark tonal fields, photographic overlays, borders and image composition. The illustrative demo panel alone has `0 24px 60px rgb(0 0 0 / 30%)` shadow. Cube glows remain supplied SVG illustration treatments; they are not a general card elevation system.
@@ -197,11 +199,19 @@ Industry cards are informational fragment targets, not buttons. Their padding is
 
 Three stages each last 3.6s, followed by a two-second final review hold before looping. Playback begins when visible; offscreen/hidden playback pauses in place, including the hold. Reduced motion and no JavaScript show the final review; returning to normal motion restarts at stage one. Stage indicators are noninteractive with `aria-current="step"`; automatic changes have no live announcements. No playback controls, stage selection, outcome messages, download action or report footer remain.
 
-### FAQ and deployment
+### FAQ
 
 Native FAQ details/summary starts closed and preserves no-JavaScript interaction. Pointer activation animates measured height for 240ms with cancellable/reversible state; keyboard activation is immediate. Reduced-motion changes finish active animation. The plus/minus indicator uses the existing 200ms transition.
 
-Deployment cards enter once from 20px offset and 0.65 opacity over 650ms with 100ms staggering. Content is already visible before entry. Reduced-motion changes finish active motion. Motion implementation and verification live in [CODE](AGENTS/CODE.md), not in these design tokens.
+### Landing entrances
+
+The hero sequences heading, description and assessment action over 750ms with 90ms spacing; navigation remains immediately available. Section introductions and content use 650ms entrances with 75ms spacing. Visible capability cards, deployment steps, benefits, plan panels and footer columns stagger in current visual order, with the total delay capped at 180ms. Workflow diagram, tilted mosaic, demo, FAQ group and closing CTA enter as coherent units without overlapping parent/child entrances.
+
+Entrances use 48px vertical travel (28px through 720px), opacity 0 → 1 and `cubic-bezier(0.16, 1, 0.3, 1)`. JavaScript prepares offscreen targets in their arrival pose before entry, preventing a visible offset jump. Entry begins within the central 84% of viewport height, accounting for the prepared translation. Targets rearm only after their layout fully leaves the viewport plus a 32px buffer. Downward entry comes from below; upward entry comes from above with reversed visual stagger order. Animate only currently entering items so tall mobile sections reveal progressively.
+
+As content departs into the outer 18% of the viewport on the outgoing edge, it fades out over 280ms and moves 32px in that direction (18px through 720px), with `cubic-bezier(0.4, 0, 1, 1)`. Visible entrances continue through reversal; an interrupted exit recovers from its current pose over 320ms without replaying the entrance. Only a full exit and reentry restarts staggered entry. Content stays settled in the reading area.
+
+Static/no-JavaScript defaults remain fully visible; prepared offscreen opacity is applied only by the mounted controller. Reduced motion skips decorative entrances and exits; preference changes, keyboard-visible focus and fragment targeting immediately settle affected content. Pointer focus preserves position through click completion. Hidden documents and responsive resizing settle motion. Native scrolling, existing transforms and action availability remain intact; cube, demo, FAQ and navigation interaction motion keep their separate owners. Implementation and verification live in [CODE](AGENTS/CODE.md).
 
 ## Do's and Don'ts
 

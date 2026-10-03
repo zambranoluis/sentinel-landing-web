@@ -51,6 +51,7 @@ export function DemoPlayer() {
     <div
       ref={root}
       className={styles.player}
+      data-motion="unit"
       data-step={step}
       data-phase={phase}
       data-playing={active}

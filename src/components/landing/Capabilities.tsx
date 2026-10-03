@@ -12,16 +12,20 @@ export function Capabilities() {
       aria-labelledby="capabilities-title"
       className={`${common.section} ${styles.section}`}
     >
-      <div className={styles.introduction}>
-        <h2 id="capabilities-title" className={common.heading}>
+      <div className={styles.introduction} data-motion-group>
+        <h2
+          id="capabilities-title"
+          className={common.heading}
+          data-motion="intro"
+        >
           Intelligence for real-world operations
         </h2>
-        <p className={common.lead}>
+        <p className={common.lead} data-motion="intro">
           Sentinel adapts detection models and rules to the operational context
           of each site, supporting security, loss prevention, workplace safety
           and operational visibility.
         </p>
-        <div className={styles.mosaic} aria-hidden="true">
+        <div className={styles.mosaic} aria-hidden="true" data-motion="unit">
           {["retail", "forecourt", "building", "warehouse"].map((scene) => (
             <div key={scene} className={styles.scene}>
               <Image
@@ -35,13 +39,14 @@ export function Capabilities() {
           ))}
         </div>
       </div>
-      <div className={styles.cards}>
+      <div className={styles.cards} data-motion-group>
         {capabilities.map((item, index) => (
           <article
             key={item.id}
             id={item.id}
             tabIndex={-1}
             className={styles.card}
+            data-motion="content"
           >
             <span className={styles.number}>
               {String(index + 1).padStart(2, "0")}

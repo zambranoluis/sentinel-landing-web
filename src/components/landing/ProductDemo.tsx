@@ -17,13 +17,13 @@ export function ProductDemo() {
         sizes="100vw"
         className={common.background}
       />
-      <div className={styles.introduction}>
-        <h2 id="demo-title" className={common.heading}>
+      <div className={styles.introduction} data-motion-group>
+        <h2 id="demo-title" className={common.heading} data-motion="intro">
           From event to
           <br />
           informed action
         </h2>
-        <p className={common.lead}>
+        <p className={common.lead} data-motion="intro">
           Sentinel monitors configured feeds, flags the event as it is detected
           and brings the available context together so your team can review it
           quickly.

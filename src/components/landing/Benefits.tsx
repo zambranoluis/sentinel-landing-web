@@ -9,6 +9,7 @@ export function Benefits() {
     <section
       aria-labelledby="benefits-title"
       className={`${common.section} ${styles.section}`}
+      data-motion-group
     >
       <Image
         src="/images/benefits.webp"
@@ -17,18 +18,18 @@ export function Benefits() {
         sizes="100vw"
         className={common.background}
       />
-      <h2 id="benefits-title" className={common.heading}>
+      <h2 id="benefits-title" className={common.heading} data-motion="intro">
         More clarity
         <br />
         More control
       </h2>
-      <p className={common.lead}>
+      <p className={common.lead} data-motion="intro">
         Improve visibility, direct attention to what matters and give your team
         more context to review and respond.
       </p>
-      <div className={styles.benefits}>
+      <div className={styles.benefits} data-motion-group>
         {benefits.map((item, index) => (
-          <article key={item.title}>
+          <article key={item.title} data-motion="content">
             <span className={common.icon}>
               <SectionIcon
                 name={["pulse", "document", "shield", "camera"][index]}

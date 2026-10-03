@@ -9,6 +9,7 @@ import { Benefits } from "@/components/landing/Benefits";
 import { Plans } from "@/components/landing/Plans";
 import { Faq } from "@/components/landing/Faq";
 import { FinalCta } from "@/components/landing/FinalCta";
+import { LandingMotion } from "@/components/landing/LandingMotion";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
         <FinalCta />
       </main>
       <Footer />
+      <LandingMotion />
     </>
   );
 }

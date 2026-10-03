@@ -71,15 +71,17 @@ export function Hero() {
           <DetectionArtwork />
         </div>
       </figure>
-      <div className={styles.content}>
-        <h1 id="hero-heading" className={styles.title}>
+      <div className={styles.content} data-motion-group>
+        <h1 id="hero-heading" className={styles.title} data-motion="hero">
           Operational intelligence for your camera systems
         </h1>
-        <p className={styles.description}>
+        <p className={styles.description} data-motion="hero">
           Sentinel detects relevant events and directs your team’s attention
           where it is needed most.
         </p>
-        <AssessmentAction />
+        <div data-motion="hero">
+          <AssessmentAction />
+        </div>
       </div>
     </section>
   );

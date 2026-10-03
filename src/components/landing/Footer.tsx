@@ -6,8 +6,8 @@ import styles from "./Footer.module.css";
 export function Footer() {
   return (
     <footer className={styles.footer}>
-      <div className={styles.columns}>
-        <div className={styles.brand}>
+      <div className={styles.columns} data-motion-group>
+        <div className={styles.brand} data-motion="content">
           <Brand />
           <p>
             Operational intelligence for camera infrastructure. Developed in
@@ -21,6 +21,7 @@ export function Footer() {
           <section
             key={group.label}
             aria-labelledby={`footer-${group.label.toLowerCase()}`}
+            data-motion="content"
           >
             <h2
               id={`footer-${group.label.toLowerCase()}`}
@@ -38,7 +39,7 @@ export function Footer() {
           </section>
         ))}
       </div>
-      <div className={styles.legal}>
+      <div className={styles.legal} data-motion="unit">
         <p>
           © 2026 CrimsonTide AI Limited. Sentinel supports detection and review;
           trained personnel remain responsible for decisions and response.

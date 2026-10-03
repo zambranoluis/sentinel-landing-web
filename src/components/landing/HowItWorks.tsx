@@ -47,18 +47,22 @@ export function HowItWorks() {
         className={styles.background}
       />
       <div className={styles.layout}>
-        <div className={styles.copy}>
-          <h2 id="how-it-works-title" className={styles.title}>
+        <div className={styles.copy} data-motion-group>
+          <h2
+            id="how-it-works-title"
+            className={styles.title}
+            data-motion="intro"
+          >
             <span>More visibility into what is happening</span>{" "}
             <span>More precision on where to act</span>
           </h2>
-          <p className={styles.description}>
+          <p className={styles.description} data-motion="intro">
             Sentinel helps turn large volumes of video into prioritised
             information. It monitors configured feeds, flags relevant events and
             presents the context people need to review, decide and respond.
           </p>
         </div>
-        <div className={styles.diagram}>
+        <div className={styles.diagram} data-motion="unit">
           <svg
             className={styles.connections}
             viewBox="0 0 820 690"

@@ -5,7 +5,7 @@ import { artifactRoot } from "./scripts/artifact-paths.mjs";
 const evidence = artifactRoot();
 // Workers inherit one evidence root instead of computing a new directory.
 process.env.SENTINEL_E2E_ARTIFACTS_ROOT = evidence;
-const port = 3187;
+const port = 3200;
 
 export default defineConfig({
   testDir: "./tests/browser",
@@ -40,7 +40,7 @@ export default defineConfig({
   webServer: {
     command: `npm run start -- --hostname 127.0.0.1 --port ${port}`,
     url: `http://127.0.0.1:${port}`,
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },
 });

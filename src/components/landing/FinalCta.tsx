@@ -9,7 +9,7 @@ export function FinalCta() {
       aria-labelledby="assessment-title"
       className={`${common.section} ${styles.section}`}
     >
-      <div className={styles.panel}>
+      <div className={styles.panel} data-motion="unit">
         <Image
           src="/images/assessment.webp"
           alt=""

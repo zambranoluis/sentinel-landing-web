@@ -40,19 +40,20 @@ export function Plans() {
       tabIndex={-1}
       aria-labelledby="plans-title"
       className={`${common.section} ${styles.section}`}
+      data-motion-group
     >
-      <h2 id="plans-title" className={common.heading}>
+      <h2 id="plans-title" className={common.heading} data-motion="intro">
         Assess first
         <br />
         Deploy with confidence
       </h2>
-      <p className={common.lead}>
+      <p className={common.lead} data-motion="intro">
         Sentinel starts with a site assessment. From that assessment, coverage
         is organised into packages with a fixed weekly rate and a defined scope
         based on the cameras, AI models and hardware required.
       </p>
-      <div className={styles.plans}>
-        <article className={styles.plan}>
+      <div className={styles.plans} data-motion-group>
+        <article className={styles.plan} data-motion="content">
           <header>
             <span className={common.icon}>
               <SectionIcon name="document" />
@@ -71,7 +72,10 @@ export function Plans() {
           <Features items={assessment} />
           <AssessmentAction />
         </article>
-        <article className={`${styles.plan} ${styles.package}`}>
+        <article
+          className={`${styles.plan} ${styles.package}`}
+          data-motion="content"
+        >
           <header>
             <span className={common.icon}>
               <SectionIcon name="layers" />
@@ -94,7 +98,7 @@ export function Plans() {
           </button>
         </article>
       </div>
-      <article className={styles.addons}>
+      <article className={styles.addons} data-motion="unit">
         <span className={common.icon}>
           <SectionIcon name="expand" />
         </span>

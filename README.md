@@ -12,9 +12,13 @@ npx playwright install chromium firefox webkit
 npm run dev
 ```
 
-Development defaults to `http://localhost:3000`. No environment variables, backend, account or credentials are required. On Linux install browsers with `npx playwright install --with-deps chromium firefox webkit`. Fonts require no external provider fetch during build.
+Development (`npm run dev`) and production (`npm run start`, after `npm run build`) default to port **3200**; use `http://127.0.0.1:3200`. No environment variables, backend, account or credentials are required. On Linux install browsers with `npx playwright install --with-deps chromium firefox webkit`. Fonts require no external provider fetch during build.
 
-For custom arguments in Windows PowerShell, use the native wrapper, for example `npm.cmd run dev -- --hostname 127.0.0.1 --port 3188`; the PowerShell wrapper previously stripped the argument separator. Inspect and reuse compatible existing services without stopping user-managed processes or silently changing ports. `next.config.ts` disables Next.js automatic agent-rule generation to preserve repository instruction files.
+The development script binds to `127.0.0.1` so Next.js accepts hot-reload requests from the browser-test origin. Override `--hostname` explicitly when another interface is needed.
+
+Before launching a server for any local agent work or browser tests, check port 3200 and confirm an existing listener belongs to this repository and serves the expected landing. Reuse a compatible development or production server and preserve user-managed processes. If an incompatible service occupies 3200, report the conflict instead of stopping it or silently selecting another port. An existing server on another port keeps its current port until explicitly restarted.
+
+For custom arguments in Windows PowerShell, use the native wrapper, for example `npm.cmd run dev -- --hostname 127.0.0.1 --port 3188`; the PowerShell wrapper previously stripped the argument separator. `next.config.ts` disables Next.js automatic agent-rule generation to preserve repository instruction files.
 
 ## Locations and boundaries
 
@@ -37,25 +41,25 @@ For custom arguments in Windows PowerShell, use the native wrapper, for example 
 
 ## Commands and verification
 
-| Command                                         | Scope / prerequisites                                                                                    |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                                   | Development server; installed dependencies                                                               |
-| `npm run build`                                 | Production compilation and route generation                                                              |
-| `npm run start`                                 | Serve an existing production build                                                                       |
-| `npm run lint`                                  | ESLint on source, tests and tooling                                                                      |
-| `npm run typecheck`                             | Generate Next.js declarations, then strict TypeScript; works before a first build                        |
-| `npm run format:check` / `npm run format`       | Check / format nonignored authored files, including the instruction chain and Impeccable Markdown/JSON   |
-| `npm run docs:links`                            | Local Markdown targets/anchors, including Impeccable briefs; no external URL fetch                       |
-| `npm run check`                                 | Aggregate lint, types, formatting and documentation checks                                               |
-| `npm run test:unit` / `npm run test:unit:watch` | Vitest navigation and artifact resolver contract tests / watch in Node                                   |
-| `npm run test:browser:list`                     | Discover production browser cases; creates a separate local run directory                                |
-| `npm run test:browser`                          | Existing production build, installed browsers, owned server on `127.0.0.1:3187`; output in `/playwright` |
-| `npm audit`                                     | Current dependency advisories; updates follow CODE's approval rule                                       |
-| `git diff --check`                              | Tracked whitespace; formatter also covers untracked authored files                                       |
+| Command                                         | Scope / prerequisites                                                                                           |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                                   | Development server on port 3200; installed dependencies                                                         |
+| `npm run build`                                 | Production compilation and route generation                                                                     |
+| `npm run start`                                 | Serve an existing production build on port 3200                                                                 |
+| `npm run lint`                                  | ESLint on source, tests and tooling                                                                             |
+| `npm run typecheck`                             | Generate Next.js declarations, then strict TypeScript; works before a first build                               |
+| `npm run format:check` / `npm run format`       | Check / format nonignored authored files, including the instruction chain and Impeccable Markdown/JSON          |
+| `npm run docs:links`                            | Local Markdown targets/anchors, including Impeccable briefs; no external URL fetch                              |
+| `npm run check`                                 | Aggregate lint, types, formatting and documentation checks                                                      |
+| `npm run test:unit` / `npm run test:unit:watch` | Vitest navigation and artifact resolver contract tests / watch in Node                                          |
+| `npm run test:browser:list`                     | Discover production browser cases; creates a separate local run directory                                       |
+| `npm run test:browser`                          | Installed browsers; reuse local server on `127.0.0.1:3200` or start a production build; output in `/playwright` |
+| `npm audit`                                     | Current dependency advisories; updates follow CODE's approval rule                                              |
+| `git diff --check`                              | Tracked whitespace; formatter also covers untracked authored files                                              |
 
 Choose checks by the [changed mechanism](AGENTS/CODE.md#verification). Documentation work needs link/format/source and instruction-chain checks; checker edits also need lint and affected positive/negative validation. A design extraction needs parsed artifacts and focused computed-style comparison. These do not automatically require a complete product browser suite. CI retains its configured full gates.
 
-Existing unit coverage checks unavailable destinations expose no URL and enabled internal targets exist. Browser coverage includes supplied copy/assets/Roboto, landmarks, disabled CTAs, disclosure keyboard/focus/rapid reversal, fragment focus, FAQ/no-JavaScript behaviour, cube pause/resume, demo looping/visibility/reduced motion, deployment entry, responsive boundaries, enlarged text, first-viewport hero and bounded desktop geometry. Three-engine tests run serially after historical parallel Firefox axe timeouts. Chromium-only isolated temporary extensions exercise actual browser zoom without accessing a user profile.
+Existing unit coverage checks unavailable destinations expose no URL and enabled internal targets exist. Browser coverage includes supplied copy/assets/Roboto, landmarks, disabled CTAs, disclosure keyboard/focus/rapid reversal, fragment focus, FAQ/no-JavaScript behaviour, cube pause/resume, demo looping/visibility/reduced motion, bidirectional landing entrances, exits and settlement, responsive boundaries, enlarged text, first-viewport hero and bounded desktop geometry. Three-engine tests run serially after historical parallel Firefox axe timeouts. Chromium-only isolated temporary extensions exercise actual browser zoom without accessing a user profile.
 
 Generated test evidence belongs in the ignored repository-local `/playwright` folder, including manual probes and saved diagnostics. The resolver recreates it as needed in a fresh checkout and defaults to `/playwright/runs/<unique-run-id>/`, anchored to the repository location rather than the shell working directory. Each run contains Playwright `results/` and `report/`; screenshots, traces, recordings, attachments and isolated zoom profiles use the existing output mechanisms. Separate default runs preserve earlier evidence because [Playwright clears its output directory at startup](https://playwright.dev/docs/api/class-testconfig#test-config-output-dir). Git, formatting, ESLint, TypeScript discovery and Markdown-link scanning exclude `/playwright`.
 
@@ -67,13 +71,15 @@ npm.cmd run test:browser -- --project=chromium --grep "public entry at desktop"
 Remove-Item Env:SENTINEL_E2E_ARTIFACTS_ROOT
 ```
 
-Run the example from the repository root. Omit the variable for automatic unique runs. To inspect a report, use `npx playwright show-report playwright/runs/<run-id>/report`. Tests refuse to reuse an existing service on their port. CI writes and uploads the checkout's `/playwright` collection. Generate only evidence required by the selected checks; this location does not require extra screenshots, recordings, manifests or analysis files.
+Run the example from the repository root. Omit the variable for automatic unique runs. To inspect a report, use `npx playwright show-report playwright/runs/<run-id>/report`. Playwright uses `http://127.0.0.1:3200` with `reuseExistingServer: !process.env.CI`: local tests reuse a compatible running server and leave it running afterward. When no server is available, tests start and clean up their own production server, requiring an existing `npm run build` output. Reused development servers exercise current source; reused production servers exercise their build, so rebuild when needed. Check the listener's identity before testing because Playwright's availability probe does not establish which project it serves. CI requires the port to be free and starts its own production server. CI writes and uploads the checkout's `/playwright` collection. Generate only evidence required by the selected checks; this location does not require extra screenshots, recordings, manifests or analysis files.
 
 Historical run results belong in the [reconciliation history](workspace/documentation-reconciliation/records/history.md), [hero viewport record](workspace/hero-viewport/plan.md) and [demo loop record](workspace/demo-loop/plan.md). These are dated reports, not current verification. The latest recorded demo work passed 171 unique browser cases across a broad run and targeted reruns, not a single uninterrupted clean run. Deletion without migration of their former raw evidence under the dedicated OS-temp `sentinel-landing-web-qa` directory was requested on 2026-10-02, but automatic approval review blocked deletion. That directory remains present pending cleanup; its old paths are historical references, not current verification. Dated reports and exact archived snapshots remain preserved. Formal accessibility conformance, real-device/field performance, authenticated/dashboard behaviour and remote CI are not established by those records. Product-owned integration gaps remain in PRODUCT.
 
 ## Agent host operations
 
 Task-entry discovery concerns the active host, permissions and capabilities relevant to the request. Cross-provider execution is needed only when expressly in scope; portability does not require ordinary work to run under four providers. Keep launchers, adapters, hooks and settings with their operational owner. This repository makes no host-setting changes and supplies no new adapter.
+
+For local browser work, follow the port-3200 server checks in [Runtime and setup](#runtime-and-setup) before starting a service. Share this project's compatible existing server, preserve the user's process after checks, and clean up only servers created by the current task. Report an incompatible occupied port without silently choosing a replacement.
 
 Official loading references, retrieved 2026-10-02:
 
