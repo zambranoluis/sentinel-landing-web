@@ -2,74 +2,63 @@
 
 import { useEffect, useReducer, useRef } from "react";
 
+type Phase = "hold" | "circles" | "connector" | "card";
 type State = {
   enhanced: boolean;
   stage: number;
-  held: number | null;
+  phase: Phase;
   hover: number | null;
   focus: number | null;
-  paused: boolean;
+  activation: number | null;
+  activationRevision: number;
   visible: boolean;
   hidden: boolean;
   reduced: boolean;
-  revision: number;
-  spatial: boolean;
 };
 type Action =
   | { type: "environment"; values: Partial<State> }
   | { type: "preview"; owner: "focus" | "hover"; index: number | null }
-  | { type: "hold"; index: number; spatial: boolean }
-  | { type: "playback" }
-  | { type: "advance" };
+  | { type: "activate"; index: number | null }
+  | { type: "complete"; phase: Phase; mobile?: boolean };
 
-function environmentRunning(state: State) {
+function isRunning(state: State) {
   return state.enhanced && state.visible && !state.hidden && !state.reduced;
-}
-
-function isAutomatic(state: State) {
-  return (
-    environmentRunning(state) &&
-    !state.paused &&
-    state.held === null &&
-    state.focus === null &&
-    state.hover === null
-  );
 }
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "environment":
-      return { ...state, ...action.values };
+      return {
+        ...state,
+        ...action.values,
+        // Preference changes settle motion at the current highlighted card.
+        ...(action.values.reduced ? { phase: "hold" as const } : {}),
+      };
     case "preview":
-      if (state[action.owner] === action.index) return state;
+      return state[action.owner] === action.index
+        ? state
+        : { ...state, [action.owner]: action.index };
+    case "activate":
       return {
         ...state,
-        [action.owner]: action.index,
-        spatial: action.owner === "hover" && state.focus === null,
+        activation: action.index,
+        activationRevision: state.activationRevision + 1,
       };
-    case "hold":
-      return {
-        ...state,
-        held: action.index,
-        paused: false,
-        revision: state.revision + 1,
-        spatial: action.spatial,
-      };
-    case "playback":
-      return state.held !== null || state.paused
-        ? {
-            ...state,
-            stage: state.held ?? state.stage,
-            held: null,
-            paused: false,
-            revision: state.revision + (state.held !== null ? 1 : 0),
-          }
-        : { ...state, paused: true };
-    case "advance":
-      // A timeout already queued when a preview/visibility event arrives must
-      // not advance the interrupted stage before effect cleanup runs.
-      if (!isAutomatic(state)) return state;
-      return { ...state, stage: (state.stage + 1) % 5, spatial: true };
+    case "complete":
+      if (state.phase !== action.phase || state.reduced) return state;
+      switch (state.phase) {
+        case "hold":
+          if (!isRunning(state)) return state;
+          return { ...state, phase: "circles" };
+        case "circles":
+          return action.mobile
+            ? { ...state, phase: "card", stage: (state.stage + 1) % 5 }
+            : { ...state, phase: "connector" };
+        case "connector":
+          return { ...state, phase: "card", stage: (state.stage + 1) % 5 };
+        case "card":
+          return { ...state, phase: "hold" };
+      }
   }
 }
 
@@ -78,21 +67,18 @@ export function useWorkflow() {
   const [state, dispatch] = useReducer(reducer, {
     enhanced: false,
     stage: 0,
-    held: null,
+    phase: "hold",
     hover: null,
     focus: null,
-    paused: false,
+    activation: null,
+    activationRevision: 0,
     visible: false,
     hidden: false,
     reduced: false,
-    revision: 0,
-    spatial: true,
   });
-  const remaining = useRef(2400);
-  const clockStage = useRef("");
-  const active = state.focus ?? state.hover ?? state.held ?? state.stage;
-  const running = environmentRunning(state);
-  const automatic = isAutomatic(state);
+  const remaining = useRef(1000);
+  const running = isRunning(state);
+  const feedback = state.focus ?? state.hover ?? state.activation;
 
   useEffect(() => {
     const preference = matchMedia("(prefers-reduced-motion: reduce)");
@@ -102,14 +88,10 @@ export function useWorkflow() {
         values: { enhanced: true, reduced: preference.matches },
       });
     const updateVisibility = () =>
-      dispatch({
-        type: "environment",
-        values: { hidden: document.hidden },
-      });
+      dispatch({ type: "environment", values: { hidden: document.hidden } });
     updatePreference();
     updateVisibility();
-    // Observe the rows individually: a tall mobile list can be partly visible
-    // even when its cube and the first row have left the viewport.
+    // Individual rows keep a partly visible mobile list playing.
     const visible = new Set<Element>();
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
@@ -131,15 +113,14 @@ export function useWorkflow() {
   }, []);
 
   useEffect(() => {
-    const key = `${state.stage}:${state.revision}`;
-    if (clockStage.current !== key) {
-      clockStage.current = key;
-      remaining.current = 2400;
+    if (state.phase !== "hold") {
+      remaining.current = 1000;
+      return;
     }
-    if (!automatic) return;
+    if (!running) return;
     const started = performance.now();
     const timer = setTimeout(
-      () => dispatch({ type: "advance" }),
+      () => dispatch({ type: "complete", phase: "hold" }),
       remaining.current,
     );
     return () => {
@@ -149,7 +130,16 @@ export function useWorkflow() {
         remaining.current - (performance.now() - started),
       );
     };
-  }, [automatic, state.stage, state.revision]);
+  }, [running, state.phase, state.stage]);
 
-  return { root, state, dispatch, active, automatic, running };
+  useEffect(() => {
+    if (state.activation === null) return;
+    const timer = setTimeout(
+      () => dispatch({ type: "activate", index: null }),
+      700,
+    );
+    return () => clearTimeout(timer);
+  }, [state.activation, state.activationRevision]);
+
+  return { root, state, dispatch, feedback, running };
 }

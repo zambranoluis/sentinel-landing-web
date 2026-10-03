@@ -1,41 +1,42 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import styles from "./HowItWorks.module.css";
 import { useWorkflow } from "./useWorkflow";
+import { useWorkflowMotion } from "./useWorkflowMotion";
 
 type Step = { name: string; position: string; path: string };
 const connectors = [
   {
-    path: "M410 180V265",
+    path: "M410 265V180",
     dots: [
       [410, 180],
       [410, 265],
     ],
   },
   {
-    path: "M200 335 294 355",
+    path: "M294 355 200 335",
     dots: [
       [200, 335],
       [294, 355],
     ],
   },
   {
-    path: "M620 335 526 355",
+    path: "M526 355 620 335",
     dots: [
       [620, 335],
       [526, 355],
     ],
   },
   {
-    path: "M290 514 335 462",
+    path: "M335 462 290 514",
     dots: [
       [290, 514],
       [335, 462],
     ],
   },
   {
-    path: "M530 514 483 462",
+    path: "M483 462 530 514",
     dots: [
       [530, 514],
       [483, 462],
@@ -50,124 +51,10 @@ export function Workflow({
   children: ReactNode;
   steps: readonly Step[];
 }) {
-  const { root, state, dispatch, active, automatic, running } = useWorkflow();
-  const effects = useRef<Animation[]>([]);
-  const railPose = useRef<number | null>(null);
-
-  useEffect(() => {
-    const element = root.current!;
-    const rail = element.querySelector<HTMLElement>("[data-rail-accent]")!;
-    const transform = getComputedStyle(rail).transform;
-    // A click can follow a hover while the rail is still travelling. Continue
-    // from its rendered pose, rather than restarting from the prior destination.
-    const previousPosition =
-      railPose.current ??
-      (transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42);
-    railPose.current = null;
-    const cancel = () => {
-      effects.current.forEach((animation) => animation.cancel());
-      effects.current = [];
-    };
-    cancel();
-    const row = element.querySelectorAll<HTMLElement>("li")[active];
-    const position = row.offsetTop + row.offsetHeight / 2 - 12;
-    rail.style.transform = `translateY(${position}px)`;
-    if (state.enhanced && !state.reduced && state.spatial) {
-      const animate = (target: Element, frames: Keyframe[], duration = 700) => {
-        effects.current.push(
-          target.animate(frames, {
-            duration,
-            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-            fill: "backwards",
-          }),
-        );
-      };
-      if (matchMedia("(max-width: 720px)").matches) {
-        animate(rail, [
-          { transform: `translateY(${previousPosition}px)`, opacity: 0.35 },
-          { transform: `translateY(${position}px)`, opacity: 1 },
-        ]);
-      } else {
-        const trace = element.querySelector(`[data-trace="${active}"]`)!;
-        animate(trace, [{ strokeDashoffset: "1" }, { strokeDashoffset: "0" }]);
-        element
-          .querySelectorAll(`[data-dot="${active}"]`)
-          .forEach((dot) =>
-            animate(dot, [
-              { transform: "scale(1)" },
-              { transform: "scale(1.65)", offset: 0.45 },
-              { transform: "scale(1)" },
-            ]),
-          );
-        element.querySelectorAll("[data-ring-accent]").forEach((ring, index) =>
-          animate(ring, [
-            { strokeDashoffset: `${-active * 0.2 + 0.08}`, opacity: 0 },
-            { opacity: 0.8, offset: 0.4 },
-            {
-              strokeDashoffset: `${-active * 0.2 - 0.08 - index * 0.015}`,
-              opacity: 0,
-            },
-          ]),
-        );
-      }
-      animate(row.querySelector(`.${styles.icon}`)!, [
-        { transform: "scale(1)" },
-        { transform: "scale(1.08)", offset: 0.45 },
-        { transform: "scale(1)" },
-      ]);
-    }
-    // Resize cancels transient geometry before measuring the new rail. The
-    // existing controls retain identity, selection and focus across breakpoints.
-    const resize = () => {
-      cancel();
-      const position = row.offsetTop + row.offsetHeight / 2 - 12;
-      rail.style.transform = `translateY(${position}px)`;
-    };
-    window.addEventListener("resize", resize);
-    let width = element.clientWidth;
-    let height = element.clientHeight;
-    const observer = new ResizeObserver(() => {
-      if (width === element.clientWidth && height === element.clientHeight)
-        return;
-      width = element.clientWidth;
-      height = element.clientHeight;
-      resize();
-    });
-    observer.observe(element);
-    return () => {
-      // React runs the old effect's cleanup before the new setup. Capture the
-      // animated pose here, before cancellation exposes the inline destination.
-      const transform = getComputedStyle(rail).transform;
-      railPose.current =
-        transform === "none" ? 0 : new DOMMatrixReadOnly(transform).m42;
-      cancel();
-      observer.disconnect();
-      window.removeEventListener("resize", resize);
-    };
-  }, [
-    active,
-    state.revision,
-    state.enhanced,
-    state.reduced,
-    state.spatial,
-    root,
-  ]);
-
-  useEffect(() => {
-    for (const animation of effects.current) {
-      if (animation.playState === "finished") continue;
-      if (running && !state.paused) animation.play();
-      else animation.pause();
-    }
-  }, [
-    active,
-    state.revision,
-    state.enhanced,
-    state.reduced,
-    state.spatial,
-    running,
-    state.paused,
-  ]);
+  const workflow = useWorkflow();
+  const { root, state, dispatch, feedback, running } = workflow;
+  useWorkflowMotion(workflow);
+  const destination = (state.stage + 1) % steps.length;
 
   return (
     <div
@@ -175,9 +62,19 @@ export function Workflow({
       className={styles.workflow}
       data-motion="unit"
       data-workflow=""
-      data-active-step={state.enhanced ? steps[active].position : undefined}
-      data-sequence-running={automatic}
-      data-immediate={!state.spatial}
+      data-active-step={
+        state.enhanced ? steps[state.stage].position : undefined
+      }
+      data-sequence-running={running}
+      data-phase={state.phase}
+      data-destination={steps[destination].position}
+      data-feedback-step={
+        feedback === null ? undefined : steps[feedback].position
+      }
+      data-activation-step={
+        state.activation === null ? undefined : steps[state.activation].position
+      }
+      data-immediate={state.reduced || state.focus !== null}
     >
       <div className={styles.diagram}>
         <svg
@@ -207,7 +104,16 @@ export function Workflow({
                 stroke="currentColor"
                 strokeWidth="3"
                 className={styles.trace}
-                data-active={state.enhanced && active === index}
+                data-active={state.enhanced && state.stage === index}
+              />
+              <path
+                data-feedback-trace={index}
+                d={connector.path}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                className={styles.feedbackTrace}
+                data-active={state.enhanced && feedback === index}
               />
               {connector.dots.map(([cx, cy]) => (
                 <circle
@@ -247,11 +153,20 @@ export function Workflow({
             data-rail-accent=""
             aria-hidden="true"
           />
+          <span
+            className={`${styles.railAccent} ${styles.feedbackRail}`}
+            data-feedback-rail=""
+            aria-hidden="true"
+          />
           <ol className={styles.steps} aria-label="How Sentinel works">
             {steps.map((step, index) => {
               const content = (
                 <>
-                  <span className={styles.icon} aria-hidden="true">
+                  <span
+                    className={styles.icon}
+                    data-step-icon=""
+                    aria-hidden="true"
+                  >
                     <svg
                       viewBox="0 0 48 48"
                       fill="none"
@@ -271,13 +186,26 @@ export function Workflow({
                 <li
                   key={step.position}
                   className={`${styles.step} ${styles[step.position]}`}
-                  data-active={state.enhanced && index === active}
+                  data-active={state.enhanced && index === state.stage}
+                  data-feedback={state.enhanced && index === feedback}
                 >
+                  <span
+                    className={styles.cardAccent}
+                    data-card-accent=""
+                    aria-hidden="true"
+                  />
+                  <span className={styles.feedbackAccent} aria-hidden="true" />
                   {state.enhanced ? (
                     <button
                       type="button"
                       className={styles.stepControl}
-                      aria-pressed={state.held === index}
+                      onPointerDown={() =>
+                        dispatch({
+                          type: "preview",
+                          owner: "focus",
+                          index: null,
+                        })
+                      }
                       onPointerEnter={(event) => {
                         if (
                           event.pointerType === "mouse" &&
@@ -304,13 +232,20 @@ export function Workflow({
                           index: null,
                         })
                       }
-                      onClick={(event) =>
+                      onKeyDown={(event) => {
+                        if (event.currentTarget.matches(":focus-visible"))
+                          dispatch({ type: "preview", owner: "focus", index });
+                      }}
+                      onKeyUp={(event) =>
                         dispatch({
-                          type: "hold",
-                          index,
-                          spatial: event.detail !== 0,
+                          type: "preview",
+                          owner: "focus",
+                          index: event.currentTarget.matches(":focus-visible")
+                            ? index
+                            : null,
                         })
                       }
+                      onClick={() => dispatch({ type: "activate", index })}
                     >
                       {content}
                     </button>
@@ -322,25 +257,6 @@ export function Workflow({
             })}
           </ol>
         </div>
-      </div>
-      <div className={styles.playback}>
-        {state.enhanced && (
-          <button
-            type="button"
-            className={styles.playbackControl}
-            disabled={state.reduced}
-            title={
-              state.reduced
-                ? "Sequence motion is disabled by your reduced motion preference"
-                : undefined
-            }
-            onClick={() => dispatch({ type: "playback" })}
-          >
-            {state.held !== null || state.paused || state.reduced
-              ? "Resume sequence"
-              : "Pause sequence"}
-          </button>
-        )}
       </div>
     </div>
   );

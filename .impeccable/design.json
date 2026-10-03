@@ -77,13 +77,13 @@
       },
       {
         "name": "workflow-sequence",
-        "value": "2.4s per step; 700ms accents",
-        "purpose": "Observe through Respond; held selection and focus-over-hover previews; remaining hold and effects suspend offscreen/hidden. Independent of cube and demo."
+        "value": "700ms circles; 500ms outward connector; 200ms card; 1,000ms hold",
+        "purpose": "Observe through Respond; completion-driven motion, additive focus-over-hover feedback and 700ms activation; hold and effects suspend in place offscreen/hidden. Mobile uses 700ms rail travel before card and hold. Independent of cube and demo."
       },
       {
         "name": "workflow-feedback",
-        "value": "200ms selection; 120ms press to 0.98",
-        "purpose": "Existing tiles/rows retain geometry; mobile rail travels beside the rows. Keyboard and reduced-motion selection are immediate."
+        "value": "200ms highlight; 700ms activation feedback; 120ms press to 0.98",
+        "purpose": "Existing tiles/rows retain geometry; interaction highlights coexist with automatic progress and never interrupt it. Keyboard and reduced-motion feedback are immediate."
       },
       {
         "name": "cube-float",
