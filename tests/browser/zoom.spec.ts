@@ -91,15 +91,22 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
           ),
         ),
     ).toBe(true);
-    await workflow.getByRole("button", { name: "Pause sequence" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(workflow).toHaveAttribute("data-sequence-running", "false");
-    await workflow
-      .getByRole("button", { name: "Resume sequence" })
-      .press("Enter");
+    await page.keyboard.press("Tab");
+    const review = workflow.getByRole("button", {
+      name: "Review.",
+      exact: true,
+    });
+    await expect(review).toBeFocused();
+    await review.press("Space");
+    await expect(workflow.locator('[data-step="review"]')).toHaveAttribute(
+      "data-emphasized",
+      "true",
+    );
+    await expect(workflow).toHaveAttribute("data-sequence-running", "true");
+    await expect(workflow.getByRole("button")).toHaveCount(5);
     await expect(
-      workflow.getByRole("button", { name: "Pause sequence" }),
-    ).toBeVisible();
+      workflow.getByRole("button", { name: /^(Pause|Resume) sequence$/ }),
+    ).toHaveCount(0);
     await capture("browser-zoom-200-workflow-selected.png");
     for (const id of [
       "capabilities",

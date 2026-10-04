@@ -9,7 +9,6 @@ type State = {
   focus: number | null;
   pressed: number | null;
   pressVersion: number;
-  paused: boolean;
   visible: boolean;
   hidden: boolean;
   reduced: boolean;
@@ -23,17 +22,10 @@ type Action =
   | { type: "press"; index: number }
   | { type: "release"; version: number }
   | { type: "resize" }
-  | { type: "playback" }
   | { type: "advance" };
 
 function isAutomatic(state: State) {
-  return (
-    state.enhanced &&
-    state.visible &&
-    !state.hidden &&
-    !state.reduced &&
-    !state.paused
-  );
+  return state.enhanced && state.visible && !state.hidden && !state.reduced;
 }
 
 function reducer(state: State, action: Action): State {
@@ -54,8 +46,6 @@ function reducer(state: State, action: Action): State {
         : state;
     case "resize":
       return { ...state, geometry: state.geometry + 1 };
-    case "playback":
-      return { ...state, paused: !state.paused };
     case "advance":
       return isAutomatic(state)
         ? { ...state, stage: (state.stage + 1) % 5, arrived: true }
@@ -97,7 +87,6 @@ export function useWorkflow(createEffects: CreateEffects) {
     focus: null,
     pressed: null,
     pressVersion: 0,
-    paused: false,
     visible: false,
     hidden: false,
     reduced: false,

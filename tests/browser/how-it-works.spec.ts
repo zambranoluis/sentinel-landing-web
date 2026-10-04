@@ -20,7 +20,17 @@ test("workflow composition, assets and accessibility across responsive boundarie
       section.getByRole("heading", { name: headline }),
     ).toBeVisible();
     await expect(section.getByRole("listitem")).toHaveText(labels);
-    await expect(section.getByRole("button")).toHaveCount(6);
+    await expect(section.getByRole("button")).toHaveCount(5);
+    await expect(section.getByText(/^(Pause|Resume) sequence$/)).toHaveCount(0);
+    expect(
+      await section
+        .locator("[data-workflow]")
+        .evaluate(
+          (element) =>
+            element.getBoundingClientRect().height -
+            element.firstElementChild!.getBoundingClientRect().height,
+        ),
+    ).toBeCloseTo(0);
     expect(
       await section.locator("li span[aria-hidden]").evaluateAll((icons) =>
         icons.map((icon) => ({
@@ -98,7 +108,7 @@ test("cube automatically pauses in place offscreen and on hidden-document notifi
   await page.goto("/#how-it-works");
   const section = page.locator("#how-it-works");
   const cube = page.locator("#how-cubeWrap");
-  await expect(section.getByRole("button")).toHaveCount(6);
+  await expect(section.getByRole("button")).toHaveCount(5);
   const playState = () =>
     cube.evaluate((element) => getComputedStyle(element).animationPlayState);
   const time = () =>
@@ -258,14 +268,14 @@ test("reduced motion is static and preference changes preserve section focus wit
       (element) => element.getAnimations({ subtree: true }).length,
     ),
   ).toBe(0);
-  await expect(section.getByRole("button")).toHaveCount(6);
+  await expect(section.getByRole("button")).toHaveCount(5);
   await section.focus();
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(page.locator("#how-cubeWrap")).toHaveCSS(
     "animation-play-state",
     "running",
   );
-  await expect(section.getByRole("button")).toHaveCount(6);
+  await expect(section.getByRole("button")).toHaveCount(5);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(section).toBeFocused();
   expect(
@@ -273,7 +283,7 @@ test("reduced motion is static and preference changes preserve section focus wit
       (element) => element.getAnimations({ subtree: true }).length,
     ),
   ).toBe(0);
-  await expect(section.getByRole("button")).toHaveCount(6);
+  await expect(section.getByRole("button")).toHaveCount(5);
 });
 
 test("mobile and footer links reach the section with keyboard focus", async ({
@@ -368,7 +378,7 @@ test("enlarged workflow text stays inside controls at mobile, tablet and desktop
   for (const width of [320, 720, 721, 834, 1279, 1280, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     const workflow = page.locator("[data-workflow]");
-    await expect(workflow.getByRole("button")).toHaveCount(6);
+    await expect(workflow.getByRole("button")).toHaveCount(5);
     const geometry = await workflow.locator("li").evaluateAll((rows) =>
       rows.map((row) => {
         const control = row.querySelector("button")!;
@@ -408,3 +418,45 @@ test("enlarged workflow text stays inside controls at mobile, tablet and desktop
     ).toBe(true);
   }
 });
+
+for (const mode of ["reduced motion", "no JavaScript"] as const) {
+  test(`automatic-only workflow has no playback labels or reserved space with ${mode}`, async ({
+    browser,
+    baseURL,
+  }) => {
+    test.setTimeout(90_000);
+    const context = await browser.newContext({
+      baseURL,
+      javaScriptEnabled: mode !== "no JavaScript",
+      reducedMotion: mode === "reduced motion" ? "reduce" : "no-preference",
+    });
+    try {
+      const page = await context.newPage();
+      for (const width of [320, 390, 720, 721, 834, 1279, 1280, 1440, 1910]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await page.goto("/#how-it-works");
+        const workflow = page.locator("[data-workflow]");
+        await expect(workflow.getByRole("listitem")).toHaveText(labels);
+        await expect(workflow.getByRole("button")).toHaveCount(
+          mode === "no JavaScript" ? 0 : 5,
+        );
+        await expect(
+          workflow.getByText(/^(Pause|Resume) sequence$/),
+        ).toHaveCount(0);
+        await expect(workflow).toHaveAttribute(
+          "data-sequence-running",
+          "false",
+        );
+        expect(
+          await workflow.evaluate(
+            (element) =>
+              element.getBoundingClientRect().height -
+              element.firstElementChild!.getBoundingClientRect().height,
+          ),
+        ).toBeCloseTo(0);
+      }
+    } finally {
+      await context.close();
+    }
+  });
+}

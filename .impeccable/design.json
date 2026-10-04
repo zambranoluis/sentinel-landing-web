@@ -78,7 +78,7 @@
       {
         "name": "workflow-sequence",
         "value": "Above 720px: 2.4s (1.7s hold, 350ms ring, 350ms destination trace); through 720px: 1.2s (500ms hold, 700ms rail)",
-        "purpose": "Observe through Respond and wrap; clockwise radial slots, vertical mobile rows. Shared playback timeline suspends in place; interaction emphasis never changes playback. Independent of cube and demo."
+        "purpose": "Observe through Respond and wrap; clockwise radial slots, vertical mobile rows. Automatic-only playback with no playback control or reserved space. Shared timeline suspends offscreen/hidden in place; interaction emphasis never changes playback. Independent of cube and demo."
       },
       {
         "name": "workflow-feedback",

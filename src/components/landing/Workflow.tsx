@@ -315,25 +315,6 @@ export function Workflow({
           </ol>
         </div>
       </div>
-      <div className={styles.playback}>
-        {state.enhanced && (
-          <button
-            type="button"
-            className={styles.playbackControl}
-            disabled={state.reduced}
-            title={
-              state.reduced
-                ? "Sequence motion is disabled by your reduced motion preference"
-                : undefined
-            }
-            onClick={() => dispatch({ type: "playback" })}
-          >
-            {state.paused || state.reduced
-              ? "Resume sequence"
-              : "Pause sequence"}
-          </button>
-        )}
-      </div>
     </div>
   );
 }

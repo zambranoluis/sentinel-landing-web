@@ -23,6 +23,26 @@ async function clock(workflow: Locator) {
   });
 }
 
+// Deliver the existing document-visibility lifecycle event without adding a
+// test-only playback path to the component. Restore native visibility to run.
+async function setHidden(workflow: Locator, hidden: boolean) {
+  await workflow.evaluate((element, hidden) => {
+    const document = element.ownerDocument;
+    if (hidden)
+      Object.defineProperty(document, "hidden", {
+        configurable: true,
+        value: true,
+      });
+    else Reflect.deleteProperty(document, "hidden");
+    document.dispatchEvent(new Event("visibilitychange"));
+  }, hidden);
+}
+
+async function resume(workflow: Locator) {
+  await setHidden(workflow, false);
+  await expect(workflow).toHaveAttribute("data-sequence-running", "true");
+}
+
 async function ready(page: Page, width = 1440, start = false) {
   await page.setViewportSize({ width, height: 1000 });
   await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -38,24 +58,19 @@ async function ready(page: Page, width = 1440, start = false) {
   const workflow = page.locator("[data-workflow]");
   await expect(workflow).toHaveAttribute("data-active-step", "observe");
   await expect(workflow).toHaveAttribute("data-sequence-running", "false");
-  await workflow.getByRole("button", { name: "Pause sequence" }).click();
   await page.mouse.move(0, 0);
   await seek(workflow, 0);
-  await page.evaluate(() => {
-    Reflect.deleteProperty(document, "hidden");
-    document.dispatchEvent(new Event("visibilitychange"));
-  });
   if (start) {
-    await workflow.getByRole("button", { name: "Resume sequence" }).click();
+    await resume(workflow);
     await page.mouse.move(0, 0);
   }
   return workflow;
 }
 
 async function frozenPose(workflow: Locator, time: number) {
-  if ((await workflow.getAttribute("data-sequence-running")) === "true")
-    await workflow.getByRole("button", { name: "Pause sequence" }).click();
+  await setHidden(workflow, true);
   await expect(workflow).toHaveAttribute("data-sequence-running", "false");
+  await expect.poll(async () => (await clock(workflow)).state).toBe("paused");
   await seek(workflow, time);
 }
 
@@ -91,7 +106,7 @@ for (const width of [390, 720, 721, 834, 1440]) {
         attributeFilter: ["data-active-step", "data-sequence-running"],
       });
     });
-    await workflow.getByRole("button", { name: "Resume sequence" }).click();
+    await resume(workflow);
     await page.mouse.move(0, 0);
     await expect
       .poll(
@@ -229,7 +244,7 @@ test("desktop handoff holds, sweeps clockwise, traces the destination, then high
       });
     await seek(workflow, 2399);
     await expect(workflow).toHaveAttribute("data-active-step", current);
-    await workflow.getByRole("button", { name: "Resume sequence" }).click();
+    await resume(workflow);
     await expect(workflow).toHaveAttribute("data-active-step", destination);
     await frozenPose(workflow, 100);
     const pulse = await workflow
@@ -242,7 +257,7 @@ test("desktop handoff holds, sweeps clockwise, traces the destination, then high
       await workflow.screenshot({
         path: testInfo.outputPath("workflow-arrival-desktop.png"),
       });
-    await workflow.getByRole("button", { name: "Resume sequence" }).click();
+    await resume(workflow);
   }
 });
 
@@ -298,7 +313,7 @@ test("focus, hover, click, Enter and Space leave stage and animation targets ind
     ),
   ).toBeGreaterThanOrEqual(2);
   await expect(workflow).toHaveAttribute("data-active-step", "observe");
-  await workflow.getByRole("button", { name: "Resume sequence" }).click();
+  await resume(workflow);
   await page.keyboard.press("Tab");
   await review.focus();
   await flag.hover();
@@ -314,7 +329,7 @@ test("focus, hover, click, Enter and Space leave stage and animation targets ind
     timeout: 4000,
   });
   await expect(review).toBeFocused();
-  await workflow.getByRole("button", { name: "Pause sequence" }).focus();
+  await page.locator("#how-it-works").focus();
   await page.mouse.move(0, 0);
   await expect(workflow).not.toHaveAttribute("data-interaction-step");
   await frozenPose(workflow, 2120);
@@ -341,7 +356,7 @@ for (const pose of [
   { width: 1440, time: 2200 },
   { width: 390, time: 800 },
 ]) {
-  test(`explicit pause retains interval and effect position at ${pose.width}px / ${pose.time}ms`, async ({
+  test(`hidden-document suspension retains interval and effect position at ${pose.width}px / ${pose.time}ms`, async ({
     page,
   }) => {
     const workflow = await ready(page, pose.width);
@@ -382,7 +397,7 @@ for (const pose of [
         attributeFilter: ["data-sequence-running", "data-active-step"],
       });
     });
-    await workflow.getByRole("button", { name: "Resume sequence" }).click();
+    await resume(workflow);
     await expect(workflow).toHaveAttribute("data-active-step", "interpret", {
       timeout: 2500,
     });
@@ -393,7 +408,7 @@ for (const pose of [
     );
     expect(elapsed).toBeGreaterThan(before.duration - pose.time - 100);
     // Allow native frame/event delivery on Windows WebKit while keeping the
-    // bound below a restarted full interval for every tested pause position.
+    // bound below a restarted full interval for every tested suspension position.
     expect(elapsed).toBeLessThan(before.duration - pose.time + 400);
   });
 }
@@ -404,7 +419,7 @@ test("offscreen and hidden suspension freeze the shared trace clock and resume i
   const workflow = await ready(page);
   for (const reason of ["offscreen", "hidden"]) {
     await frozenPose(workflow, 2200);
-    await workflow.getByRole("button", { name: "Resume sequence" }).click();
+    await resume(workflow);
     if (reason === "offscreen") await page.evaluate(() => scrollTo(0, 0));
     else
       await page.evaluate(() => {
@@ -461,7 +476,7 @@ test("breakpoint changes retain stage, focus and normalized clock progress and r
         .evaluateAll((els) => els.flatMap((el) => el.getAnimations()).length),
     ).toBe(0);
   }
-  await workflow.getByRole("button", { name: "Resume sequence" }).click();
+  await resume(workflow);
   await expect(workflow).toHaveAttribute("data-active-step", "interpret");
   await frozenPose(workflow, 800);
   expect(
@@ -500,7 +515,7 @@ test("mobile rail moves only during automatic handoffs and includes Respond to O
       await page.locator("#how-it-works").screenshot({
         path: testInfo.outputPath("workflow-intermediate-mobile.png"),
       });
-    await workflow.getByRole("button", { name: "Resume sequence" }).click();
+    await resume(workflow);
     await expect(workflow).toHaveAttribute(
       "data-active-step",
       stages[(index + 1) % 5],
@@ -620,7 +635,7 @@ for (const width of [390, 1440]) {
             window as unknown as { movingWorkflowEffects: Animation[] }
           ).movingWorkflowEffects = effects;
         });
-        await workflow.getByRole("button", { name: "Resume sequence" }).click();
+        await resume(workflow);
         const review = workflow.getByRole("button", {
           name: "Review.",
           exact: true,
@@ -661,9 +676,9 @@ test("reduced motion settles effects and keeps keyboard emphasis, focus and play
   await flag.focus();
   await flag.press("Enter");
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(
-    workflow.getByRole("button", { name: "Resume sequence" }),
-  ).toBeDisabled();
+  await expect(workflow).toHaveAttribute("data-sequence-running", "false");
+  await expect(workflow.getByRole("button")).toHaveCount(5);
+  await expect(flag).toBeEnabled();
   await expect(flag).toBeFocused();
   await expect(workflow).toHaveAttribute("data-active-step", "observe");
   await expect(workflow.locator('[data-step="flag"]')).toHaveAttribute(
@@ -681,9 +696,8 @@ test("reduced motion settles effects and keeps keyboard emphasis, focus and play
   await flag.press("Space");
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(flag).toBeFocused();
-  await expect(
-    workflow.getByRole("button", { name: "Resume sequence" }),
-  ).toBeEnabled();
+  await expect(workflow).toHaveAttribute("data-sequence-running", "false");
+  await expect(flag).toBeEnabled();
   await expect
     .poll(() =>
       workflow.evaluate((el) =>
@@ -692,6 +706,6 @@ test("reduced motion settles effects and keeps keyboard emphasis, focus and play
     )
     .toBe(true);
   expect((await clock(workflow)).time).toBeCloseTo(2200);
-  await workflow.getByRole("button", { name: "Resume sequence" }).click();
+  await resume(workflow);
   await expect(workflow).toHaveAttribute("data-active-step", "interpret");
 });
