@@ -6,7 +6,7 @@ import styles from "./Deployment.module.css";
 const deploymentImages = [
   "/sections/deployment/security-compound-animated.svg",
   "/sections/deployment/surveillance-network-animated.svg",
-  "/images/deployment-review.webp",
+  "/sections/deployment/surveillance-animated.svg",
 ];
 
 export function Deployment() {
