@@ -146,6 +146,14 @@ Capabilities deliberately uses 7% left and 5% right gutters inside the centered 
 
 Shared section padding is `clamp(74px, 7.5vw, 144px)`; section-specific photographic space stays with the module. The spacing family above supplies recurrent gaps. How it works uses a 40% copy / 56% diagram / 4% gap layout on desktop, stacks the diagram at intermediate widths and places the cube above a vertical wrapping workflow through 720px.
 
+### Deployment illustrations
+
+“Built around your operation” retains its three-step ordered copy and original animated SVGs. Equal 3:2 illustration frames center the compound, network and dashboard at 114%, 132% and 122% of frame width, preserving intrinsic proportions. Frames trim empty horizontal canvas; vertical overflow remains visible so the network's lower glow tails survive within the surrounding spacing. Complete objects and animated paths remain visible. The section itself remains unclipped and grows naturally with its content. LandingMotion continues to own each complete step's entrance and exit.
+
+Through 720px, steps stack vertically. Illustration frames extend to 12px screen gutters while copy keeps the standard page gutters. At 721–1279px, three stacked rows pair artwork on the left with number, heading and description on the right; after a 24px gap, columns divide the available width 60%/40%. The tablet query spans continuously above 720px and below 1280px to cover fractional widths from browser zoom or display scaling. Native scrolling and semantic order remain intact.
+
+From 1280px, three columns occupy 92% of the centered 1920px reference frame, capped at 1766.4px; the introduction stays at the standard content boundary. Top padding is `clamp(56px, 4vw, 80px)`, the heading uses `clamp(2.25rem, 3vw, 3.5rem)`, and supporting text uses `clamp(1.0625rem, 1.1vw, 1.25rem)` with a 960px maximum measure. Across all bands, heading-to-lead and lead-to-steps gaps are 20px and 32px.
+
 ### First viewport
 
 Navbar stays in document flow. Navbar plus hero fills at least the first viewport at every breakpoint. Hero minimum is `calc(100dvh - var(--navbar-height))`, with a `100vh` fallback. The header observer publishes its border-box height; pre-measurement/no-JavaScript fallback is 81px. Short screens and enlarged text may make content taller and scroll naturally.
