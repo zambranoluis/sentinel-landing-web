@@ -81,6 +81,9 @@ export function useHeroScene() {
     const element = artwork.current!;
     const layer = camera.current!;
     const root = scene.current!;
+    // Copy and callout overlays share the hero's pointer boundary; only the
+    // artwork bounds determine camera travel and overscan.
+    const hero = root.closest("section")!;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const svg = element.querySelector<SVGSVGElement>('svg[role="group"]')!;
     const waves =
@@ -141,10 +144,10 @@ export function useHeroScene() {
       sync();
     });
     observer.observe(element);
-    element.addEventListener("pointermove", move);
-    element.addEventListener("pointerleave", reset);
+    hero.addEventListener("pointermove", move);
+    hero.addEventListener("pointerleave", reset);
     document.addEventListener("visibilitychange", sync);
-    root.addEventListener("pointermove", trackPointer);
+    hero.addEventListener("pointermove", trackPointer);
     reduced.addEventListener("change", sync);
     pointer.addEventListener("change", sync);
     window.addEventListener("resize", reset);
@@ -153,10 +156,10 @@ export function useHeroScene() {
       observer.disconnect();
       if (waveStarted) waves.forEach((wave) => wave.endElement());
       reset();
-      element.removeEventListener("pointermove", move);
-      element.removeEventListener("pointerleave", reset);
+      hero.removeEventListener("pointermove", move);
+      hero.removeEventListener("pointerleave", reset);
       document.removeEventListener("visibilitychange", sync);
-      root.removeEventListener("pointermove", trackPointer);
+      hero.removeEventListener("pointermove", trackPointer);
       reduced.removeEventListener("change", sync);
       pointer.removeEventListener("change", sync);
       window.removeEventListener("resize", reset);

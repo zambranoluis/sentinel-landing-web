@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { heroDetections } from "../../src/components/landing/heroDetections";
 
@@ -38,6 +38,160 @@ async function point(page: Page, x: number, y: number) {
 async function selectDetection(page: Page, name: string) {
   await scene(page).getByRole("button", { name, exact: true }).press("Enter");
 }
+
+async function moveCamera(page: Page, destination: Locator) {
+  const box = (await destination.boundingBox())!;
+  const position = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  await page.mouse.move(position.x, position.y);
+  const art = (await page.locator("[data-hero-artwork]").boundingBox())!;
+  const expected = {
+    x: Math.max(-6, Math.min(6, ((position.x - art.x) / art.width - 0.5) * 12)),
+    y: Math.max(
+      -6,
+      Math.min(6, ((position.y - art.y) / art.height - 0.5) * 12),
+    ),
+    scale: 1 + 16 / Math.min(art.width, art.height),
+  };
+  await expect
+    .poll(() =>
+      page.locator("[data-hero-camera]").evaluate((element, expected) => {
+        const matrix = new DOMMatrix(getComputedStyle(element).transform);
+        return (
+          Math.abs(matrix.m41 - expected.x) < 0.05 &&
+          Math.abs(matrix.m42 - expected.y) < 0.05 &&
+          Math.abs(matrix.m11 - expected.scale) < 0.0001
+        );
+      }, expected),
+    )
+    .toBe(true);
+  return expected;
+}
+
+test("camera stays zoomed and tracks continuously across hero overlays", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await open(page, "no-preference");
+  await expect(page.locator("#hero-heading")).toHaveCSS("opacity", "1");
+  await selectDetection(page, "Person at the loading bay");
+  const artwork = page.locator("[data-hero-artwork]");
+  const close = detail(page).getByRole("button", {
+    name: "Close detection details",
+  });
+  const heading = page.locator("#hero-heading");
+  const description = page.locator("[data-hero-copy] > p");
+  const assessment = page.locator("[data-hero-copy] button");
+  const overlays = [detail(page), close, heading, description, assessment];
+  const originalBoxes = await Promise.all(
+    overlays.map((item) => item.boundingBox()),
+  );
+  const initial = await moveCamera(page, artwork);
+
+  // Observe every intermediate frame and style write, including brief resets
+  // that a settled-transform assertion alone would miss.
+  await page.locator("[data-hero-camera]").evaluate((element) => {
+    const styles: (string | null)[] = [];
+    const scales: number[] = [];
+    const observer = new MutationObserver((records) => {
+      styles.push(...records.map((record) => record.oldValue));
+      styles.push(element.getAttribute("style"));
+    });
+    observer.observe(element, {
+      attributes: true,
+      attributeFilter: ["style"],
+      attributeOldValue: true,
+    });
+    let frame = 0;
+    const sample = () => {
+      scales.push(new DOMMatrix(getComputedStyle(element).transform).m11);
+      frame = requestAnimationFrame(sample);
+    };
+    frame = requestAnimationFrame(sample);
+    Object.assign(element, {
+      finishCameraObservation: () => {
+        observer.disconnect();
+        cancelAnimationFrame(frame);
+        return { styles, scales };
+      },
+    });
+  });
+
+  for (const overlay of overlays) await moveCamera(page, overlay);
+  for (const overlay of [...overlays].reverse()) {
+    const box = (await overlay.boundingBox())!;
+    await page.mouse.move(box.x + 2, box.y + 2);
+    await page.mouse.move(box.x + box.width - 2, box.y + box.height - 2);
+  }
+  await moveCamera(page, artwork);
+  expect(await Promise.all(overlays.map((item) => item.boundingBox()))).toEqual(
+    originalBoxes,
+  );
+
+  await moveCamera(page, close);
+  await close.click();
+  await expect(detail(page)).toHaveCount(0);
+  await expect(target(page, "person-bay")).toBeFocused();
+  await expect(scene(page)).toHaveAttribute("data-selected", "");
+  await expect(page.locator("[data-hero-camera]")).not.toHaveCSS(
+    "transform",
+    "none",
+  );
+  // A stationary pointer must not reopen the removed panel after its grace.
+  await page.waitForTimeout(220);
+  await expect(detail(page)).toHaveCount(0);
+  await moveCamera(page, heading);
+  await moveCamera(page, artwork);
+  const observation = await page
+    .locator("[data-hero-camera]")
+    .evaluate((element) =>
+      (
+        element as HTMLElement & {
+          finishCameraObservation: () => {
+            styles: (string | null)[];
+            scales: number[];
+          };
+        }
+      ).finishCameraObservation(),
+    );
+  expect(observation.styles.length).toBeGreaterThan(0);
+  expect(
+    observation.styles.every((style) => style?.includes("transform:")),
+  ).toBe(true);
+  expect(observation.scales.length).toBeGreaterThan(0);
+  expect(Math.min(...observation.scales)).toBeGreaterThan(
+    initial.scale - 0.0001,
+  );
+});
+
+test("camera resets only on hero exit and reverses its return on reentry", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await open(page, "no-preference");
+  const heading = page.locator("#hero-heading");
+  const camera = page.locator("[data-hero-camera]");
+  await expect(heading).toHaveCSS("opacity", "1");
+  const active = await moveCamera(page, heading);
+  await page.mouse.move(700, 20);
+  await expect
+    .poll(() =>
+      camera.evaluate((element: HTMLElement) => element.style.transform),
+    )
+    .toBe("");
+  const returning = await camera.evaluate((element) => ({
+    scale: new DOMMatrix(getComputedStyle(element).transform).m11,
+    running: element
+      .getAnimations()
+      .some((animation) => animation.playState === "running"),
+  }));
+  expect(returning.scale).toBeGreaterThan(1);
+  expect(returning.scale).toBeLessThanOrEqual(active.scale + 0.0001);
+  expect(returning.running).toBe(true);
+  await moveCamera(page, heading);
+  await page.mouse.move(700, 20);
+  await expect(camera).toHaveCSS("transform", "none");
+  await moveCamera(page, heading);
+});
 
 async function expectNoToolbar(page: Page) {
   await expect(scene(page).locator("details, summary")).toHaveCount(0);
