@@ -205,34 +205,75 @@ export function HeroScene() {
                     }
                   }}
                 >
+                  <path
+                    className={styles.halo}
+                    data-detection-layer="halo"
+                    d={item.outline}
+                  >
+                    {item.route && <RouteWave />}
+                  </path>
                   <path className={styles.understroke} d={item.outline}>
                     {item.route && <RouteWave />}
                   </path>
                   <path
                     className={`${styles.outline} ${item.route ? styles.route : ""}`}
+                    data-detection-layer="outline"
                     d={item.outline}
                   >
                     {item.route && <RouteWave />}
                   </path>
                   <path
                     className={`${styles.accent} ${item.route ? styles.route : ""}`}
+                    data-detection-layer="accent"
                     d={item.route ? item.outline : item.region}
                     pathLength={item.route ? undefined : 100}
                     stroke={`url(#${id}-accent)`}
                   >
                     {item.route && <RouteWave />}
                   </path>
-                  {item.nodes?.map(([x, y]) => (
-                    <rect
-                      className={styles.node}
-                      key={`${x}-${y}`}
-                      x={x - 2.5}
-                      y={y - 2.5}
-                      width="5"
-                      height="5"
+                  {item.corners && (
+                    <path
+                      className={styles.corners}
+                      data-detection-layer="corners"
+                      d={item.corners}
                     />
+                  )}
+                  {item.nodes?.map(([x, y]) => (
+                    <g key={`${x}-${y}`} className={styles.marker}>
+                      <rect
+                        className={styles.node}
+                        x={x - 3}
+                        y={y - 3}
+                        width="6"
+                        height="6"
+                        rx="0.6"
+                      />
+                      <circle
+                        className={styles.nodeCenter}
+                        cx={x}
+                        cy={y}
+                        r="1"
+                      />
+                    </g>
                   ))}
+                  {item.route && (
+                    <g className={styles.marker}>
+                      <circle
+                        className={styles.endpoint}
+                        cx="590"
+                        cy="454"
+                        r="4"
+                      />
+                      <circle
+                        className={styles.endpoint}
+                        cx="1497"
+                        cy="919"
+                        r="4"
+                      />
+                    </g>
+                  )}
                   <path
+                    data-detection-layer="hit"
                     className={item.route ? styles.routeHit : styles.hit}
                     d={item.region}
                   />

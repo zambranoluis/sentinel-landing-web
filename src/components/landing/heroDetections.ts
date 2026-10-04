@@ -7,6 +7,7 @@ export type HeroDetection = {
   region: string;
   anchor: readonly [number, number];
   nodes?: readonly (readonly [number, number])[];
+  corners?: string;
   route?: boolean;
 };
 
@@ -35,6 +36,8 @@ export const heroDetections: readonly HeroDetection[] = [
       "M635 307 937 328 937 478 632 466Z M635 307 681 305 953 321 937 328 M937 478 953 469 953 321",
     region: "M635 307 681 305 953 321 953 469 937 478 632 466Z",
     anchor: [953, 365],
+    corners:
+      "M634.6 329 635 307 659 308.7 M915 326.5 937 328v22 M937 456v22l-24-0.9 M656 466.9 632 466l0.4-22 M953 343v-22l-20-1.2",
     nodes: [
       [635, 307],
       [937, 328],
@@ -54,6 +57,8 @@ export const heroDetections: readonly HeroDetection[] = [
       "M1218 495 1376 508 1433 544 1274 531Z M1218 495v211l56 35 159-24V544 M1274 531v210",
     region: "M1218 495 1376 508 1433 544 1433 717 1274 741 1218 706Z",
     anchor: [1218, 550],
+    corners:
+      "M1218 519v-24l24 2 M1254 518.4 1274 531l24 2 M1411 539 1433 544v24 M1433 693v24l-24 3.6 M1254 728.5 1274 741v-24 M1218 682v24l20 12.5",
     nodes: [
       [1218, 495],
       [1274, 531],
@@ -72,6 +77,8 @@ export const heroDetections: readonly HeroDetection[] = [
     outline: "M984 448l64 13v87l-64-15Z",
     region: "M984 448l64 13v87l-64-15Z",
     anchor: [1048, 490],
+    corners:
+      "M984 464v-16l16 3.3 M1032 457.8 1048 461v16 M1048 532v16l-16-3.8 M1000 536.8 984 533v-16",
     nodes: [
       [984, 448],
       [1048, 548],
@@ -88,6 +95,8 @@ export const heroDetections: readonly HeroDetection[] = [
     outline: "M1146 550l83 11v146l-83-24Z",
     region: "M1146 550l83 11v146l-83-24Z",
     anchor: [1146, 600],
+    corners:
+      "M1146 570v-20l20 2.7 M1209 558.3 1229 561v20 M1229 687v20l-20-5.8 M1166 688.8 1146 683v-20",
     nodes: [
       [1146, 550],
       [1229, 707],
@@ -104,6 +113,8 @@ export const heroDetections: readonly HeroDetection[] = [
     outline: "M1546 616l78 14v-48l-78-17Z",
     region: "M1546 616l78 14v-48l-78-17Z",
     anchor: [1546, 585],
+    corners:
+      "M1546 581v-16l16 3.5 M1608 578.5 1624 582v16 M1624 614v16l-16-2.9 M1562 618.9 1546 616v-16",
   },
   {
     id: "pallet-front",
@@ -116,6 +127,7 @@ export const heroDetections: readonly HeroDetection[] = [
     outline: "M1212 807l150 14 40 100 M1212 807v134",
     region: "M1212 807 1362 821 1402 921 1402 941 1212 941Z",
     anchor: [1212, 815],
+    corners: "M1212 831v-24l24 2.2 M1338 818.8 1362 821l8.9 22.3",
     nodes: [
       [1212, 807],
       [1362, 821],
@@ -132,6 +144,7 @@ export const heroDetections: readonly HeroDetection[] = [
     outline: "M1511 683l111 25 50 30 M1511 683v258",
     region: "M1511 683 1622 708 1672 738 1672 941 1511 941Z",
     anchor: [1511, 710],
+    corners: "M1511 707v-24l23.4 5.3 M1598.6 702.7 1622 708l20.6 12.3",
   },
   {
     id: "transfer-route",

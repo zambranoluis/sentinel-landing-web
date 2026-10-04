@@ -113,8 +113,7 @@ test("nested people and route hit regions win; background and Close clear", asyn
     await page.keyboard.press("Escape");
   }
   const route = await target(page, "transfer-route")
-    .locator("path")
-    .last()
+    .locator('[data-detection-layer="hit"]')
     .evaluate((path: SVGPathElement) => {
       const p = path
         .getPointAtLength(path.getTotalLength() * 0.38)
@@ -302,8 +301,12 @@ test("camera, route and accent motion suspend automatically and respect reduced 
   expect(Math.abs(matrix.x)).toBeLessThanOrEqual(6);
   expect(Math.abs(matrix.y)).toBeLessThanOrEqual(6);
   expect(matrix.scale).toBeGreaterThan(1);
-  const accents = target(page, "truck").locator("path").nth(2);
-  const route = target(page, "transfer-route").locator("path").nth(1);
+  const accents = target(page, "truck").locator(
+    '[data-detection-layer="accent"]',
+  );
+  const route = target(page, "transfer-route").locator(
+    '[data-detection-layer="outline"]',
+  );
   const firstShape = await route.evaluate((e: SVGPathElement) =>
     e.getTotalLength(),
   );
@@ -382,10 +385,9 @@ test("static scene retains accessible descriptions without JavaScript or toolbar
     await expectDescriptions(page);
     await expect(scene(page).getByRole("button")).toHaveCount(0);
     await expect(page.locator("[data-detection][tabindex]")).toHaveCount(0);
-    await expect(target(page, "truck").locator("path").nth(2)).toHaveCSS(
-      "animation-name",
-      "none",
-    );
+    await expect(
+      target(page, "truck").locator('[data-detection-layer="accent"]'),
+    ).toHaveCSS("animation-name", "none");
   } finally {
     await context.close();
   }

@@ -53,26 +53,48 @@
   .target:not([data-active="true"]) {
   opacity: 0.3;
 }
+.halo,
 .understroke,
 .outline,
 .accent,
-.node {
+.corners,
+.node,
+.nodeCenter,
+.endpoint {
   pointer-events: none;
   vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.halo,
+.outline,
+.corners,
+.node,
+.endpoint {
+  transition:
+    stroke 180ms ease-out,
+    stroke-width 180ms ease-out,
+    opacity 180ms ease-out;
+}
+.halo {
+  fill: none;
+  stroke: #9cddff;
+  stroke-width: 6;
+  opacity: 0.12;
 }
 .understroke {
   fill: none;
   stroke: #05111c;
-  stroke-width: 3.5;
+  stroke-width: 3;
 }
 .outline {
   fill: none;
   stroke: #9cddff;
-  stroke-width: 1.5;
+  stroke-width: 1.15;
 }
 .accent {
   fill: none;
-  stroke-width: 2;
+  stroke-width: 1.75;
   stroke-dasharray: 12 88;
   stroke-linecap: round;
   opacity: 0;
@@ -88,7 +110,17 @@
 }
 .target[data-active="true"] .outline {
   stroke: #effaff;
-  stroke-width: 2;
+  stroke-width: 1.65;
+  opacity: 1;
+}
+.target[data-active="true"] .halo {
+  opacity: 0.2;
+}
+.target[data-active="true"] .corners,
+.target[data-active="true"] .node,
+.target[data-active="true"] .endpoint {
+  stroke: #effaff;
+  opacity: 1;
 }
 .target:focus-visible .outline {
   stroke: white;
@@ -99,10 +131,27 @@
   stroke-width: 3;
   stroke-dasharray: 5 3;
 }
-.node {
-  fill: #c4edff;
-  stroke: #05111c;
-  stroke-width: 0.75;
+.corners {
+  fill: none;
+  stroke: #c4edff;
+  stroke-width: 2;
+  opacity: 0.85;
+}
+.marker {
+  pointer-events: none;
+}
+.node,
+.endpoint {
+  fill: #05111c;
+  stroke: #c4edff;
+  stroke-width: 1;
+}
+.nodeCenter {
+  fill: #effaff;
+}
+.endpoint {
+  fill: none;
+  opacity: 0.8;
 }
 .hit {
   fill: transparent;
@@ -121,8 +170,15 @@
   pointer-events: stroke;
   cursor: pointer;
 }
-.route {
-  stroke-dasharray: 3 6;
+.outline.route {
+  opacity: 0.45;
+}
+.target:focus-visible .outline.route {
+  opacity: 1;
+  stroke-dasharray: 5 3;
+}
+.accent.route {
+  stroke-dasharray: 24 76;
 }
 .scene[data-ready="true"] .accent.route {
   animation: tracking 7s linear infinite;
@@ -220,6 +276,17 @@
     opacity: 1;
   }
 }
+@media (max-width: 720px) {
+  .halo {
+    opacity: 0.06;
+  }
+  .target[data-active="true"] .halo {
+    opacity: 0.1;
+  }
+  .corners {
+    display: none;
+  }
+}
 @media (min-width: 721px) {
   .scene {
     position: absolute;
@@ -261,7 +328,12 @@
 @media (prefers-reduced-motion: reduce) {
   .camera,
   .shade,
-  .target {
+  .target,
+  .halo,
+  .outline,
+  .corners,
+  .node,
+  .endpoint {
     transition: none;
   }
   .scene .accent,
