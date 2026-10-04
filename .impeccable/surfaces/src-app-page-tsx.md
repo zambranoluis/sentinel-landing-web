@@ -4,6 +4,9 @@ slug: "src-app-page-tsx"
 primary_target: "src/app/page.tsx"
 related_targets:
   [
+    "src/components/landing/Hero.tsx",
+    "src/components/landing/HeroScene.tsx",
+    "src/components/landing/HeroScene.module.css",
     "src/components/landing/Capabilities.tsx",
     "src/components/landing/ProductDemo.tsx",
     "src/components/landing/Deployment.tsx",
@@ -32,6 +35,8 @@ The illustrative demo automatically cycles through three 3.6-second stages plus 
 Composed full-fade entrances sequence the hero, section introductions and visible content groups; artwork and interactive groups enter as coherent units. Prepare arrival poses offscreen so entrances never begin with a visible offset jump. Downward entry comes from below; upward reentry comes from above with reversed visual staggering. Content fades and travels out at the departing viewport edge; interrupted exits recover smoothly. Rearm only after complete exit plus a 32px viewport buffer, keeping the reading area settled and revealing tall mobile groups progressively. Preserve static/no-JavaScript visibility, native scrolling, existing transforms and immediate navigation/action availability. Reduced motion, keyboard-visible focus, fragments, hidden documents and responsive changes settle motion as specified in [DESIGN](../../DESIGN.md#landing-entrances).
 
 ## Direction contract
+
+The hero invites exploration of twelve illustrative detections through aligned cyan frames, bounded shared camera movement and shaped spotlight feedback. Focus and pinning preserve intent; desktop details stay beside targets and clear of copy, while phone details follow the image. A native target disclosure preserves access to cropped subjects and no-JavaScript descriptions. Scene motion can be paused and suspends offscreen/hidden; reduced motion is static. Preserve the original photograph, hero text, CTA and resting viewport geometry. [Interactive hero scene](../../DESIGN.md#interactive-hero-scene) owns the interaction contract.
 
 THESIS: Show how camera input becomes directed human attention through the complete supplied Sentinel story.
 

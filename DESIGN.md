@@ -150,7 +150,7 @@ Shared section padding is `clamp(74px, 7.5vw, 144px)`; section-specific photogra
 
 Navbar stays in document flow. Navbar plus hero fills at least the first viewport at every breakpoint. Hero minimum is `calc(100dvh - var(--navbar-height))`, with a `100vh` fallback. The header observer publishes its border-box height; pre-measurement/no-JavaScript fallback is 81px. Short screens and enlarged text may make content taller and scroll naturally.
 
-Above 720px, left-hand hero copy sits over the full warehouse scene and readability overlay. Through 720px, copy precedes a separate image band that absorbs spare height while retaining its aspect-ratio minimum. Image selection accounts for tall crops. Detection outlines share the photograph's geometry and remain static/decorative. Desktop navigation/actions can wrap for enlarged text.
+Above 720px, left-hand hero copy sits over the full warehouse scene and readability overlay. Through 720px, copy precedes a separate image band that absorbs spare height while retaining its aspect-ratio minimum. Image selection accounts for tall crops. Detection outlines share the photograph's geometry and offer illustrative exploration as specified below. Desktop navigation/actions can wrap for enlarged text.
 
 ### Section and footer relationships
 
@@ -193,6 +193,20 @@ Footer options have no text underline and retain their resting text colors durin
 Headings size to their text width. Their bars remain navy and 24px wide at rest. Hover anywhere within a footer section, or keyboard focus within it, expands its heading bar across the heading text width. Moving between options keeps the heading bar expanded while each option bar responds independently. Heading width and option scale transitions use 200ms ease-out, reverse from their current state on exit or interruption, and do not move surrounding content. Pointer hover requires a hover-capable fine pointer; touch does not leave hover feedback. Reduced motion makes changes immediate, and the styling works without JavaScript.
 
 Global text selection retains a navy (`#1b3266`) background with light (`#f6f8fb`) text.
+
+### Interactive hero scene
+
+Keep the original 1672 × 941 warehouse photograph, text, CTA and resting viewport relationship. A shared cover-cropped layer aligns photography, detection strokes, spotlight regions and hit areas. The text stays above scene effects; the readability gradient shades photography beneath the strokes.
+
+Twelve targets retain the original geometry: truck, four people, forklift, five pallet areas and transfer route. Cyan strokes (`#9cddff`) use a thin dark under-stroke (`#05111c`), small existing nodes (`#c4edff`) and staggered cyan-to-ice (`#72bde9` → `#effaff`) perimeter accents. Route dashes travel along a gentle wave with fixed endpoints and approximately 3px maximum visible deformation. Fine-pointer movement translates the shared layer by at most 6px with small overscan; leaving returns it smoothly over 400ms. Through 720px, the camera stays still.
+
+Hover or keyboard focus dims photography outside the target's shaped detection region, softens other strokes and reveals details over 180ms. Keyboard focus overrides hover; pinned selection overrides both. A 160ms exit grace allows crossing into the callout. Click, tap, Enter or Space pins or switches a target; repeat activation, Escape, Close or empty scene space clears it. Close restores the originating control's focus. Named SVG controls have visible focus and generous interior hit areas; person regions sit above enclosing vehicles and the route has a wide invisible hit stroke.
+
+Desktop details sit beside the target, clamped inside the scene and beyond the copy column. Through 720px, details flow below the photograph without reducing its resting height. Each panel has a title, short explanation, “Illustrative detection,” two descriptive fields and Close. No automatic live announcements or invented metrics. The native “Explore detections” disclosure lists all targets, including cropped ones; activation closes the list, retains focus at its summary and pins the target. Without JavaScript the same disclosure contains all descriptions and the complete artwork remains static.
+
+A compact pause/resume control governs scene decoration, independent of landing entrances, workflow and demo. Offscreen and hidden-document suspension freeze CSS accents and the native SVG route timeline; reduced motion removes camera/looping motion and makes selection feedback immediate. Resizing recalculates crop-aware callout bounds and preserves selection.
+
+Scene controls and details use compact 4px corners, Steel borders and an opaque `#071321` background. Detail headings are 1rem, explanations/list controls 0.875rem, and descriptive fields/toolbar controls 0.75rem. Secondary labels use `#b9d6e6`; directory separators use the outline cyan at 20% opacity. These local illustration treatments do not redefine the landing's card system.
 
 ### Workflow illustration
 

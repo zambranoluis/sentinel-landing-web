@@ -32,7 +32,9 @@ Visitors understand the offer in the hero, follow Observe → Interpret → Flag
 
 Home and the five primary fragments (How it works, Capabilities, Deployment, Plans and FAQ) are available. Five footer industry links reach the supplied retail, shops/pharmacies, restaurants/bars, manufacturing/warehousing and gas-station cards. Hotels has no supplied section and remains unavailable.
 
-The hero's detection outlines and workflow cube are explanatory artwork. The demo is explicitly illustrative: three automatic stages when visible, followed by a two-second final review hold and repeated looping. Stage labels are noninteractive. Reduced motion and no JavaScript show the static final review. It performs no detections, saves no footage and sends no alerts.
+The hero is an explorable illustrative warehouse scene: visitors can inspect a truck, four people, a forklift, five pallet areas and a transfer route. Hover or keyboard focus previews details; click, tap, Enter or Space pins a selection. Each detail describes the subject and context under “Illustrative detection,” without performance metrics or live claims. An “Explore detections” disclosure reaches all targets, including cropped ones, and preserves their descriptions without JavaScript. The photograph, hero copy and assessment action retain their approved composition.
+
+The workflow cube is explanatory artwork. The separate demo is explicitly illustrative: three automatic stages when visible, followed by a two-second final review hold and repeated looping. Stage labels are noninteractive. Reduced motion and no JavaScript show the static final review. Neither the hero nor the demo performs detections, saves footage or sends alerts.
 
 Eight supplied FAQ disclosures start closed and work without JavaScript. Plans show a free assessment and package terms with pricing confirmed after assessment; they implement no purchase or contract workflow.
 

@@ -10,6 +10,9 @@
 
 .content {
   order: -1;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
   flex-shrink: 0;
   padding: 3.5rem var(--page-gutter) 2.5rem;
 }
@@ -34,49 +37,7 @@
   text-wrap: pretty;
 }
 
-.scene {
-  margin: 0;
-  display: flex;
-  flex: 1 0 auto;
-}
-.artwork {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1672 / 941;
-}
-.image {
-  object-fit: cover;
-}
-.detections {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  inset: 0;
-  pointer-events: none;
-}
-
 @media (min-width: 721px) {
-  .scene {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-  }
-  .artwork {
-    height: 100%;
-    aspect-ratio: auto;
-  }
-  .artwork::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      rgb(5 11 22 / 95%) 0%,
-      rgb(5 11 22 / 82%) 31%,
-      rgb(5 11 22 / 35%) 52%,
-      transparent 76%
-    );
-  }
   .content {
     order: initial;
     width: 57%;
@@ -99,15 +60,8 @@
     margin-left: var(--reference-offset);
     padding-left: calc(var(--reference-width) * 0.1);
   }
-  .artwork::after {
-    background: linear-gradient(
-      90deg,
-      rgb(5 11 22 / 95%) var(--reference-offset),
-      rgb(5 11 22 / 82%)
-        calc(var(--reference-offset) + var(--reference-width) * 0.31),
-      rgb(5 11 22 / 35%)
-        calc(var(--reference-offset) + var(--reference-width) * 0.52),
-      transparent calc(var(--reference-offset) + var(--reference-width) * 0.76)
-    );
-  }
+}
+
+.content > * {
+  pointer-events: auto;
 }

@@ -1,0 +1,381 @@
+.scene {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  min-width: 0;
+}
+.artwork {
+  position: relative;
+  width: 100%;
+  flex: 1 0 auto;
+  aspect-ratio: 1672 / 941;
+  min-height: calc(
+    100dvh - var(--navbar-height) - var(--hero-copy-height, 100dvh)
+  );
+}
+.viewport {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+.camera {
+  position: absolute;
+  inset: 0;
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.image {
+  object-fit: cover;
+}
+.shading,
+.detections,
+.readability {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  pointer-events: none;
+}
+.shade {
+  fill: #050b16;
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+.shade[data-active="true"] {
+  opacity: 0.65;
+}
+.target {
+  outline: none;
+  opacity: 1;
+  transition: opacity 180ms ease-out;
+}
+.scene[data-ready="true"]:not([data-selected=""])
+  .target:not([data-active="true"]) {
+  opacity: 0.3;
+}
+.understroke,
+.outline,
+.accent,
+.node {
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+.understroke {
+  fill: none;
+  stroke: #05111c;
+  stroke-width: 3.5;
+}
+.outline {
+  fill: none;
+  stroke: #9cddff;
+  stroke-width: 1.5;
+}
+.accent {
+  fill: none;
+  stroke-width: 2;
+  stroke-dasharray: 12 88;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.scene[data-ready="true"] .accent {
+  opacity: 0.9;
+  animation: tracking 6s linear infinite;
+  animation-delay: var(--delay);
+  animation-play-state: paused;
+}
+.scene[data-running="true"] .accent {
+  animation-play-state: running;
+}
+.target[data-active="true"] .outline {
+  stroke: #effaff;
+  stroke-width: 2;
+}
+.target:focus-visible .outline {
+  stroke: white;
+  stroke-width: 3;
+}
+.target:focus-visible .hit {
+  stroke: var(--sentinel-steel);
+  stroke-width: 3;
+  stroke-dasharray: 5 3;
+}
+.node {
+  fill: #c4edff;
+  stroke: #05111c;
+  stroke-width: 0.75;
+}
+.hit {
+  fill: transparent;
+  stroke: none;
+}
+.routeHit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 26;
+}
+.scene[data-ready="true"] .hit {
+  pointer-events: all;
+  cursor: pointer;
+}
+.scene[data-ready="true"] .routeHit {
+  pointer-events: stroke;
+  cursor: pointer;
+}
+.route {
+  stroke-dasharray: 3 6;
+}
+.scene[data-ready="true"] .accent.route {
+  animation: tracking 7s linear infinite;
+  animation-play-state: paused;
+}
+.scene[data-running="true"] .accent.route {
+  animation-play-state: running;
+}
+@keyframes tracking {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+.tools {
+  z-index: 3;
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  left: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+.tools button,
+.tools summary,
+.directory {
+  pointer-events: auto;
+}
+.tools summary,
+.pause {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--sentinel-steel);
+  border-radius: 4px;
+  background: #071321;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.tools summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tools summary::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+.explore[open] summary::before {
+  transform: rotate(225deg);
+}
+.explore summary::-webkit-details-marker {
+  display: none;
+}
+.directory {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: min(100%, 320px);
+  max-height: 48dvh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+  background: #071321;
+  border: 1px solid var(--sentinel-steel);
+  border-radius: 4px;
+  scrollbar-color: var(--sentinel-steel) #071321;
+}
+.directoryIntro {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.directory ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.directory li + li {
+  border-top: 1px solid rgb(156 221 255 / 20%);
+}
+.directory button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  padding: 10px 4px;
+  background: transparent;
+  color: var(--text-primary);
+  border: 0;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.directory button[aria-pressed="true"] {
+  color: #9cddff;
+}
+.scene button:focus-visible,
+.scene summary:focus-visible {
+  outline: 3px solid var(--sentinel-steel);
+  outline-offset: -3px;
+}
+.detail {
+  padding: 20px;
+  background: #071321;
+  color: var(--text-primary);
+  border: 1px solid var(--sentinel-steel);
+  border-radius: 4px;
+  z-index: 2;
+  animation: detail-in 180ms ease-out;
+}
+.detailHeading {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.detail h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  flex: 1;
+}
+.detailHeading button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  margin: -12px -12px 0 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+.detail p,
+.directory p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.detail p {
+  margin: 12px 0 20px;
+}
+.detail .caption,
+.directory .caption {
+  margin: 0 0 8px;
+  color: #b9d6e6;
+  font-size: 0.75rem;
+}
+.detail dl,
+.directory dl {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.detail dl > div,
+.directory dl > div {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+}
+.detail dl > div + div {
+  margin-top: 6px;
+}
+.detail dt,
+.directory dt {
+  color: #b9d6e6;
+}
+.detail dd,
+.directory dd {
+  margin: 0;
+}
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@keyframes detail-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (min-width: 721px) {
+  .scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .artwork {
+    height: 100%;
+    aspect-ratio: auto;
+    min-height: 0;
+  }
+  .detail {
+    position: absolute;
+    width: 288px;
+  }
+  .tools {
+    left: 58%;
+    bottom: 20px;
+    right: 24px;
+  }
+  .readability {
+    background: linear-gradient(
+      90deg,
+      rgb(5 11 22 / 95%) 0%,
+      rgb(5 11 22 / 82%) 31%,
+      rgb(5 11 22 / 35%) 52%,
+      transparent 76%
+    );
+  }
+}
+@media (min-width: 1280px) {
+  .readability {
+    background: linear-gradient(
+      90deg,
+      rgb(5 11 22 / 95%) var(--reference-offset),
+      rgb(5 11 22 / 82%)
+        calc(var(--reference-offset) + var(--reference-width) * 0.31),
+      rgb(5 11 22 / 35%)
+        calc(var(--reference-offset) + var(--reference-width) * 0.52),
+      transparent calc(var(--reference-offset) + var(--reference-width) * 0.76)
+    );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .camera,
+  .shade,
+  .target {
+    transition: none;
+  }
+  .scene .accent,
+  .scene .route,
+  .detail {
+    animation: none !important;
+  }
+  .scene[data-ready="true"] .accent {
+    opacity: 0;
+  }
+}
