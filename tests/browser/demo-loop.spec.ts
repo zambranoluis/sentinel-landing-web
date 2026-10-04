@@ -17,9 +17,17 @@ const sample = (player: Locator) =>
     };
   });
 async function finishPhase(player: Locator) {
-  await progress(player).evaluate((element) =>
-    element.getAnimations()[0].finish(),
-  );
+  // Check readiness and finish in one browser call so a natural completion cannot race it.
+  await expect
+    .poll(() =>
+      progress(player).evaluate((element) => {
+        const animation = element.getAnimations()[0];
+        if (!animation) return false;
+        animation.finish();
+        return true;
+      }),
+    )
+    .toBe(true);
 }
 async function documentHidden(page: Page, hidden: boolean) {
   // Controlled visibility events exercise the handler, not native OS suspension.
@@ -45,11 +53,9 @@ async function expectSimplifiedDemo(player: Locator) {
     "Example outcomes shown for demonstration.",
     "Human review remains central.",
     "Export event report",
+    "Illustrative demo · not a live feed",
   ])
     await expect(player.getByText(text, { exact: true })).toHaveCount(0);
-  await expect(
-    player.getByText("Illustrative demo · not a live feed"),
-  ).toBeVisible();
   await expect(
     player.getByRole("list", { name: "Demo stages" }).locator("li"),
   ).toHaveCount(3);
@@ -198,7 +204,7 @@ test("stage and final hold suspend offscreen and in hidden documents without res
       }
     }
   }
-  await finishPhase(player);
+  // Let the resumed hold complete naturally; it may already be done on a slow host.
   await expect(player).toHaveAttribute("data-phase", "0");
 });
 
@@ -236,7 +242,13 @@ test("reduced motion shows static review and normal motion restarts at stage one
       ),
     ).toBe(0);
   }
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(async () => {
+    window.scrollTo(0, 0);
+    // Allow the offscreen observer to commit before re-enabling playback.
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+    );
+  });
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(player).toHaveAttribute("data-phase", "0");
   await expect(player).toHaveAttribute("data-playing", "false");
@@ -267,6 +279,31 @@ test("desktop and mobile demo preserve imagery and details through every stage",
       await expect
         .poll(() => sample(player).then((s) => s.state))
         .toBe("paused");
+      const layout = await player.evaluate((element) => {
+        const card = element.querySelector('[class*="dashboard"]')!;
+        const bar = card.querySelector('[class*="progress"]')!;
+        const header = card.querySelector('[class*="dashboardHeader"]')!;
+        const cardBox = card.getBoundingClientRect();
+        const barBox = bar.getBoundingClientRect();
+        const headerBox = header.getBoundingClientRect();
+        return {
+          marginTop: getComputedStyle(element).marginTop,
+          topInset: barBox.top - cardBox.top,
+          borderTop: parseFloat(getComputedStyle(card).borderTopWidth),
+          headerGap: headerBox.top - barBox.bottom,
+          height: barBox.height,
+          width: barBox.width,
+          contentWidth:
+            cardBox.width -
+            parseFloat(getComputedStyle(card).borderLeftWidth) -
+            parseFloat(getComputedStyle(card).borderRightWidth),
+        };
+      });
+      expect(layout.marginTop).toBe("40px");
+      expect(layout.topInset).toBeCloseTo(layout.borderTop, 1);
+      expect(layout.headerGap).toBeCloseTo(0, 1);
+      expect(layout.height).toBe(3);
+      expect(layout.width).toBeCloseTo(layout.contentWidth, 1);
       const stage = phase === "hold" ? 2 : Number(phase);
       const title = [
         "The event is detected",

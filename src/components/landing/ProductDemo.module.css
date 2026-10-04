@@ -18,11 +18,8 @@
 .introduction p {
   max-width: 64ch;
 }
-.disclaimer {
-  margin: 24px 0 40px;
-  text-align: center;
-  color: var(--sentinel-steel);
-  font-size: 0.875rem;
+.player {
+  margin-top: 40px;
 }
 .experience {
   display: grid;

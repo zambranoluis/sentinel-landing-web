@@ -236,7 +236,7 @@ test("reduced motion and enlarged text preserve complete demo and section conten
     await page.locator(`#${id}`).scrollIntoViewIfNeeded();
     await noOverflow(page);
   }
-  const player = page.locator("[data-step]");
+  const player = page.locator("#product-demo [data-step]");
   await expect(player).toHaveAttribute("data-step", "2");
   await expect(player).toHaveAttribute("data-phase", "static");
   await expect(player).toHaveAttribute("data-playing", "false");
@@ -295,10 +295,24 @@ test("all sections and native FAQ remain usable without JavaScript", async ({
     await page.goto("/");
     for (const id of sections)
       await expect(page.locator(`#${id}`)).toBeVisible();
-    const player = page.locator("[data-step]");
+    const player = page.locator("#product-demo [data-step]");
     await expect(player).toHaveAttribute("data-step", "2");
     await expect(player).toHaveAttribute("data-phase", "static");
     await expect(player.getByRole("button")).toHaveCount(0);
+    await expect(
+      player.getByText("Illustrative demo · not a live feed", { exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      player.getByRole("heading", { name: "Review the event", exact: true }),
+    ).toBeVisible();
+    for (const detail of [
+      "Potential concealment",
+      "Aisle 4",
+      "14:32:07",
+      "Review required",
+      "88%",
+    ])
+      await expect(player.locator("dl")).toContainText(detail);
     expect(
       await player.evaluate(
         (element) => element.getAnimations({ subtree: true }).length,

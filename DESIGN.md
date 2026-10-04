@@ -212,6 +212,8 @@ Industry cards are informational fragment targets, not buttons. Their padding is
 
 ### Illustrative demo
 
+The player sits 40px below the introduction, without a separate disclaimer. Its progress bar spans the card's top edge above “Sentinel · Event review.”
+
 Three stages each last 3.6s, followed by a two-second final review hold before looping. Playback begins when visible; offscreen/hidden playback pauses in place, including the hold. Reduced motion and no JavaScript show the final review; returning to normal motion restarts at stage one. Stage indicators are noninteractive with `aria-current="step"`; automatic changes have no live announcements. No playback controls, stage selection, outcome messages, download action or report footer remain.
 
 ### FAQ

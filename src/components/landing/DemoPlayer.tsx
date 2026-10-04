@@ -56,7 +56,6 @@ export function DemoPlayer() {
       data-phase={phase}
       data-playing={active}
     >
-      <p className={styles.disclaimer}>Illustrative demo · not a live feed</p>
       <div className={styles.experience}>
         <ol className={styles.steps} aria-label="Demo stages">
           {steps.map((item, index) => (
@@ -88,6 +87,20 @@ export function DemoPlayer() {
           ))}
         </ol>
         <div className={styles.dashboard}>
+          <div className={styles.progress} aria-hidden="true">
+            <span
+              key={phase}
+              style={{ animationPlayState: active ? "running" : "paused" }}
+              onAnimationEnd={() => {
+                setPhase((current) => {
+                  if (current === "static") return current;
+                  if (current === "hold") return 0;
+                  if (current === 2) return "hold";
+                  return current === 0 ? 1 : 2;
+                });
+              }}
+            />
+          </div>
           <div className={styles.dashboardHeader}>
             <span>
               <SectionIcon name="camera" /> Sentinel · Event review
@@ -151,20 +164,6 @@ export function DemoPlayer() {
                 </div>
               </dl>
             </div>
-          </div>
-          <div className={styles.progress} aria-hidden="true">
-            <span
-              key={phase}
-              style={{ animationPlayState: active ? "running" : "paused" }}
-              onAnimationEnd={() => {
-                setPhase((current) => {
-                  if (current === "static") return current;
-                  if (current === "hold") return 0;
-                  if (current === 2) return "hold";
-                  return current === 0 ? 1 : 2;
-                });
-              }}
-            />
           </div>
         </div>
       </div>
