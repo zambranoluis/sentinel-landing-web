@@ -53,8 +53,6 @@ export function HeroScene() {
     selected,
     pinned,
     ready,
-    paused,
-    setPaused,
     hover,
     leave,
     cancelExit,
@@ -72,7 +70,6 @@ export function HeroScene() {
       data-hero-scene
       data-selected={selected ?? ""}
       data-pinned={pinned ?? ""}
-      data-paused={paused}
       data-ready={ready}
       data-running="false"
       onKeyDown={(event) => {
@@ -90,12 +87,7 @@ export function HeroScene() {
         ref={artwork}
         data-hero-artwork
         onClick={(event) => {
-          if (
-            !(event.target as Element).closest(
-              "[data-detection], button, details",
-            )
-          )
-            clear();
+          if (!(event.target as Element).closest("[data-detection]")) clear();
         }}
       >
         <div className={styles.viewport}>
@@ -249,66 +241,16 @@ export function HeroScene() {
             </svg>
           </div>
         </div>
-        <div
-          className={styles.tools}
-          onPointerEnter={cancelExit}
-          onPointerLeave={leave}
-        >
-          <details className={styles.explore}>
-            <summary>Explore detections</summary>
-            <div className={styles.directory} tabIndex={ready ? -1 : 0}>
-              <p className={styles.directoryIntro}>
-                Explore this illustrative warehouse scene.
-              </p>
-              <ul>
-                {heroDetections.map((item) => (
-                  <li key={item.id}>
-                    {ready ? (
-                      <button
-                        type="button"
-                        aria-pressed={pinned === item.id}
-                        aria-describedby={`${id}-description-${item.id}`}
-                        onFocus={(event) => {
-                          origin.current = event.currentTarget;
-                          setFocused(item.id);
-                        }}
-                        onClick={(event) => {
-                          const disclosure =
-                            event.currentTarget.closest("details")!;
-                          const summary = disclosure.querySelector("summary")!;
-                          summary.focus({ preventScroll: true });
-                          disclosure.open = false;
-                          activate(item.id, summary);
-                        }}
-                      >
-                        {item.title}
-                      </button>
-                    ) : (
-                      <strong>{item.title}</strong>
-                    )}
-                    <div
-                      id={`${id}-description-${item.id}`}
-                      className={ready ? styles.visuallyHidden : undefined}
-                    >
-                      <DetectionDescription target={item} />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </details>
-          {ready && (
-            <button
-              className={styles.pause}
-              type="button"
-              aria-pressed={paused}
-              onClick={() => setPaused(!paused)}
-            >
-              {paused ? "Resume animation" : "Pause animation"}
-            </button>
-          )}
-        </div>
       </div>
+      {heroDetections.map((item) => (
+        <div
+          key={item.id}
+          id={`${id}-description-${item.id}`}
+          className={styles.visuallyHidden}
+        >
+          <DetectionDescription target={item} />
+        </div>
+      ))}
       {target && (
         <div
           ref={panel}

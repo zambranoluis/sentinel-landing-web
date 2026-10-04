@@ -62,11 +62,9 @@ test("200% browser zoom preserves reflow and keyboard navigation", async ({
       );
     await capture("browser-zoom-200-scene.png");
     const heroScene = page.locator("[data-hero-scene]");
-    await heroScene.locator("summary").click();
     await heroScene
-      .locator("details")
       .getByRole("button", { name: "Forklift operator", exact: true })
-      .click();
+      .press("Enter");
     await expect(heroScene).toHaveAttribute("data-pinned", "person-driver");
     const detail = heroScene.locator("[data-hero-detail]");
     await expect(detail).toContainText("Illustrative detection");

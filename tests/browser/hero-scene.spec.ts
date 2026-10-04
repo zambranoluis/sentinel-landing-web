@@ -35,14 +35,33 @@ async function point(page: Page, x: number, y: number) {
     );
 }
 
-async function selectFromList(page: Page, name: string) {
-  const disclosure = scene(page).locator("details");
-  if (
-    !(await disclosure.getAttribute("open")) &&
-    !(await disclosure.evaluate((e: HTMLDetailsElement) => e.open))
-  )
-    await disclosure.locator("summary").click();
-  await disclosure.getByRole("button", { name, exact: true }).click();
+async function selectDetection(page: Page, name: string) {
+  await scene(page).getByRole("button", { name, exact: true }).press("Enter");
+}
+
+async function expectNoToolbar(page: Page) {
+  await expect(scene(page).locator("details, summary")).toHaveCount(0);
+  await expect(
+    scene(page).getByRole("button", {
+      name: /Explore detections|Pause animation|Resume animation/,
+    }),
+  ).toHaveCount(0);
+}
+
+async function expectDescriptions(page: Page) {
+  for (const item of heroDetections) {
+    const descriptionId = await target(page, item.id).getAttribute(
+      "aria-describedby",
+    );
+    expect(descriptionId).toBeTruthy();
+    const description = page.locator(`[id="${descriptionId}"]`);
+    await expect(description).toHaveCount(1);
+    await expect(description).toContainText(item.description);
+    await expect(description.locator("dt")).toHaveCount(2);
+    await expect(target(page, item.id)).toHaveAccessibleDescription(
+      new RegExp(item.description.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+    );
+  }
 }
 
 test("all twelve detections expose illustrative details and pin/switch/toggle", async ({
@@ -52,9 +71,11 @@ test("all twelve detections expose illustrative details and pin/switch/toggle", 
   page.on("pageerror", (error) => errors.push(error.message));
   await page.setViewportSize({ width: 1440, height: 900 });
   await open(page);
+  await expectNoToolbar(page);
+  await expectDescriptions(page);
   await expect(page.locator("[data-detection]")).toHaveCount(12);
   for (const item of heroDetections) {
-    await selectFromList(page, item.title);
+    await selectDetection(page, item.title);
     await expect(scene(page)).toHaveAttribute("data-pinned", item.id);
     await expect(detail(page).getByRole("heading")).toHaveText(item.title);
     await expect(detail(page)).toContainText(item.description);
@@ -62,7 +83,7 @@ test("all twelve detections expose illustrative details and pin/switch/toggle", 
     await expect(detail(page)).toContainText("Illustrative detection");
     await expect(target(page, item.id)).toHaveAttribute("aria-pressed", "true");
   }
-  await selectFromList(page, heroDetections.at(-1)!.title);
+  await selectDetection(page, heroDetections.at(-1)!.title);
   await expect(detail(page)).toHaveCount(0);
   await expect(scene(page).locator("[aria-live]")).toHaveCount(0);
   expect(errors).toEqual([]);
@@ -106,7 +127,7 @@ test("nested people and route hit regions win; background and Close clear", asyn
     .getByRole("button", { name: "Close detection details" })
     .click();
   await expect(detail(page)).toHaveCount(0);
-  await selectFromList(page, "Loading truck");
+  await selectDetection(page, "Loading truck");
   await page.mouse.click(1300, 160);
   await expect(detail(page)).toHaveCount(0);
 });
@@ -144,24 +165,20 @@ test("hover survives crossing to callout; keyboard and pin take precedence", asy
     await expect(target(page, item.id)).toBeFocused();
   }
   await page.keyboard.press("Tab");
-  const summary = scene(page).locator("summary");
-  await expect(summary).toBeFocused();
-  await summary.press("Enter");
-  await page.keyboard.press("Tab");
-  const first = scene(page)
-    .locator("details")
-    .getByRole("button", { name: "Loading truck", exact: true });
-  await expect(first).toBeFocused();
-  await first.press("Space");
-  await expect(scene(page)).toHaveAttribute("data-pinned", "truck");
-  await expect(summary).toBeFocused();
+  const close = detail(page).getByRole("button", {
+    name: "Close detection details",
+  });
+  await expect(close).toBeFocused();
+  await close.press("Enter");
+  await expect(detail(page)).toHaveCount(0);
+  await expect(target(page, heroDetections.at(-1)!.id)).toBeFocused();
 });
 
 test("selection stays aligned and bounded through responsive resizing", async ({
   page,
 }, testInfo) => {
   await open(page);
-  await selectFromList(page, "Forklift operator");
+  await selectDetection(page, "Forklift operator");
   for (const [width, height] of [
     [390, 844],
     [720, 1000],
@@ -249,14 +266,22 @@ test("touch selection presents details below the photograph and preserves camera
       .getByRole("button", { name: "Close detection details" })
       .tap();
     await expect(detail(page)).toHaveCount(0);
-    await scene(page).locator("summary").tap();
-    await expect(scene(page).locator("details button")).toHaveCount(12);
+    await expect(target(page, "person-bay")).toBeFocused();
+    await expectNoToolbar(page);
+    // Closing below-image details may scroll the page; read fresh hit coordinates.
+    await target(page, "person-bay").scrollIntoViewIfNeeded();
+    const reopened = await point(page, 1078, 505);
+    await page.touchscreen.tap(reopened.x, reopened.y);
+    await expect(scene(page)).toHaveAttribute("data-pinned", "person-bay");
+    const toggled = await point(page, 1078, 505);
+    await page.touchscreen.tap(toggled.x, toggled.y);
+    await expect(detail(page)).toHaveCount(0);
   } finally {
     await context.close();
   }
 });
 
-test("camera, route and accent motion pause, suspend and respect reduced motion", async ({
+test("camera, route and accent motion suspend automatically and respect reduced motion", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -299,7 +324,7 @@ test("camera, route and accent motion pause, suspend and respect reduced motion"
   await expect
     .poll(() => accents.evaluate((e) => getComputedStyle(e).strokeDashoffset))
     .not.toBe(before);
-  await scene(page).getByRole("button", { name: "Pause animation" }).click();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect(scene(page)).toHaveAttribute("data-running", "false");
   await expect(accents).toHaveCSS("animation-play-state", "paused");
   const pausedTime = await accents.evaluate(
@@ -315,10 +340,6 @@ test("camera, route and accent motion pause, suspend and respect reduced motion"
   expect(await route.evaluate((e: SVGPathElement) => e.getTotalLength())).toBe(
     pausedShape,
   );
-  await scene(page).getByRole("button", { name: "Resume animation" }).click();
-  await expect(scene(page)).toHaveAttribute("data-running", "true");
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await expect(scene(page)).toHaveAttribute("data-running", "false");
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect(scene(page)).toHaveAttribute("data-running", "true");
   // Controlled visibility event checks the lifecycle handler, not an OS tab switch.
@@ -347,7 +368,7 @@ test("camera, route and accent motion pause, suspend and respect reduced motion"
   );
 });
 
-test("native disclosure retains every description without JavaScript", async ({
+test("static scene retains accessible descriptions without JavaScript or toolbar", async ({
   browser,
 }, testInfo) => {
   const context = await browser.newContext({
@@ -357,11 +378,8 @@ test("native disclosure retains every description without JavaScript", async ({
   try {
     const page = await context.newPage();
     await page.goto(testInfo.project.use.baseURL!);
-    await scene(page).locator("summary").click();
-    for (const item of heroDetections)
-      await expect(scene(page).locator("details")).toContainText(
-        item.description,
-      );
+    await expectNoToolbar(page);
+    await expectDescriptions(page);
     await expect(scene(page).getByRole("button")).toHaveCount(0);
     await expect(page.locator("[data-detection][tabindex]")).toHaveCount(0);
     await expect(target(page, "truck").locator("path").nth(2)).toHaveCSS(
@@ -373,16 +391,16 @@ test("native disclosure retains every description without JavaScript", async ({
   }
 });
 
-test("selected scene and disclosure have no automated accessibility violations", async ({
+test("selected and resting scene have no automated accessibility violations", async ({
   page,
 }) => {
   await open(page);
-  await selectFromList(page, "Person at the loading bay");
+  await selectDetection(page, "Person at the loading bay");
   expect(
     (await new AxeBuilder({ page }).include("[data-hero-scene]").analyze())
       .violations,
   ).toEqual([]);
-  await scene(page).locator("summary").click();
+  await page.keyboard.press("Escape");
   expect(
     (await new AxeBuilder({ page }).include("[data-hero-scene]").analyze())
       .violations,

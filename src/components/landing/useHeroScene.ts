@@ -15,7 +15,6 @@ export function useHeroScene() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
-  const [paused, setPaused] = useState(false);
   const [ready, setReady] = useState(false);
   const selected = pinned ?? focused ?? hovered;
 
@@ -99,11 +98,7 @@ export function useHeroScene() {
       frame = 0;
       layer.style.removeProperty("transform");
     };
-    const enabled = () =>
-      root.dataset.paused !== "true" &&
-      !reduced.matches &&
-      visible &&
-      !document.hidden;
+    const enabled = () => !reduced.matches && visible && !document.hidden;
     const sync = () => {
       root.dataset.running = String(enabled());
       // Native SVG geometry animation also works in engines without CSS d.
@@ -149,7 +144,6 @@ export function useHeroScene() {
     element.addEventListener("pointermove", move);
     element.addEventListener("pointerleave", reset);
     document.addEventListener("visibilitychange", sync);
-    root.addEventListener("hero-playback-change", sync);
     root.addEventListener("pointermove", trackPointer);
     reduced.addEventListener("change", sync);
     pointer.addEventListener("change", sync);
@@ -162,17 +156,12 @@ export function useHeroScene() {
       element.removeEventListener("pointermove", move);
       element.removeEventListener("pointerleave", reset);
       document.removeEventListener("visibilitychange", sync);
-      root.removeEventListener("hero-playback-change", sync);
       root.removeEventListener("pointermove", trackPointer);
       reduced.removeEventListener("change", sync);
       pointer.removeEventListener("change", sync);
       window.removeEventListener("resize", reset);
     };
   }, []);
-
-  useEffect(() => {
-    scene.current?.dispatchEvent(new Event("hero-playback-change"));
-  }, [paused]);
 
   return {
     scene,
@@ -183,8 +172,6 @@ export function useHeroScene() {
     selected,
     pinned,
     ready,
-    paused,
-    setPaused,
     hover,
     leave,
     cancelExit,
