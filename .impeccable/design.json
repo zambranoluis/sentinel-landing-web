@@ -77,13 +77,13 @@
       },
       {
         "name": "workflow-sequence",
-        "value": "2.4s per step; 700ms accents",
-        "purpose": "Observe through Respond; held selection and focus-over-hover previews; remaining hold and effects suspend offscreen/hidden. Independent of cube and demo."
+        "value": "Above 720px: 2.4s (1.7s hold, 350ms ring, 350ms destination trace); through 720px: 1.2s (500ms hold, 700ms rail)",
+        "purpose": "Observe through Respond and wrap; clockwise radial slots, vertical mobile rows. Shared playback timeline suspends in place; interaction emphasis never changes playback. Independent of cube and demo."
       },
       {
         "name": "workflow-feedback",
-        "value": "200ms selection; 120ms press to 0.98",
-        "purpose": "Existing tiles/rows retain geometry; mobile rail travels beside the rows. Keyboard and reduced-motion selection are immediate."
+        "value": "200ms emphasis; 120ms press to 0.98; 600ms activation emphasis",
+        "purpose": "Automatic tile remains highlighted alongside independent interaction emphasis. Focus overrides hover; keyboard and reduced-motion feedback are immediate. Mobile rail follows automatic stages only."
       },
       {
         "name": "cube-float",

@@ -95,7 +95,8 @@
     border-color 200ms ease-out,
     background-color 200ms ease-out;
 }
-.step[data-active="true"] {
+.step[data-active="true"],
+.step[data-emphasized="true"] {
   border-color: #05ddf1;
   background: rgb(5 44 58 / 96%);
 }
@@ -196,20 +197,20 @@ button.stepControl:active {
   top: 0;
 }
 .interpret {
-  left: 0;
+  right: 0;
   top: 36.3%;
 }
 .flag {
-  right: 0;
-  top: 36.3%;
+  right: 13.7%;
+  bottom: 0;
 }
 .review {
   left: 13.7%;
   bottom: 0;
 }
 .respond {
-  right: 13.7%;
-  bottom: 0;
+  left: 0;
+  top: 36.3%;
 }
 .icon {
   display: grid;
