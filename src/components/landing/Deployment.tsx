@@ -3,6 +3,12 @@ import { deployment } from "./content";
 import common from "./Sections.module.css";
 import styles from "./Deployment.module.css";
 
+const deploymentImages = [
+  "/sections/deployment/security-compound-animated.svg",
+  "/sections/deployment/surveillance-network-animated.svg",
+  "/images/deployment-review.webp",
+];
+
 export function Deployment() {
   return (
     <section
@@ -25,7 +31,7 @@ export function Deployment() {
           {deployment.map((item, index) => (
             <li key={item.title} data-motion="content">
               <Image
-                src={`/images/deployment-${["assessment", "installation", "review"][index]}.webp`}
+                src={deploymentImages[index]}
                 width={1672}
                 height={941}
                 alt=""
