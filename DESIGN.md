@@ -218,7 +218,7 @@ Three stages each last 3.6s, followed by a two-second final review hold before l
 
 ### FAQ
 
-Native FAQ details/summary starts closed and preserves no-JavaScript interaction. Pointer activation animates measured height for 240ms with cancellable/reversible state; keyboard activation is immediate. Reduced-motion changes finish active animation. The plus/minus indicator uses the existing 200ms transition.
+Native FAQ details/summary starts closed and preserves no-JavaScript interaction. Pointer activation animates measured height for 240ms with cancellable/reversible state; keyboard activation is immediate. Reduced-motion changes finish active animation. The plus/× indicator uses two centered 14 × 3px solid bars, rotating together by 45° over the existing 200ms transition while the circular outline stays stationary. It follows `data-expanded` during animated closing and native `[open]` without JavaScript; reduced motion removes rotation transitions.
 
 ### Landing entrances
 

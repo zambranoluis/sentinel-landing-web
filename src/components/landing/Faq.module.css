@@ -46,21 +46,22 @@
 .plus::after {
   content: "";
   position: absolute;
-  width: 12px;
-  height: 1px;
+  width: 14px;
+  height: 3px;
   background: var(--sentinel-steel);
-  top: 15px;
-  left: 9px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
   transition: transform 200ms;
 }
 .plus::after {
-  transform: rotate(90deg);
+  transform: translate(-50%, -50%) rotate(90deg);
 }
-.item[open] .plus::after {
-  transform: rotate(0);
+.item[open]:not([data-expanded="false"]) .plus::before {
+  transform: translate(-50%, -50%) rotate(45deg);
 }
-.item[data-expanded="false"] .plus::after {
-  transform: rotate(90deg);
+.item[open]:not([data-expanded="false"]) .plus::after {
+  transform: translate(-50%, -50%) rotate(135deg);
 }
 .answer {
   color: var(--sentinel-steel);
